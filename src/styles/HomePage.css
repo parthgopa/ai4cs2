@@ -1,0 +1,150 @@
+.home-page {
+  padding: 1rem 0 3rem;
+  background-color: var(--background-color);
+}
+
+.hero-section {
+  margin-bottom: 2rem;
+}
+
+.hero-image-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.hero-image:hover {
+  transform: scale(1.02);
+}
+
+.section-title {
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.section-description {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.event-categories {
+  padding-left: 1.5rem;
+  margin-bottom: 2rem;
+  list-style-type: none;
+}
+
+.event-categories li {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  position: relative;
+}
+
+.event-categories li::before {
+  content: '';
+  position: absolute;
+  left: -1.5rem;
+  top: 0.5rem;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+}
+
+.explanation-text {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.explanation-text p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.blue-text {
+  color: var(--primary-color);
+}
+
+.text-italic {
+  font-style: italic;
+}
+
+/* Removed get-started-btn styles */
+
+/* Functionalities Section Styles */
+.functionalities-section {
+  margin-top: 2rem;
+}
+
+.functionalities-list {
+  border-radius: 4px;
+}
+
+.functionality-item {
+  padding: 1rem;
+  border-left: none;
+  border-right: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  color: var(--primary-color);
+}
+
+.functionality-item:hover {
+  background-color: var(--accent-color);
+  transform: translateX(5px);
+}
+
+.functionality-content {
+  flex: 1;
+}
+
+.functionality-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+}
+
+.functionality-icon {
+  margin-right: 10px;
+  font-size: 1.3rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.functionality-arrow {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-left: 1rem;
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 0.5rem 0 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .event-categories li {
+    font-size: 0.95rem;
+  }
+  
+  .functionality-title {
+    font-size: 1rem;
+  }
+}
