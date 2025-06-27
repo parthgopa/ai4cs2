@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { Card, Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../API';
+import { FaCopy, FaFilePdf } from 'react-icons/fa';
+import PDFGenerator from './PDFGenerator';
+
 
 const ComplianceCalendar = () => {
   const [formData, setFormData] = useState({
-    companyName: 'ABC Limited',
-    companyType: 'public limited company',
-    year: '2026',
-    complianceFor: ['Companies Act 2013', 'GST', 'income tax', 'RBI', 'nbfc', 'FEMA', 'SEBI'],
-    calendarType: 'detail'
+    companyName: '',
+    companyType: 'Private Limited Company',
+    year: '',
+    quarterlyOptions: ['January to March'],
+    complianceFor: ['Companies Act 2013', 'Goods and Services Tax (GST)',
+       'Income Tax Act', 'Reserve Bank of India (RBI) regulations', 
+       'Non-Banking Financial Companies (NBFC) regulations', 'Foreign Exchange Management Act (FEMA)', 
+       'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)'],
+    calendarType: ['detailed']
   });
 
   const [loading, setLoading] = useState(false);
@@ -23,17 +30,32 @@ const ComplianceCalendar = () => {
     });
   };
 
-  const handleCheckboxChange = (e) => {
+  const handleApplicableCheckboxChange = (e) => {
     const { value, checked } = e.target;
     if (checked) {
       setFormData({
         ...formData,
-        complianceFor: [...formData.complianceFor, value]
+        complianceFor: [...formData.complianceFor, value],
       });
     } else {
       setFormData({
         ...formData,
         complianceFor: formData.complianceFor.filter(item => item !== value)
+      });
+    }
+  };
+
+  const handleCalendarTypeCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setFormData({
+        ...formData,
+        calendarType: [...formData.calendarType, value],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        calendarType: formData.calendarType.filter(item => item !== value)
       });
     }
   };
@@ -49,27 +71,30 @@ const ComplianceCalendar = () => {
 Prompt 
 Give following details
 1.\tName of the company - ${formData.companyName} 
-2.\tType - ${formData.companyType} 
+2.\tCompany Type - ${formData.companyType} 
 3.\tYear - ${formData.year}
-4.\tCompliance for - ${complianceForString} 
-5.\tCalendar type- ${formData.calendarType}
- Based on above information Generate a structured detailed compliance calendar for that includes all monthly statutory filings and deadlines and consequences for non complaint applicable to both private limited companies and public limited companies listed on a stock exchange in India. The calendar should include compliance requirements under the laws (${complianceForString}).
-Output as under
-${formData.calendarType === 'detail' ? 
-`If calendar type is detail then
-A. Structureed output in following note format with [${formData.companyName}, ${formData.companyType}, ${formData.year}]
-1 month and year
-2 date 
-3 respective act ,
-4  compliance detail ,
-5. consequences for non compliance 
-4 remarks` : 
-`If calendar type is summary then output is as under:
-B. Handy ready reckoner style -
- month 
-     date 
-         Act
-              Compliance`}`;
+4.\tQuarterly options - ${formData.quarterlyOptions.join(', ')}
+5.\tApplicable laws - ${complianceForString} 
+6.\tCalendar type- ${formData.calendarType}
+
+Based on the above details, generate a structured compliance calendar.
+The calendar should:
+•	Include all applicable statutory filings and compliance requirements under the mentioned laws.
+•	Mention the exact due dates, name of the applicable Act/regulation, and brief description of the compliance.
+•	Specify consequences of non-compliance, if any.
+•	Provide additional remarks, if necessary.
+
+The output should be in the dot point format with month and date.
+
+Example:
+Month: January
+Date: 1
+Act/Regulation: Companies Act 2013
+Description: Annual General Meeting
+Consequences: Non-compliance may result in legal action.
+Remarks: This is a mandatory requirement.
+`;
+// console.log(prompt);
 
     try {
       await APIService({
@@ -78,6 +103,7 @@ B. Handy ready reckoner style -
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
             setResponse(data.candidates[0].content.parts[0].text);
+            // console.log(data.candidates[0].content.parts[0].text);
           } else {
             setResponse("Sorry, we couldn't generate a compliance calendar. Please try again.");
           }
@@ -92,13 +118,40 @@ B. Handy ready reckoner style -
 
   const complianceOptions = [
     { value: 'Companies Act 2013', label: 'Companies Act 2013' },
-    { value: 'GST', label: 'GST' },
-    { value: 'income tax', label: 'Income Tax' },
-    { value: 'RBI', label: 'RBI' },
-    { value: 'nbfc', label: 'NBFC' },
-    { value: 'FEMA', label: 'FEMA' },
-    { value: 'SEBI', label: 'SEBI' }
+    { value: 'Goods and Services Tax (GST)', label: 'Goods and Services Tax (GST)' },
+    { value: 'Income Tax Act', label: 'Income Tax Act' },
+    { value: 'Reserve Bank of India (RBI) regulations', label: 'Reserve Bank of India (RBI) regulations' },
+    { value: 'Non-Banking Financial Companies (NBFC) regulations', label: 'Non-Banking Financial Companies (NBFC) regulations' },
+    { value: 'Foreign Exchange Management Act (FEMA)', label: 'Foreign Exchange Management Act (FEMA)' },
+    { value: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)', label: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)' }
   ];
+
+  const calenderTypeOptions = [
+    { value: 'detailed', label: 'Detailed' },
+    { value: 'summary', label: 'Summary' }
+  ];
+
+  const quarterlyOptions = [
+    { value: 'January to March', label: 'January to March' },
+    { value: 'April to June', label: 'April to June' },
+    { value: 'July to September', label: 'July to September' },
+    { value: 'October to December', label: 'October to December' }
+  ];
+
+  const handleQuarterlyCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setFormData({
+        ...formData,
+        quarterlyOptions: [...formData.quarterlyOptions, value],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        quarterlyOptions: formData.quarterlyOptions.filter(item => item !== value)
+      });
+    }
+  };
 
   return (
     <Container>
@@ -128,10 +181,9 @@ B. Handy ready reckoner style -
                   className="form-select"
                   required
                 >
-                  <option value="private limited company">Private Limited Company</option>
-                  <option value="public limited company">Public Limited Company</option>
-                  <option value="one person company">One Person Company</option>
-                  <option value="limited liability partnership">Limited Liability Partnership</option>
+                  <option value="Private Limited Company">Private Limited Company</option>
+                  <option value="Unlisted public Limited">Unlisted public Limited</option>
+                  <option value="listed public Limited">listed public Limited</option>
                 </Form.Select>
               </Form.Group>
 
@@ -147,8 +199,28 @@ B. Handy ready reckoner style -
                 />
               </Form.Group>
 
+              {/* Now quaterly compliance calendar, add a 4 checkbox Q1,Q2,Q3,Q4 where Q1 - january to march, Q2 - april to june, Q3 - july to september, Q4 - october to december */}
               <Form.Group className="form-group">
-                <Form.Label className="form-label">Compliance For</Form.Label>
+                <Form.Label className="form-label">Quarterly Compliance Calendar</Form.Label>
+                <div>
+                  {quarterlyOptions.map((option) => (
+                    <Form.Check
+                      key={option.value}
+                      type="checkbox"
+                      id={`quarterly-compliance-calendar-${option.value}`}
+                      label={option.label}
+                      value={option.value}
+                      checked={formData.quarterlyOptions.includes(option.value)}
+                      onChange={handleQuarterlyCheckboxChange}
+                      className="form-check"
+                    />
+                  ))}
+                </div>
+              </Form.Group> 
+
+
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Applicable Laws</Form.Label>
                 <div>
                   {complianceOptions.map((option) => (
                     <Form.Check
@@ -158,7 +230,7 @@ B. Handy ready reckoner style -
                       label={option.label}
                       value={option.value}
                       checked={formData.complianceFor.includes(option.value)}
-                      onChange={handleCheckboxChange}
+                      onChange={handleApplicableCheckboxChange}
                       className="form-check"
                     />
                   ))}
@@ -166,22 +238,24 @@ B. Handy ready reckoner style -
               </Form.Group>
 
               <Form.Group className="form-group">
-                <Form.Label className="form-label">Calendar Type</Form.Label>
-                <Form.Select
-                  name="calendarType"
-                  value={formData.calendarType}
-                  onChange={handleInputChange}
-                  className="form-select"
-                  required
-                >
-                  <option value="detail">Detailed</option>
-                  <option value="summary">Summary</option>
-                </Form.Select>
+                <Form.Label className="form-label">Calendar Type</Form.Label>{/*Detailed or Summary checkbox, allow to check both checkbox and save both in the form data*/}
+                  {calenderTypeOptions.map((option) => (
+                    <Form.Check
+                      key={option.value}
+                      type="checkbox"
+                      id={`calendar-type-${option.value}`}
+                      label={option.label}
+                      value={option.value}
+                      checked={formData.calendarType.includes(option.value)}
+                      onChange={handleCalendarTypeCheckboxChange}
+                      className="form-check"
+                    />
+                  ))}
               </Form.Group>
 
-              <Button type="submit" className="btn-primary btn-block" disabled={loading}>
+              <button type="submit" className="btn btn-primary" disabled={loading}>
                 {loading ? 'Generating Calendar...' : 'Generate Compliance Calendar'}
-              </Button>
+              </button>
             </Form>
           </Card>
         </Col>
@@ -200,11 +274,38 @@ B. Handy ready reckoner style -
       {response && (
         <Row className="justify-content-center">
           <Col md={10}>
+          <h2 className="card-title">Compliance Calendar</h2>
             <Card className="output-card">
-              <h2 className="card-title">Compliance Calendar</h2>
+              <div className="d-flex justify-content-end mt-3">
+                <Button 
+                  variant="outline-primary" 
+                  className="me-2" 
+                  onClick={() => {
+                    navigator.clipboard.writeText(response);
+                    alert('Copied to clipboard!');
+                  }}
+                >
+                  <FaCopy className="me-1" />
+                  <span className="d-none d-sm-inline">Copy to Clipboard</span>
+                </Button>
+                <Button 
+                  variant="outline-danger" 
+                  onClick={() => {
+                    const { generatePDF } = PDFGenerator({ 
+                      content: response, 
+                      fileName: `${formData.companyName}-compliance-calendar.pdf` 
+                    });
+                    generatePDF();
+                  }}
+                >
+                  <FaFilePdf className="me-1" />
+                  <span className="d-none d-sm-inline">Download PDF</span>
+                </Button>
+              </div>
               <div className="markdown-content">
                 <ReactMarkdown>{response}</ReactMarkdown>
               </div>
+              
             </Card>
           </Col>
         </Row>

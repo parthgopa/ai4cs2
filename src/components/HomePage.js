@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 // Import icons
 import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBuilding } from 'react-icons/fa';
 import { MdUpdate, MdAssessment, MdDescription, MdMeetingRoom, MdOutlineAppRegistration, MdPeople } from 'react-icons/md';
-// Import ComplianceCalendar component
-import ComplianceCalendar from './ComplianceCalendar';
-// Note: We'll need to import an actual image file once it's available
-// import heroImage from '../../assets/images/hero-image.jpg';
 
 const HomePage = () => {
   const navigate = useNavigate();
