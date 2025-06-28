@@ -10,7 +10,7 @@ const ComplianceCalendar = () => {
   const [formData, setFormData] = useState({
     companyName: '',
     companyType: 'Private Limited Company',
-    year: '2026',
+    // year: '2026',
     quarterlyOptions: ['January to March'],
     financialEndDate: '',
     complianceFor: ['Companies Act 2013', 'Goods and Services Tax (GST)',
@@ -56,7 +56,7 @@ const ComplianceCalendar = () => {
 Give following details
 1.\tName of the company - ${formData.companyName} 
 2.\tCompany Type - ${formData.companyType} 
-3.\tFinancial Year - ${formData.financialEndDate}
+3.\tLatest Financial year and date - ${formData.financialEndDate}
 4.\tQuarterly options - ${formData.quarterlyOptions.join(', ')}
 5.\tApplicable laws - ${complianceForString} 
 6.\tCalendar type- detailed
@@ -67,7 +67,7 @@ The compliance calendar should:
 
 Include all applicable statutory filings and compliance requirements under the mentioned laws, along with the relevant sections, subsections, and rules thereunder.
 
-Clearly mention the exact due dates, name of the applicable Act, relevant provision (section/subsection/rule), and a brief description of the compliance.
+Clearly mention the exact due dates, name of the applicable Act, relevant provision (section/subsection/rule/form number), and a brief description of the compliance.
 
 Specify the consequences of non-compliance, if any (such as penalties, late fees, disqualification, or prosecution).
 
@@ -117,11 +117,11 @@ Remarks: Mandatory for all companies except OPC
     { value: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)', label: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)' }
   ];
 
-  const quarterlyOptions = [
-    { value: 'January to March', label: 'January to March' },
+  const quarterlyOptions = [    
     { value: 'April to June', label: 'April to June' },
     { value: 'July to September', label: 'July to September' },
-    { value: 'October to December', label: 'October to December' }
+    { value: 'October to December', label: 'October to December' },
+    { value: 'January to March', label: 'January to March' },
   ];
 
   const handleQuarterlyCheckboxChange = (e) => {
@@ -173,7 +173,7 @@ Remarks: Mandatory for all companies except OPC
                 </Form.Select>
               </Form.Group>
 
-              <Form.Group className="form-group">
+              {/* <Form.Group className="form-group">
                 <Form.Label className="form-label">Year</Form.Label>
                 <Form.Control
                   type="text"
@@ -183,7 +183,7 @@ Remarks: Mandatory for all companies except OPC
                   className="form-control"
                   required
                 />
-              </Form.Group>
+              </Form.Group> */}
 
               {/* add a caleder for selecting finiancial end date abd year */}
               <Form.Group className="form-group">
