@@ -1,13 +1,38 @@
-import React from 'react';
-import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 // Import icons
 import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBuilding } from 'react-icons/fa';
 import { MdUpdate, MdAssessment, MdDescription, MdMeetingRoom, MdOutlineAppRegistration, MdPeople } from 'react-icons/md';
+// Import Chatbot component
+import Chatbot from './Chatbot';
+// Import ComingSoonModal component
+import ComingSoonModal from './ComingSoonModal';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  
+  // State for chatbot visibility
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  
+  // State for ComingSoonModal
+  const [showModal, setShowModal] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState('');
+  
+  // Function to toggle chatbot visibility
+  const toggleChatbot = () => setIsChatbotOpen(!isChatbotOpen);
+  
+  // Function to open modal with feature title
+  const openComingSoonModal = (featureTitle) => {
+    setSelectedFeature(featureTitle);
+    setShowModal(true);
+  };
+  
+  // Function to close modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
   
   // List of functionalities with icons
   const functionalities = [
@@ -73,51 +98,14 @@ const HomePage = () => {
     }
   ];
   
-  const handleFunctionalityClick = (id) => {
+  const handleFunctionalityClick = (id, title) => {
     console.log(`Functionality clicked: ${id}`);
     
-    // Navigate based on the functionality ID
-    switch(id) {
-      case 'compliance-calendar':
-        navigate('/compliance-calendar');
-        break;
-      case 'legal-research':
-        navigate('/legal-research');
-        break;
-      case 'legal-opinion':
-        navigate('/legal-opinion');
-        break;
-      case 'strategic-advice':
-        navigate('/strategic-advice');
-        break;
-      case 'procedure-practice':
-        navigate('/procedure-practice');
-        break;
-      case 'corporate-governance':
-        navigate('/corporate-governance');
-        break;
-      case 'regulatory-updation':
-        navigate('/regulatory-updation');
-        break;
-      case 'risk-assessment':
-        navigate('/risk-assessment');
-        break;
-      case 'resolutions':
-        navigate('/resolutions');
-        break;
-      case 'board-meeting-management':
-        navigate('/board-meeting-management');
-        break;
-      case 'application-petition-appeal':
-        navigate('/application-petition-appeal');
-        break;
-      case 'shareholder-communication':
-        navigate('/shareholder-communication');
-        break;
-      default:
-        console.log(`Unknown functionality: ${id}`);
-        // Optionally navigate to a 404 or error page
-        // navigate('/not-found');
+    // Only navigate to compliance-calendar, show modal for others
+    if (id === 'compliance-calendar') {
+      navigate('/compliance-calendar');
+    } else {
+      openComingSoonModal(title);
     }
   };
   
@@ -167,8 +155,8 @@ const HomePage = () => {
                       <ListGroup.Item 
                         key={item.id} 
                         action 
-                        onClick={() => handleFunctionalityClick(item.id)}
-                        className="functionality-item"
+                        onClick={() => handleFunctionalityClick(item.id, item.title)}
+                        className={`functionality-item ${item.id !== 'compliance-calendar' ? 'disabled-feature' : ''}`}
                       >
                         <div className="functionality-content">
                           <h2 className="functionality-title">
@@ -187,7 +175,31 @@ const HomePage = () => {
         </Container>
       </section>
 
+      {/* Chatbot Toggle Button */}
+      <Button 
+        className="chatbot-toggle"
+        onClick={toggleChatbot}
+        aria-label="Toggle AI Assistant"
+      >
+        <img 
+          src="/images/chatbot.jpg" 
+          alt="AI Assistant"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://via.placeholder.com/35x35?text=AI";
+          }}
+        />
+      </Button>
 
+      {/* Chatbot Component */}
+      <Chatbot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />
+      
+      {/* Coming Soon Modal */}
+      <ComingSoonModal 
+        show={showModal} 
+        handleClose={closeModal} 
+        featureTitle={selectedFeature} 
+      />
     </main>
   );
 };
