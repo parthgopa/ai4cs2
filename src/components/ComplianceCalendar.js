@@ -10,13 +10,13 @@ const ComplianceCalendar = () => {
   const [formData, setFormData] = useState({
     companyName: '',
     companyType: 'Private Limited Company',
-    year: '',
+    year: '2026',
     quarterlyOptions: ['January to March'],
+    financialEndDate: '',
     complianceFor: ['Companies Act 2013', 'Goods and Services Tax (GST)',
        'Income Tax Act', 'Reserve Bank of India (RBI) regulations', 
        'Non-Banking Financial Companies (NBFC) regulations', 'Foreign Exchange Management Act (FEMA)', 
        'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)'],
-    calendarType: ['detailed']
   });
 
   const [loading, setLoading] = useState(false);
@@ -45,21 +45,6 @@ const ComplianceCalendar = () => {
     }
   };
 
-  const handleCalendarTypeCheckboxChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setFormData({
-        ...formData,
-        calendarType: [...formData.calendarType, value],
-      });
-    } else {
-      setFormData({
-        ...formData,
-        calendarType: formData.calendarType.filter(item => item !== value)
-      });
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -67,32 +52,38 @@ const ComplianceCalendar = () => {
 
     const complianceForString = formData.complianceFor.join(', ');
     
-    const prompt = `Compliance calendar 
-Prompt 
+    const prompt = `
 Give following details
 1.\tName of the company - ${formData.companyName} 
 2.\tCompany Type - ${formData.companyType} 
-3.\tYear - ${formData.year}
+3.\tFinancial Year - ${formData.financialEndDate}
 4.\tQuarterly options - ${formData.quarterlyOptions.join(', ')}
 5.\tApplicable laws - ${complianceForString} 
-6.\tCalendar type- ${formData.calendarType}
+6.\tCalendar type- detailed
 
-Based on the above details, generate a structured compliance calendar.
-The calendar should:
-•	Include all applicable statutory filings and compliance requirements under the mentioned laws.
-•	Mention the exact due dates, name of the applicable Act/regulation, and brief description of the compliance.
-•	Specify consequences of non-compliance, if any.
-•	Provide additional remarks, if necessary.
+Based on the information provided above, generate a detailed statutory compliance calendar.
 
-The output should be in the dot point format with month and date.
+The compliance calendar should:
 
-Example:
+Include all applicable statutory filings and compliance requirements under the mentioned laws, along with the relevant sections, subsections, and rules thereunder.
+
+Clearly mention the exact due dates, name of the applicable Act, relevant provision (section/subsection/rule), and a brief description of the compliance.
+
+Specify the consequences of non-compliance, if any (such as penalties, late fees, disqualification, or prosecution).
+
+Provide additional remarks, wherever necessary (e.g., optional but recommended filings, industry-specific variations).
+
+
+The output should be in a note-style format grouped by month and date, as shown below:
+
 Month: January
-Date: 1
-Act/Regulation: Companies Act 2013
-Description: Annual General Meeting
-Consequences: Non-compliance may result in legal action.
-Remarks: This is a mandatory requirement.
+Date: 01
+Act/Regulation: Companies Act, 2013
+Compliance Description: Holding of Annual General Meeting
+Applicable Provision: Section 96(1)
+Consequences of Non-Compliance: Penalty on company and officers in default as per Section 99
+Remarks: Mandatory for all companies except OPC
+
 `;
 // console.log(prompt);
 
@@ -124,11 +115,6 @@ Remarks: This is a mandatory requirement.
     { value: 'Non-Banking Financial Companies (NBFC) regulations', label: 'Non-Banking Financial Companies (NBFC) regulations' },
     { value: 'Foreign Exchange Management Act (FEMA)', label: 'Foreign Exchange Management Act (FEMA)' },
     { value: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)', label: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)' }
-  ];
-
-  const calenderTypeOptions = [
-    { value: 'detailed', label: 'Detailed' },
-    { value: 'summary', label: 'Summary' }
   ];
 
   const quarterlyOptions = [
@@ -199,6 +185,19 @@ Remarks: This is a mandatory requirement.
                 />
               </Form.Group>
 
+              {/* add a caleder for selecting finiancial end date abd year */}
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Financial End Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="financialEndDate"
+                  value={formData.financialEndDate}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                />
+              </Form.Group>
+
               {/* Now quaterly compliance calendar, add a 4 checkbox Q1,Q2,Q3,Q4 where Q1 - january to march, Q2 - april to june, Q3 - july to september, Q4 - october to december */}
               <Form.Group className="form-group">
                 <Form.Label className="form-label">Quarterly Compliance Calendar</Form.Label>
@@ -235,22 +234,6 @@ Remarks: This is a mandatory requirement.
                     />
                   ))}
                 </div>
-              </Form.Group>
-
-              <Form.Group className="form-group">
-                <Form.Label className="form-label">Calendar Type</Form.Label>{/*Detailed or Summary checkbox, allow to check both checkbox and save both in the form data*/}
-                  {calenderTypeOptions.map((option) => (
-                    <Form.Check
-                      key={option.value}
-                      type="checkbox"
-                      id={`calendar-type-${option.value}`}
-                      label={option.label}
-                      value={option.value}
-                      checked={formData.calendarType.includes(option.value)}
-                      onChange={handleCalendarTypeCheckboxChange}
-                      className="form-check"
-                    />
-                  ))}
               </Form.Group>
 
               <button type="submit" className="btn btn-primary" disabled={loading}>
