@@ -66,11 +66,11 @@ Based on the information provided above, generate a detailed statutory complianc
 
 The compliance calendar should:
 
-Include all applicable statutory filings and compliance requirements under the mentioned laws, along with the relevant sections, subsections, and rules thereunder.
+Include all applicable statutory filings and compliance requirements under the mentioned laws, along with the relevant sections, subsections, and rules there under.
 
 Clearly mention the exact due dates, name of the applicable Act, relevant provision (section/subsection/rule/form number), and a brief description of the compliance.
 
-Specify the consequences of non-compliance, if any (such as penalties, late fees, disqualification, or prosecution).
+Specify the consequences in detail of non-compliance , if any (such as penalties, late fees, disqualification, or prosecution).
 
 Provide additional remarks, wherever necessary (e.g., optional but recommended filings, industry-specific variations).
 

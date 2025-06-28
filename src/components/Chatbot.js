@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Form, Button, Spinner } from 'react-bootstrap';
+import { Card, Form, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../API';
 import '../styles/Chatbot.css';
