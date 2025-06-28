@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import APIService from '../API';
 import { FaCopy, FaFilePdf } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
+import AIDisclaimer from './AIDisclaimer';
 
 
 const ComplianceCalendar = () => {
@@ -288,7 +289,7 @@ Remarks: Mandatory for all companies except OPC
               <div className="markdown-content">
                 <ReactMarkdown>{response}</ReactMarkdown>
               </div>
-              
+              <AIDisclaimer variant="light" />
             </Card>
           </Col>
         </Row>
