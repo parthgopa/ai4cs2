@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import './styles/Footer.css';
+import '../styles/Footer.css';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className="footer">
       <Container>
-        <Row className="py-4">
+        <Row className="py-2">
           <Col md={4}>
             <h5 className="footer-heading">AI4CS</h5>
             <p className="footer-text">

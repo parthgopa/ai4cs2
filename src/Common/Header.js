@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { ThemeContext } from './ThemeContext';
-import './styles/Header.css';
+import '../styles/Header.css';
 
 const Header = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
