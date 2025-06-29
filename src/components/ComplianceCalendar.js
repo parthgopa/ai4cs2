@@ -75,8 +75,8 @@ Specify the consequences in detail of non-compliance , if any (such as penalties
 Provide additional remarks, wherever necessary (e.g., optional but recommended filings, industry-specific variations).
 
 
-The output should be in a dotpoint format grouped by month and date, as shown below:
-
+The output should be strictly in a dotpoint format grouped by month and datem, no paragraph in output, as shown below :
+Exclude anu introductory notes, preferences or disclaimer, notes from the output.
 Month: January
 Date: 01
 Act/Regulation: Companies Act, 2013.
