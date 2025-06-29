@@ -5,9 +5,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/theme.css';
 
 // Custom Components
-import { ThemeProvider } from './ThemeContext';
-import Header from './Header';
-import Footer from './Footer';
+import { ThemeProvider } from './Common/ThemeContext';
+import Header from './Common/Header';
+import Footer from './Common/Footer';
 import HomePage from './components/HomePage';
 import ResolutionsDraftingPage from './components/ResolutionsDraftingPage';
 import ComplianceCalendar from './components/ComplianceCalendar';

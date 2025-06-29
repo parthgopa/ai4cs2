@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
-import APIService from '../API';
+import APIService from '../Common/API';
 import '../styles/Chatbot.css';
 import { FaTimes, FaRobot, FaUser, FaPaperPlane, FaExpand, FaCompress } from 'react-icons/fa';
 

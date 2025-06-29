@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
-import APIService from '../API';
+import APIService from '../Common/API';
 import { FaCopy, FaFilePdf } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
 import AIDisclaimer from './AIDisclaimer';
@@ -54,7 +54,7 @@ const ComplianceCalendar = () => {
     const complianceForString = formData.complianceFor.join(', ');
     
     const prompt = `
-Give following details
+Given following details
 1.\tName of the company - ${formData.companyName} 
 2.\tCompany Type - ${formData.companyType} 
 3.\tLatest Financial year and date - ${formData.financialEndDate}
@@ -62,24 +62,24 @@ Give following details
 5.\tApplicable laws - ${complianceForString} 
 6.\tCalendar type- detailed
 
-Based on the information provided above, generate a detailed statutory compliance calendar.
+Based on the information provided above, generate exhaustive and detailedstatutory compliance calendar.
 
 The compliance calendar should:
 
-Include all applicable statutory filings and compliance requirements under the mentioned laws, along with the relevant sections, subsections, and rules there under.
+Include all applicable statutory filings and compliance requirements under the mentioned laws, along with the relevant sections, subsections, and rules thereunder, in detail.
 
-Clearly mention the exact due dates, name of the applicable Act, relevant provision (section/subsection/rule/form number), and a brief description of the compliance.
+Clearly mention the exact due dates, name of the applicable Act, relevant provision (section/subsection/rule/form number), and a detailed description of the compliance.
 
 Specify the consequences in detail of non-compliance , if any (such as penalties, late fees, disqualification, or prosecution).
 
 Provide additional remarks, wherever necessary (e.g., optional but recommended filings, industry-specific variations).
 
 
-The output should be in a note-style format grouped by month and date, as shown below:
+The output should be in a dotpoint format grouped by month and date, as shown below:
 
 Month: January
 Date: 01
-Act/Regulation: Companies Act, 2013
+Act/Regulation: Companies Act, 2013.
 Compliance Description: Holding of Annual General Meeting
 Applicable Provision: Section 96(1)
 Consequences of Non-Compliance: Penalty on company and officers in default as per Section 99
