@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
-import { FaCopy, FaFilePdf } from 'react-icons/fa';
+import { FaCopy, FaFilePdf, FaSpinner } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
 import AIDisclaimer from './AIDisclaimer';
 
@@ -64,6 +64,7 @@ Given following details
 
 Task: Generate a Statutory Compliance Calendar for  ${formData.companyName} ${formData.companyType} 
 for the ${formData.quarterlyOptions.join(', ')} quarter following the financial year ending ${formData.financialEndDate}. 
+Exclude any introductory notes, prefaces, or disclaimers, warnings through the output( like (Note: This calendar is a simplified representation and may not cover all compliance requirements. Professional advice should be sought for comprehensive compliance.)).
 The calendar should be organized as follows( in "dot points"): 
 
   1.  Quarter: [Selected Quarter] (e.g., Q1)
@@ -81,37 +82,52 @@ The calendar should be organized as follows( in "dot points"):
        (Repeat for each Month within the Quarter)
   
 (Example structure - you will fill in the details):
+w
+### Quarter: Q1
+#### Months within the Quarter: April, May, June
 
-Quarter: Q1
+---
 
-Month: April
+#### Month: April
 
-   Act: Companies Act, 2013
-       Date: 04/30/2025
-           Compliance Item: Filing of Form AOC-4 for Financial Year [Previous Financial Year]
-           Governing Act & Section: Companies Act, 2013, Section 137
-           Applicable Form (if any): AOC-4
-           Due Date: 04/30/2025
-           Legal Provision for Non-Compliance: Penalty of [Amount] and [Additional Penalties as per Companies Act, 2013] as per Section 137.
-           Remarks: Requires audited financial statements.
+* *Act: Companies Act, 2013*
+    * *Date: 30/04/2024*
+        * Compliance Item: Filing of Form MSME I (Half Yearly Return) for October 2023 to March 2024
+        * Governing Act & Section: Companies Act, 2013, Section 405 read with Rule 5 of Companies (Furnishing of Information about Payment to Micro and Small Enterprise Suppliers) Rules, 2019
+        * Applicable Form (if any): MSME I
+        * Due Date: 30/04/2024
+        * Legal Provision for Non-Compliance: Penalty as per Section 450 of Companies Act, 2013.
+        * Remarks: Applicable if the company has outstanding payments to Micro and Small Enterprise suppliers for more than 45 days.
 
-   Act: GST Act
-       Date: 04/20/2025
-           Compliance Item: Filing of GSTR-3B for March 2025
-           Governing Act & Section: GST Act, Section 39
-           Applicable Form (if any): GSTR-3B
-           Due Date: 04/20/2025
-           Legal Provision for Non-Compliance: Late fee of [Amount] per day, interest at [Percentage] per annum, as per Section 50.
-           Remarks: Requires accurate reconciliation of input tax credit.
+* *Act: Income Tax Act*
+    * *Date: 07/04/2024*
+        * Compliance Item: Due date for deposit of TDS/TCS for the month of March 2024
+        * Governing Act & Section: Income Tax Act, 1961
+        * Applicable Form (if any): ITNS 281
+        * Due Date: 07/04/2024
+        * Legal Provision for Non-Compliance: Interest under Section 201(1A) for delay in payment.
+        * Remarks: This applies to all tax deducted/collected at source.
+    * *Date: 30/04/2024*
+        * Compliance Item: Furnishing of TDS certificate (Form 16A) for the quarter ending 31st March 2024 for other than salary.
+        * Governing Act & Section: Income Tax Act, 1961, Section 203
+        * Applicable Form (if any): Form 16A
+        * Due Date: 30/04/2024
+        * Legal Provision for Non-Compliance: Penalty of INR 100 per day for default under Section 272A(2)(g).
+        * Remarks: To be issued to the deductees.
+    * *Date: 30/04/2024*
+        * Compliance Item: Furnishing of Quarterly TDS statement (Form 24Q/26Q/27Q) for the quarter ending 31st March 2024.
+        * Governing Act & Section: Income Tax Act, 1961, Section 200(3)
+        * Applicable Form (if any): Form 24Q/26Q/27Q
+        * Due Date: 30/04/2024
+        * Legal Provision for Non-Compliance: Late fee under Section 234E of INR 200 per day till the default continues, subject to the amount of TDS.
+        * Remarks: Includes details of tax deducted on salary and non-salary payments.
 
-Month: May
 
 (Continue in the same format for May, June, and other relevant Acts and dates)
 Exclude any introductory notes, prefaces, or disclaimers from the output.
  Date format should be 
 DD/MM/YYYY
  it should be in the order of the act mention as above     
-
 
 `;
 // console.log(prompt);
@@ -277,7 +293,7 @@ DD/MM/YYYY
         <Row className="justify-content-center">
           <Col md={10}>
             <div className="loading-container">
-              <div className="spinner"></div>
+              <FaSpinner style={{animation: 'spin 1s linear infinite', fontSize: '3rem', color: 'gray' }} />
             </div>
           </Col>
         </Row>
@@ -286,7 +302,7 @@ DD/MM/YYYY
       {response && (
         <Row className="justify-content-center">
           <Col md={10}>
-          <h2 className="card-title">Compliance Calendar</h2>
+          <h2 className="card-title">Compliance Calendar for {formData.companyName}</h2>
             <Card className="output-card">
               <div className="d-flex justify-content-end mt-3">
                 <Button 
