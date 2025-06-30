@@ -12,7 +12,7 @@ const ComplianceCalendar = () => {
     companyName: '',
     companyType: 'Private Limited Company',
     // year: '2026',
-    quarterlyOptions: ['January to March'],
+    quarterlyOptions: [''],
     financialEndDate: '',
     complianceFor: ['Companies Act 2013', 'Goods and Services Tax (GST)',
        'Income Tax Act', 'Reserve Bank of India (RBI) regulations', 
@@ -57,33 +57,61 @@ const ComplianceCalendar = () => {
 Given following details
 1.\tName of the company - ${formData.companyName} 
 2.\tCompany Type - ${formData.companyType} 
-3.\tLatest Financial year and date - ${formData.financialEndDate}
+3.\tFinancial year and date - ${formData.financialEndDate}
 4.\tQuarterly options - ${formData.quarterlyOptions.join(', ')}
 5.\tApplicable laws - ${complianceForString} 
 6.\tCalendar type- detailed
 
-Based on the information provided above, generate exhaustive and detailedstatutory compliance calendar.
+Task: Generate a Statutory Compliance Calendar for  ${formData.companyName} ${formData.companyType} 
+for the ${formData.quarterlyOptions.join(', ')} quarter following the financial year ending ${formData.financialEndDate}. 
+The calendar should be organized as follows( in "dot points"): 
 
-The compliance calendar should:
+  1.  Quarter: [Selected Quarter] (e.g., Q1)
+    2.  Months within the Quarter: (e.g., April, May, June)
+           Act: [Name of the Act, e.g., Companies Act 2013]
+               Date: [Specific Date for Compliance]
+                   Compliance Item: [Specific description of the compliance requirement, e.g., Filing of Form XYZ, Payment of TDS, etc.]
+                   Governing Act & Section: [Specify the Act and Section number from which the compliance item originates.]
+                   Applicable Form (if any): [Name of the form required for compliance, e.g., Form GSTR-3B, Form ITR-6, etc.]
+                   Due Date: [Date by which the compliance must be completed. This should match the 'Date' above.]
+                   Legal Provision for Non-Compliance: [Specific penalty, fine, or legal consequence outlined in the Act for failing to comply. Include relevant Section number.]
+                   Remarks: [Space for additional notes or clarifications regarding the compliance item, e.g., late fee structure, conditions for exemption, relevant circulars, etc.]
 
-Include all applicable statutory filings and compliance requirements under the mentioned laws, along with the relevant sections, subsections, and rules thereunder, in detail.
+       (Repeat for each Act within the Month)
+       (Repeat for each Month within the Quarter)
+  
+(Example structure - you will fill in the details):
 
-Clearly mention the exact due dates, name of the applicable Act, relevant provision (section/subsection/rule/form number), and a detailed description of the compliance.
+Quarter: Q1
 
-Specify the consequences in detail of non-compliance , if any (such as penalties, late fees, disqualification, or prosecution).
+Month: April
 
-Provide additional remarks, wherever necessary (e.g., optional but recommended filings, industry-specific variations).
+   Act: Companies Act, 2013
+       Date: 04/30/2025
+           Compliance Item: Filing of Form AOC-4 for Financial Year [Previous Financial Year]
+           Governing Act & Section: Companies Act, 2013, Section 137
+           Applicable Form (if any): AOC-4
+           Due Date: 04/30/2025
+           Legal Provision for Non-Compliance: Penalty of [Amount] and [Additional Penalties as per Companies Act, 2013] as per Section 137.
+           Remarks: Requires audited financial statements.
 
+   Act: GST Act
+       Date: 04/20/2025
+           Compliance Item: Filing of GSTR-3B for March 2025
+           Governing Act & Section: GST Act, Section 39
+           Applicable Form (if any): GSTR-3B
+           Due Date: 04/20/2025
+           Legal Provision for Non-Compliance: Late fee of [Amount] per day, interest at [Percentage] per annum, as per Section 50.
+           Remarks: Requires accurate reconciliation of input tax credit.
 
-The output should be in a dotpoint format grouped by month and date, as shown below:
+Month: May
 
-Month: January
-Date: 01
-Act/Regulation: Companies Act, 2013.
-Compliance Description: Holding of Annual General Meeting
-Applicable Provision: Section 96(1)
-Consequences of Non-Compliance: Penalty on company and officers in default as per Section 99
-Remarks: Mandatory for all companies except OPC
+(Continue in the same format for May, June, and other relevant Acts and dates)
+Exclude any introductory notes, prefaces, or disclaimers from the output.
+ Date format should be 
+DD/MM/YYYY
+ it should be in the order of the act mention as above     
+
 
 `;
 // console.log(prompt);
@@ -119,10 +147,10 @@ Remarks: Mandatory for all companies except OPC
   ];
 
   const quarterlyOptions = [    
-    { value: 'April to June', label: 'April to June' },
-    { value: 'July to September', label: 'July to September' },
-    { value: 'October to December', label: 'October to December' },
-    { value: 'January to March', label: 'January to March' },
+    { value: 'Q1-April to June', label: 'Q1-April to June' },
+    { value: 'Q2-July to September', label: 'Q2-July to September' },
+    { value: 'Q3-October to December', label: 'Q3-October to December' },
+    { value: 'Q4-January to March', label: 'Q4-January to March' },
   ];
 
   const handleQuarterlyCheckboxChange = (e) => {
@@ -184,7 +212,7 @@ Remarks: Mandatory for all companies except OPC
                   className="form-control"
                   required
                 />
-              </Form.Group> */}
+              </Form.Group>  */}
 
               {/* add a caleder for selecting finiancial end date abd year */}
               <Form.Group className="form-group">
