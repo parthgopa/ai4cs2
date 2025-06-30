@@ -64,7 +64,7 @@ Given following details
 
 Task: Generate a Statutory Compliance Calendar for  ${formData.companyName} ${formData.companyType} 
 for the ${formData.quarterlyOptions.join(', ')} quarter following the financial year ending ${formData.financialEndDate}. 
-Exclude any introductory notes, prefaces, or disclaimers, warnings through the output( like (Note: This calendar is a simplified representation and may not cover all compliance requirements. Professional advice should be sought for comprehensive compliance.)).
+Exclude any introductory notes,end note, prefaces, or disclaimers, warnings through the output( like (Note: This calendar is a simplified representation and may not cover all compliance requirements. Professional advice should be sought for comprehensive compliance.)).
 The calendar should be organized as follows( in "dot points"): 
 
   1.  Quarter: [Selected Quarter] (e.g., Q1)
