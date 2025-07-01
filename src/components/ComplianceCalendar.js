@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
-import { FaCopy, FaFilePdf, FaSpinner } from 'react-icons/fa';
+import { FaCopy, FaFilePdf, FaSpinner, FaFileWord } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
+import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
 
 
@@ -57,7 +58,7 @@ const ComplianceCalendar = () => {
 Given following details
 1.\tName of the company - ${formData.companyName} 
 2.\tCompany Type - ${formData.companyType} 
-3.\tFinancial year and date - ${formData.financialEndDate}
+3.\tLast Financial year and date - ${formData.financialEndDate}
 4.\tQuarterly options - ${formData.quarterlyOptions.join(', ')}
 5.\tApplicable laws - ${complianceForString} 
 6.\tCalendar type- detailed
@@ -232,7 +233,7 @@ DD/MM/YYYY
 
               {/* add a caleder for selecting finiancial end date abd year */}
               <Form.Group className="form-group">
-                <Form.Label className="form-label">Financial End Date</Form.Label>
+                <Form.Label className="form-label">Last Financial End Date</Form.Label>
                 <Form.Control
                   type="date"
                   name="financialEndDate"
@@ -302,7 +303,8 @@ DD/MM/YYYY
       {response && (
         <Row className="justify-content-center">
           <Col md={10}>
-          <h2 className="card-title">Compliance Calendar for {formData.companyName}</h2>
+          <h1 className="card-title" style={{marginBottom:'6px'}}> {formData.companyName} -</h1>
+          <h2 className="card-title" style={{marginBottom:'12px'}}>Compliance Calendar</h2>
             <Card className="output-card">
               <div className="d-flex justify-content-end mt-3">
                 <Button 
@@ -325,9 +327,23 @@ DD/MM/YYYY
                     });
                     generatePDF();
                   }}
+                  className="me-2"
                 >
                   <FaFilePdf className="me-1" />
                   <span className="d-none d-sm-inline">Download PDF</span>
+                </Button>
+                <Button 
+                  variant="outline-success" 
+                  onClick={() => {
+                    const { generateWord } = WordGenerator({ 
+                      content: response, 
+                      fileName: `${formData.companyName}-compliance-calendar.docx` 
+                    });
+                    generateWord();
+                  }}
+                >
+                  <FaFileWord className="me-1" />
+                  <span className="d-none d-sm-inline">Download Word</span>
                 </Button>
               </div>
               <div className="markdown-content">

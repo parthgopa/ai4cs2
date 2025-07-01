@@ -12,6 +12,7 @@ import HomePage from './components/HomePage';
 import ResolutionsDraftingPage from './components/ResolutionsDraftingPage';
 import ComplianceCalendar from './components/ComplianceCalendar';
 import CorporateGovernance from './components/CorporateGovernance';
+import RegulatoryUpdation from './components/RegulatoryUpdation';
 
 function App() {
   
@@ -32,7 +33,7 @@ function App() {
               <Route path="/strategic-advice" element={<div className="container mt-5"><h1>Strategic Advice</h1><p>This page is under development.</p></div>} />
               <Route path="/procedure-practice" element={<div className="container mt-5"><h1>Procedure and Practice</h1><p>This page is under development.</p></div>} />
               <Route path="/corporate-governance" element={<CorporateGovernance />} />
-              <Route path="/regulatory-updation" element={<div className="container mt-5"><h1>Regulatory Updation</h1><p>This page is under development.</p></div>} />
+              <Route path="/regulatory-updation" element={<RegulatoryUpdation />} />
               <Route path="/risk-assessment" element={<div className="container mt-5"><h1>Risk Assessment</h1><p>This page is under development.</p></div>} />
               <Route path="/board-meeting-management" element={<div className="container mt-5"><h1>Board Meeting Management</h1><p>This page is under development.</p></div>} />
               <Route path="/application-petition-appeal" element={<div className="container mt-5"><h1>Application, Petition and Appeal</h1><p>This page is under development.</p></div>} />

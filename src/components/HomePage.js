@@ -47,6 +47,11 @@ const HomePage = () => {
       icon: <FaBuilding />
     },
     {
+      id: 'regulatory-updation',
+      title: 'Regulatory Updation',
+      icon: <MdUpdate />
+    },
+    {
       id: 'legal-research',
       title: 'Legal Research',
       icon: <FaBalanceScale />
@@ -65,16 +70,6 @@ const HomePage = () => {
       id: 'procedure-practice',
       title: 'Procedure and Practice',
       icon: <FaClipboardList />
-    },
-    {
-      id: 'corporate-governance',
-      title: 'Corporate Governance',
-      icon: <FaBuilding />
-    },
-    {
-      id: 'regulatory-updation',
-      title: 'Regulatory Updation',
-      icon: <MdUpdate />
     },
     {
       id: 'risk-assessment',
@@ -110,6 +105,8 @@ const HomePage = () => {
       navigate('/compliance-calendar');
     } else if (id === 'corporate-governance') {
       navigate('/corporate-governance');
+    } else if (id === 'regulatory-updation') {
+      navigate('/regulatory-updation');
     } else {
       openComingSoonModal(title);
     }
@@ -162,7 +159,7 @@ const HomePage = () => {
                         key={item.id} 
                         action 
                         onClick={() => handleFunctionalityClick(item.id, item.title)}
-                        className={`functionality-item ${(item.id !== 'compliance-calendar' && item.id !== 'corporate-governance') ? 'disabled-feature' : ''}`}
+                        className={`functionality-item ${(item.id !== 'compliance-calendar' && item.id !== 'corporate-governance' && item.id !== 'regulatory-updation') ? 'disabled-feature' : ''}`}
                       >
                         <div className="functionality-content">
                           <h2 className="functionality-title">

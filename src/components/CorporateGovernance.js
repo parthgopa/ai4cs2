@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
-import { FaCopy, FaFilePdf, FaSpinner } from 'react-icons/fa';
+import { FaCopy, FaFilePdf, FaSpinner, FaFileWord } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
+import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
 
 const CorporateGovernance = () => {
@@ -196,7 +197,8 @@ Output in the form of dot points note with name of company and in legal tone.
       {response && (
         <Row className="justify-content-center">
           <Col md={10}>
-            <h2 className="card-title">Corporate Governance Report for {formData.companyName}</h2>
+            <h1 className="card-title" style={{marginBottom:'6px'}}> {formData.companyName} -</h1>
+            <h2 className="card-title" style={{marginBottom:'12px'}}>Corporate Governance Report</h2>
             <Card className="output-card">
               <div className="d-flex justify-content-end mt-3">
                 <Button 
@@ -219,9 +221,23 @@ Output in the form of dot points note with name of company and in legal tone.
                     });
                     generatePDF();
                   }}
+                  className="me-2"
                 >
                   <FaFilePdf className="me-1" />
                   <span className="d-none d-sm-inline">Download PDF</span>
+                </Button>
+                <Button 
+                  variant="outline-success" 
+                  onClick={() => {
+                    const { generateWord } = WordGenerator({ 
+                      content: response, 
+                      fileName: `${formData.companyName}-corporate-governance-report.docx` 
+                    });
+                    generateWord();
+                  }}
+                >
+                  <FaFileWord className="me-1" />
+                  <span className="d-none d-sm-inline">Download Word</span>
                 </Button>
               </div>
               <div className="markdown-content">
