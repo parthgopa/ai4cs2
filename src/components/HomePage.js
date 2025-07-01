@@ -42,6 +42,16 @@ const HomePage = () => {
       icon: <FaCalendarAlt />
     },
     {
+      id: 'corporate-governance',
+      title: 'Corporate Governance',
+      icon: <FaBuilding />
+    },
+    {
+      id: 'regulatory-updation',
+      title: 'Regulatory Updation',
+      icon: <MdUpdate />
+    },
+    {
       id: 'legal-research',
       title: 'Legal Research',
       icon: <FaBalanceScale />
@@ -60,16 +70,6 @@ const HomePage = () => {
       id: 'procedure-practice',
       title: 'Procedure and Practice',
       icon: <FaClipboardList />
-    },
-    {
-      id: 'corporate-governance',
-      title: 'Corporate Governance',
-      icon: <FaBuilding />
-    },
-    {
-      id: 'regulatory-updation',
-      title: 'Regulatory Updation',
-      icon: <MdUpdate />
     },
     {
       id: 'risk-assessment',
@@ -99,11 +99,14 @@ const HomePage = () => {
   ];
   
   const handleFunctionalityClick = (id, title) => {
-    console.log(`Functionality clicked: ${id}`);
     
-    // Only navigate to compliance-calendar, show modal for others
+    // Navigate to specific pages for implemented features, show modal for others
     if (id === 'compliance-calendar') {
       navigate('/compliance-calendar');
+    } else if (id === 'corporate-governance') {
+      navigate('/corporate-governance');
+    } else if (id === 'regulatory-updation') {
+      navigate('/regulatory-updation');
     } else {
       openComingSoonModal(title);
     }
@@ -156,7 +159,7 @@ const HomePage = () => {
                         key={item.id} 
                         action 
                         onClick={() => handleFunctionalityClick(item.id, item.title)}
-                        className={`functionality-item ${item.id !== 'compliance-calendar' ? 'disabled-feature' : ''}`}
+                        className={`functionality-item ${(item.id !== 'compliance-calendar' && item.id !== 'corporate-governance' && item.id !== 'regulatory-updation') ? 'disabled-feature' : ''}`}
                       >
                         <div className="functionality-content">
                           <h2 className="functionality-title">
