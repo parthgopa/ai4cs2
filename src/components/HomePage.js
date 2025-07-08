@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 // Import icons
-import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBuilding } from 'react-icons/fa';
+import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBuilding, FaBook } from 'react-icons/fa';
 import { MdUpdate, MdAssessment, MdDescription, MdMeetingRoom, MdOutlineAppRegistration, MdPeople } from 'react-icons/md';
 // Import Chatbot component
 import Chatbot from './Chatbot';
@@ -48,8 +48,13 @@ const HomePage = () => {
     },
     {
       id: 'regulatory-updation',
-      title: 'Regulatory Updation',
+      title: ' Regulatory Compass: Latest Updates & Trends',
       icon: <MdUpdate />
+    },
+    {
+      id: 'statutory-registers',
+      title: 'Statutory registers and records',
+      icon: <FaBook />
     },
     {
       id: 'legal-research',
@@ -107,6 +112,8 @@ const HomePage = () => {
       navigate('/corporate-governance');
     } else if (id === 'regulatory-updation') {
       navigate('/regulatory-updation');
+    } else if (id === 'statutory-registers') {
+      navigate('/statutory-registers');
     } else {
       openComingSoonModal(title);
     }
@@ -159,7 +166,7 @@ const HomePage = () => {
                         key={item.id} 
                         action 
                         onClick={() => handleFunctionalityClick(item.id, item.title)}
-                        className={`functionality-item ${(item.id !== 'compliance-calendar' && item.id !== 'corporate-governance' && item.id !== 'regulatory-updation') ? 'disabled-feature' : ''}`}
+                        className={`functionality-item ${(item.id !== 'compliance-calendar' && item.id !== 'corporate-governance' && item.id !== 'regulatory-updation' && item.id !== 'statutory-registers') ? 'disabled-feature' : ''}`}
                       >
                         <div className="functionality-content">
                           <h2 className="functionality-title">

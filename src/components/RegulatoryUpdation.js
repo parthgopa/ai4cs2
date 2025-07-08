@@ -16,7 +16,7 @@ const RegulatoryUpdation = () => {
   const getLastMonths = (count) => {
     const months = [];
     for (let i = count; i > 0; i--) {
-      const monthIndex = (currentMonth - i + 1 + 12) % 12;
+      const monthIndex = (currentMonth - i + 12) % 12;
       const year = currentMonth - i + 1 < 0 ? currentYear - 1 : currentYear;
       const monthName = new Date(year, monthIndex, 1).toLocaleString('default', { month: 'long' });
       months.push({ name: monthName, year: year });
@@ -85,31 +85,22 @@ const RegulatoryUpdation = () => {
     const monthsString = lastMonths.map(month => `${month.name} ${month.year}`).join(', ');
     
     const prompt = `
-Provide a detailed update on recent amendments to the {${regulationsString}},
+update me with 
+1.  latest provision along with previous provisions , if any.
+
+2.  procedure , regulatory changes
+during the month ${monthsString} . 
+
+3. Best practices, and Industry trends 
+
+pertaining to  the following Laws.
+${regulationsString},
 focusing on changes made during
-[${monthsString}.]
-Exclude any introductory notes, prefaces, or disclaimers, end notes from the output.
 
-Include the following information:
- 
-- Brief Discussion of Changes: Explain the key changes and their impact on corporate compliance, along with notification numbers and dates.
-- Corporate Compliance: Outline the specific compliance requirements and best practices for companies to adhere to these changes.
-- Flagship Cases and Judgments: Provide a brief summary of important cases decided by high courts and supreme courts during (${monthsString}), along with their judgments.
- 
-Specific Areas of Focus:
- 
-- Companies Act 2013: Recent amendments to rules and regulations, such as changes to board composition, CSR obligations, and audit procedures including acceptance of deposit rule.
-- SEBI Regulations: Updates on disclosure requirements, ESG compliance, and other relevant regulations.
-- FEMA Rules: Changes to foreign exchange management regulations, including overseas investment rules and compliance requirements.
-Output Format:
-- Provide separate sections for each act/regulation, with clear headings and concise information.
-Exclude any introductory notes, prefaces, end note or disclaimers from the output.
- 
-Output in the form of dot point and in legal tone.
- 
-- Use the date format dd/mm/yyyy for notification dates and judgment dates.
+Mention date of changes and date of application of the changes
+
+Omit any preface note, conclusion note, end note and disclaimer. Text " by AI recheck it by legal professionals"  at the end in bold font.
 `;
-
     try {
       await APIService({
         question: prompt,
