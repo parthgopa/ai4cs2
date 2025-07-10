@@ -85,22 +85,54 @@ const RegulatoryUpdation = () => {
     const monthsString = lastMonths.map(month => `${month.name} ${month.year}`).join(', ');
     
     const prompt = `
-update me with 
-1.  latest provision along with previous provisions , if any.
+Prepare a professional, structured regulatory update report with the following specifications:
 
-2.  procedure , regulatory changes
-during the month ${monthsString} . 
+📌 Laws to Cover:
+${regulationsString}
 
-3. Best practices, and Industry trends 
+📆 Period of Review:
+${monthsString}
 
-pertaining to  the following Laws.
-${regulationsString},
-focusing on changes made during
+🎯 Objectives:
 
-Mention date of changes and date of application of the changes
+1. For each update, clearly mention:
+• Date of Notification / Circular / Amendment
+• Date of Effect (if different)
 
-Omit any preface note, conclusion note, end note and disclaimer. Text " by AI recheck it by legal professionals"  at the end in bold font.
+2. For each change, include:
+
+Previous Provision (if applicable)
+
+Revised / New Provision
+
+Relevant Section / Rule / Regulation Number
+
+3. Add any newly introduced:
+
+Procedures (e.g., filing, disclosures, approvals)
+
+Compliance Timelines
+
+
+4. Summarize:
+
+Best Practices emerging from these changes
+
+Industry Trends or Regulatory Intent
+
+⚠ Important Formatting Instructions:
+
+Do not include any preface, summary, introduction, or disclaimer.
+
+Structure content under proper headings for each law.
+
+Add the bolded line below at the end:
+
+"By AI - recheck it by legal professionals"
+
+Omit any preface note, conclusion note, end note and disclaimer.
 `;
+console.log(prompt);
     try {
       await APIService({
         question: prompt,
