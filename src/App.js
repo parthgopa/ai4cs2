@@ -11,9 +11,9 @@ import Footer from './Common/Footer';
 import HomePage from './components/HomePage';
 import ResolutionsDraftingPage from './components/ResolutionsDraftingPage';
 import ComplianceCalendar from './components/ComplianceCalendar';
-import CorporateGovernance from './components/CorporateGovernance';
 import RegulatoryUpdation from './components/RegulatoryUpdation';
 import StatutoryRegisters from './components/StatutoryRegisters';
+import SecretarialAudit from './components/SecretarialAudit';
 
 function App() {
   
@@ -27,13 +27,13 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/resolutions" element={<ResolutionsDraftingPage />} />
               <Route path="/compliance-calendar" element={<ComplianceCalendar />} />
+              <Route path="/secretarial-audit" element={<SecretarialAudit />} />
               
               {/* Added routes for all functionalities */}
               <Route path="/legal-research" element={<div className="container mt-5"><h1>Legal Research</h1><p>This page is under development.</p></div>} />
               <Route path="/legal-opinion" element={<div className="container mt-5"><h1>Legal Opinion</h1><p>This page is under development.</p></div>} />
               <Route path="/strategic-advice" element={<div className="container mt-5"><h1>Strategic Advice</h1><p>This page is under development.</p></div>} />
               <Route path="/procedure-practice" element={<div className="container mt-5"><h1>Procedure and Practice</h1><p>This page is under development.</p></div>} />
-              <Route path="/corporate-governance" element={<CorporateGovernance />} />
               <Route path="/regulatory-updation" element={<RegulatoryUpdation />} />
               <Route path="/statutory-registers" element={<StatutoryRegisters />} />
               <Route path="/risk-assessment" element={<div className="container mt-5"><h1>Risk Assessment</h1><p>This page is under development.</p></div>} />

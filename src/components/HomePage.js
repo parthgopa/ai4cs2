@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 // Import icons
-import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBuilding, FaBook } from 'react-icons/fa';
+import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook } from 'react-icons/fa';
 import { MdUpdate, MdAssessment, MdDescription, MdMeetingRoom, MdOutlineAppRegistration, MdPeople } from 'react-icons/md';
 // Import Chatbot component
 import Chatbot from './Chatbot';
@@ -42,9 +42,9 @@ const HomePage = () => {
       icon: <FaCalendarAlt />
     },
     {
-      id: 'corporate-governance',
-      title: 'Corporate Governance',
-      icon: <FaBuilding />
+      id: 'secretarial-audit',
+      title: 'Secretarial Audit',
+      icon: <FaBalanceScale />
     },
     {
       id: 'regulatory-updation',
@@ -108,6 +108,8 @@ const HomePage = () => {
     // Navigate to specific pages for implemented features, show modal for others
     if (id === 'compliance-calendar') {
       navigate('/compliance-calendar');
+    } else if (id === 'secretarial-audit') {
+      navigate('/secretarial-audit');
     } else if (id === 'corporate-governance') {
       navigate('/corporate-governance');
     } else if (id === 'regulatory-updation') {
@@ -166,13 +168,13 @@ const HomePage = () => {
                         key={item.id} 
                         action 
                         onClick={() => handleFunctionalityClick(item.id, item.title)}
-                        className={`functionality-item ${(item.id !== 'compliance-calendar' && item.id !== 'corporate-governance' && item.id !== 'regulatory-updation' && item.id !== 'statutory-registers') ? 'disabled-feature' : ''}`}
+                        className={`functionality-item ${(item.id !== 'compliance-calendar' && item.id !== 'secretarial-audit' && item.id !== 'regulatory-updation' && item.id !== 'statutory-registers') ? 'disabled-feature' : ''}`}
                       >
                         <div className="functionality-content">
-                          <h2 className="functionality-title">
-                            <span className="functionality-icon">{item.icon}</span>
+                          <h1 className="functionality-title">
+                            <span className="functionality-icon" style={{ marginRight: '10px', fontSize: '1.5rem' }}>{item.icon}</span>
                             {item.title}
-                          </h2>
+                          </h1>
                         </div>
                         <div className="functionality-arrow">→</div>
                       </ListGroup.Item>

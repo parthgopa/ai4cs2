@@ -1,11 +1,11 @@
 import { jsPDF } from 'jspdf';
 
-const PDFGenerator = ({ content, fileName = 'compliance-calendar.pdf' }) => {
+const PDFGenerator = ({ content, fileName = 'compliance-calendar.pdf',title }) => {
   const generatePDF = () => {
     const doc = new jsPDF();
     
     // Extract title from filename
-    const title = fileName.split('-')[0];
+    // const title = fileName.split('-')[0];
     
     // Clean markdown formatting from content
     let cleanContent = content
@@ -26,7 +26,7 @@ const PDFGenerator = ({ content, fileName = 'compliance-calendar.pdf' }) => {
     
     // Set title
     doc.setFontSize(16);
-    doc.text(`${title} Report`, 20, 20);
+    doc.text(`${title}`, 20, 20);
     
     // Add content
     doc.setFontSize(12);

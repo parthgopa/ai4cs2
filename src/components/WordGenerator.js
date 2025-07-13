@@ -1,7 +1,7 @@
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
 import { saveAs } from 'file-saver';
 
-const WordGenerator = ({ content, fileName = 'document.docx' }) => {
+const WordGenerator = ({ content, fileName = 'document.docx', title }) => {
   const generateWord = () => {
     // Clean markdown formatting from content
     let cleanContent = content
@@ -21,7 +21,6 @@ const WordGenerator = ({ content, fileName = 'document.docx' }) => {
       .replace(/^(---|\*\*\*|___)$/gm, '');
 
     // Extract title from filename
-    const title = fileName.split('-')[0];
 
     // Create document
     const doc = new Document({
@@ -30,7 +29,7 @@ const WordGenerator = ({ content, fileName = 'document.docx' }) => {
           properties: {},
           children: [
             new Paragraph({
-              text: `${title} Report`,
+              text: `${title}`,
               heading: HeadingLevel.HEADING_1,
             }),
             ...cleanContent.split('\n').map(line => {

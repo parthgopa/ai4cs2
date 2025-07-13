@@ -91,7 +91,7 @@ Prepare a professional, structured regulatory update report with the following s
 ${regulationsString}
 
 📆 Period of Review:
-${monthsString}
+${monthsString} , July 2025
 
 🎯 Objectives:
 
@@ -132,7 +132,7 @@ Add the bolded line below at the end:
 
 Omit any preface note, conclusion note, end note and disclaimer.
 `;
-console.log(prompt);
+// console.log(prompt);
     try {
       await APIService({
         question: prompt,
@@ -293,7 +293,8 @@ console.log(prompt);
                   onClick={() => {
                     const { generatePDF } = PDFGenerator({ 
                       content: response, 
-                      fileName: `Regulatory-updates of last ${formData.monthsCount} months.pdf` 
+                      fileName: `Regulatory-updates of last ${formData.monthsCount} months.pdf` ,
+                      title: `Regulatory Updates`
                     });
                     generatePDF();
                   }}
@@ -307,7 +308,8 @@ console.log(prompt);
                   onClick={() => {
                     const { generateWord } = WordGenerator({ 
                       content: response, 
-                      fileName: `Regulatory-updates of last ${formData.monthsCount} months.docx` 
+                      fileName: `Regulatory-updates of last ${formData.monthsCount} months.docx` ,
+                      title: `Regulatory Updates`
                     });
                     generateWord();
                   }}
