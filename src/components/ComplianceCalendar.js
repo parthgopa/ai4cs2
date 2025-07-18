@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
-import { FaCopy, FaFilePdf, FaSpinner } from 'react-icons/fa';
+import { FaCopy, FaFilePdf, FaSpinner, FaFileWord } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
+import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
 
 
@@ -31,100 +32,42 @@ const ComplianceCalendar = () => {
     });
   };
 
-  const handleApplicableCheckboxChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setFormData({
-        ...formData,
-        complianceFor: [...formData.complianceFor, value],
-      });
-    } else {
-      setFormData({
-        ...formData,
-        complianceFor: formData.complianceFor.filter(item => item !== value)
-      });
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setResponse('');
 
-    const complianceForString = formData.complianceFor.join(', ');
     
     const prompt = `
 Given following details
 1.\tName of the company - ${formData.companyName} 
 2.\tCompany Type - ${formData.companyType} 
-3.\tFinancial year and date - ${formData.financialEndDate}
+3.\tLast Financial year and date - ${formData.financialEndDate}
 4.\tQuarterly options - ${formData.quarterlyOptions.join(', ')}
-5.\tApplicable laws - ${complianceForString} 
+5.\tApplicable laws - Companies Act 2013 and rules and regulations thereunder, SEBI (LODR)[in case of privated limited company and unlisted public limited company, ignore SEBI (LODR)] . 
 6.\tCalendar type- detailed
 
-Task: Generate a Statutory Compliance Calendar for  ${formData.companyName} ${formData.companyType} 
+Task: Generate a detailed Statutory Compliance Calendar for  ${formData.companyName} ${formData.companyType} 
 for the ${formData.quarterlyOptions.join(', ')} quarter following the financial year ending ${formData.financialEndDate}. 
-Exclude any introductory notes, prefaces, or disclaimers, warnings through the output( like (Note: This calendar is a simplified representation and may not cover all compliance requirements. Professional advice should be sought for comprehensive compliance.)).
+Exclude any introductory notes,end note, prefaces, or disclaimers, warnings through the output( like (Note: This calendar is a simplified representation and may not cover all compliance requirements. Professional advice should be sought for comprehensive compliance.)).
 The calendar should be organized as follows( in "dot points"): 
 
   1.  Quarter: [Selected Quarter] (e.g., Q1)
     2.  Months within the Quarter: (e.g., April, May, June)
            Act: [Name of the Act, e.g., Companies Act 2013]
                Date: [Specific Date for Compliance]
-                   Compliance Item: [Specific description of the compliance requirement, e.g., Filing of Form XYZ, Payment of TDS, etc.]
+                   Compliance Item: [description in detail, e.g., Provision of the Act with Section and Subsection number .]
                    Governing Act & Section: [Specify the Act and Section number from which the compliance item originates.]
                    Applicable Form (if any): [Name of the form required for compliance, e.g., Form GSTR-3B, Form ITR-6, etc.]
                    Due Date: [Date by which the compliance must be completed. This should match the 'Date' above.]
-                   Legal Provision for Non-Compliance: [Specific penalty, fine, or legal consequence outlined in the Act for failing to comply. Include relevant Section number.]
+                   Legal Provision,in detail, for Non-Compliance: [Specific penalty, fine, or legal consequence outlined in the Act for failing to comply. Include relevant Section number.]
                    Remarks: [Space for additional notes or clarifications regarding the compliance item, e.g., late fee structure, conditions for exemption, relevant circulars, etc.]
 
        (Repeat for each Act within the Month)
        (Repeat for each Month within the Quarter)
   
-(Example structure - you will fill in the details):
-w
-### Quarter: Q1
-#### Months within the Quarter: April, May, June
 
----
-
-#### Month: April
-
-* *Act: Companies Act, 2013*
-    * *Date: 30/04/2024*
-        * Compliance Item: Filing of Form MSME I (Half Yearly Return) for October 2023 to March 2024
-        * Governing Act & Section: Companies Act, 2013, Section 405 read with Rule 5 of Companies (Furnishing of Information about Payment to Micro and Small Enterprise Suppliers) Rules, 2019
-        * Applicable Form (if any): MSME I
-        * Due Date: 30/04/2024
-        * Legal Provision for Non-Compliance: Penalty as per Section 450 of Companies Act, 2013.
-        * Remarks: Applicable if the company has outstanding payments to Micro and Small Enterprise suppliers for more than 45 days.
-
-* *Act: Income Tax Act*
-    * *Date: 07/04/2024*
-        * Compliance Item: Due date for deposit of TDS/TCS for the month of March 2024
-        * Governing Act & Section: Income Tax Act, 1961
-        * Applicable Form (if any): ITNS 281
-        * Due Date: 07/04/2024
-        * Legal Provision for Non-Compliance: Interest under Section 201(1A) for delay in payment.
-        * Remarks: This applies to all tax deducted/collected at source.
-    * *Date: 30/04/2024*
-        * Compliance Item: Furnishing of TDS certificate (Form 16A) for the quarter ending 31st March 2024 for other than salary.
-        * Governing Act & Section: Income Tax Act, 1961, Section 203
-        * Applicable Form (if any): Form 16A
-        * Due Date: 30/04/2024
-        * Legal Provision for Non-Compliance: Penalty of INR 100 per day for default under Section 272A(2)(g).
-        * Remarks: To be issued to the deductees.
-    * *Date: 30/04/2024*
-        * Compliance Item: Furnishing of Quarterly TDS statement (Form 24Q/26Q/27Q) for the quarter ending 31st March 2024.
-        * Governing Act & Section: Income Tax Act, 1961, Section 200(3)
-        * Applicable Form (if any): Form 24Q/26Q/27Q
-        * Due Date: 30/04/2024
-        * Legal Provision for Non-Compliance: Late fee under Section 234E of INR 200 per day till the default continues, subject to the amount of TDS.
-        * Remarks: Includes details of tax deducted on salary and non-salary payments.
-
-
-(Continue in the same format for May, June, and other relevant Acts and dates)
-Exclude any introductory notes, prefaces, or disclaimers from the output.
+Exclude any introductory notes, prefaces,end notes or disclaimers from the output.
  Date format should be 
 DD/MM/YYYY
  it should be in the order of the act mention as above     
@@ -152,16 +95,6 @@ DD/MM/YYYY
     }
   };
 
-  const complianceOptions = [
-    { value: 'Companies Act 2013', label: 'Companies Act 2013' },
-    { value: 'Goods and Services Tax (GST)', label: 'Goods and Services Tax (GST)' },
-    { value: 'Income Tax Act', label: 'Income Tax Act' },
-    { value: 'Reserve Bank of India (RBI) regulations', label: 'Reserve Bank of India (RBI) regulations' },
-    { value: 'Non-Banking Financial Companies (NBFC) regulations', label: 'Non-Banking Financial Companies (NBFC) regulations' },
-    { value: 'Foreign Exchange Management Act (FEMA)', label: 'Foreign Exchange Management Act (FEMA)' },
-    { value: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)', label: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)' }
-  ];
-
   const quarterlyOptions = [    
     { value: 'Q1-April to June', label: 'Q1-April to June' },
     { value: 'Q2-July to September', label: 'Q2-July to September' },
@@ -182,6 +115,11 @@ DD/MM/YYYY
         quarterlyOptions: formData.quarterlyOptions.filter(item => item !== value)
       });
     }
+  };
+
+  const RedStrong = ({ children }) => {
+    // Apply Tailwind CSS class 'text-red-500' to make the text red
+    return <strong style={{textDecoration: 'underline'}}>{children}</strong>;
   };
 
   return (
@@ -218,21 +156,9 @@ DD/MM/YYYY
                 </Form.Select>
               </Form.Group>
 
-              {/* <Form.Group className="form-group">
-                <Form.Label className="form-label">Year</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="year"
-                  value={formData.year}
-                  onChange={handleInputChange}
-                  className="form-control"
-                  required
-                />
-              </Form.Group>  */}
-
               {/* add a caleder for selecting finiancial end date abd year */}
               <Form.Group className="form-group">
-                <Form.Label className="form-label">Financial End Date</Form.Label>
+                <Form.Label className="form-label">Last Financial End Date</Form.Label>
                 <Form.Control
                   type="date"
                   name="financialEndDate"
@@ -263,23 +189,7 @@ DD/MM/YYYY
               </Form.Group> 
 
 
-              <Form.Group className="form-group">
-                <Form.Label className="form-label">Applicable Laws</Form.Label>
-                <div>
-                  {complianceOptions.map((option) => (
-                    <Form.Check
-                      key={option.value}
-                      type="checkbox"
-                      id={`compliance-${option.value}`}
-                      label={option.label}
-                      value={option.value}
-                      checked={formData.complianceFor.includes(option.value)}
-                      onChange={handleApplicableCheckboxChange}
-                      className="form-check"
-                    />
-                  ))}
-                </div>
-              </Form.Group>
+              
 
               <button type="submit" className="btn btn-primary" disabled={loading}>
                 {loading ? 'Generating Calendar...' : 'Generate Compliance Calendar'}
@@ -302,7 +212,8 @@ DD/MM/YYYY
       {response && (
         <Row className="justify-content-center">
           <Col md={10}>
-          <h2 className="card-title">Compliance Calendar for {formData.companyName}</h2>
+          <h1 className="card-title" style={{marginBottom:'6px'}}> {formData.companyName} -</h1>
+          <h2 className="card-title" style={{marginBottom:'12px'}}>Compliance Calendar</h2>
             <Card className="output-card">
               <div className="d-flex justify-content-end mt-3">
                 <Button 
@@ -321,17 +232,38 @@ DD/MM/YYYY
                   onClick={() => {
                     const { generatePDF } = PDFGenerator({ 
                       content: response, 
-                      fileName: `${formData.companyName}-compliance-calendar.pdf` 
+                      fileName: `${formData.companyName}-compliance-calendar.pdf` ,
+                      title: `Compliance Calendar`
                     });
                     generatePDF();
                   }}
+                  className="me-2"
                 >
                   <FaFilePdf className="me-1" />
                   <span className="d-none d-sm-inline">Download PDF</span>
                 </Button>
+                <Button 
+                  variant="outline-success" 
+                  onClick={() => {
+                    const { generateWord } = WordGenerator({ 
+                      content: response, 
+                      fileName: `${formData.companyName}-compliance-calendar.docx` ,
+                      title: `Compliance Calendar`
+                    });
+                    generateWord();
+                  }}
+                >
+                  <FaFileWord className="me-1" />
+                  <span className="d-none d-sm-inline">Download Word</span>
+                </Button>
               </div>
               <div className="markdown-content">
-                <ReactMarkdown>{response}</ReactMarkdown>
+                <ReactMarkdown
+                components={{
+                  // Override the default 'strong' component with our custom 'RedStrong' component
+                  strong: RedStrong,
+                }}
+                >{response}</ReactMarkdown>
               </div>
               <AIDisclaimer variant="light" />
             </Card>
