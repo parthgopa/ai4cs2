@@ -32,27 +32,11 @@ const ComplianceCalendar = () => {
     });
   };
 
-  const handleApplicableCheckboxChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setFormData({
-        ...formData,
-        complianceFor: [...formData.complianceFor, value],
-      });
-    } else {
-      setFormData({
-        ...formData,
-        complianceFor: formData.complianceFor.filter(item => item !== value)
-      });
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setResponse('');
 
-    const complianceForString = formData.complianceFor.join(', ');
     
     const prompt = `
 Given following details
@@ -111,16 +95,6 @@ DD/MM/YYYY
     }
   };
 
-  const complianceOptions = [
-    { value: 'Companies Act 2013', label: 'Companies Act 2013' },
-    { value: 'Goods and Services Tax (GST)', label: 'Goods and Services Tax (GST)' },
-    { value: 'Income Tax Act', label: 'Income Tax Act' },
-    { value: 'Reserve Bank of India (RBI) regulations', label: 'Reserve Bank of India (RBI) regulations' },
-    { value: 'Non-Banking Financial Companies (NBFC) regulations', label: 'Non-Banking Financial Companies (NBFC) regulations' },
-    { value: 'Foreign Exchange Management Act (FEMA)', label: 'Foreign Exchange Management Act (FEMA)' },
-    { value: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)', label: 'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)' }
-  ];
-
   const quarterlyOptions = [    
     { value: 'Q1-April to June', label: 'Q1-April to June' },
     { value: 'Q2-July to September', label: 'Q2-July to September' },
@@ -141,6 +115,11 @@ DD/MM/YYYY
         quarterlyOptions: formData.quarterlyOptions.filter(item => item !== value)
       });
     }
+  };
+
+  const RedStrong = ({ children }) => {
+    // Apply Tailwind CSS class 'text-red-500' to make the text red
+    return <strong style={{textDecoration: 'underline'}}>{children}</strong>;
   };
 
   return (
@@ -279,7 +258,12 @@ DD/MM/YYYY
                 </Button>
               </div>
               <div className="markdown-content">
-                <ReactMarkdown>{response}</ReactMarkdown>
+                <ReactMarkdown
+                components={{
+                  // Override the default 'strong' component with our custom 'RedStrong' component
+                  strong: RedStrong,
+                }}
+                >{response}</ReactMarkdown>
               </div>
               <AIDisclaimer variant="light" />
             </Card>

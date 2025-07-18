@@ -11,7 +11,7 @@ import AIDisclaimer from './AIDisclaimer';
 const SecretarialAudit = () => {
   const [formData, setFormData] = useState({
     companyName: '',
-    companyType: 'Private Limited Company',
+    companyType: 'Listed Company',
   });
 
   const [loading, setLoading] = useState(false);
@@ -87,10 +87,15 @@ try {
 
   // Company type options
   const companyTypes = [
-    'Private Limited Company',
-    'Unlisted public Limited',
-    'listed public Limited'
+    'Listed Company',
+    'Public Company - more than 50 crores paid up share capital',
+    'Public Company - more than 250 crores turnover'
   ];
+
+  const RedStrong = ({ children }) => {
+    // Apply Tailwind CSS class 'text-red-500' to make the text red
+    return <strong style={{textDecoration: 'underline'}}>{children}</strong>;
+  };
 
   return (
     <Container className="py-4">
@@ -156,8 +161,7 @@ try {
       {response && (
         <Row className="justify-content-center">
           <Col md={10}>
-            <h1 className="card-title" style={{marginBottom:'6px'}}>{formData.companyName} -</h1>
-            <h2 className="card-title" style={{marginBottom:'12px'}}>Secretarial Audit Report</h2>
+            <h2 className="card-title" style={{marginBottom:'12px'}}> Checklist for Secretarial Audit - {formData.companyType}</h2>
             <Card className="output-card">
               <div className="d-flex justify-content-end mt-3">
                 <Button 
@@ -177,7 +181,7 @@ try {
                     const { generatePDF } = PDFGenerator({ 
                       content: response, 
                       fileName: `${formData.companyName}-secretarial-audit.pdf`,
-                      title: `Secretarial Audit Report`
+                      title: `Checklist for Secretarial Audit`
                     });
                     generatePDF();
                   }}
@@ -202,7 +206,12 @@ try {
                 </Button>
               </div>
               <div className="markdown-content">
-                <ReactMarkdown>{response}</ReactMarkdown>
+                <ReactMarkdown
+                 components={{
+                  // Override the default 'strong' component with our custom 'RedStrong' component
+                  strong: RedStrong,
+                }}
+                >{response}</ReactMarkdown>
               </div>
               <AIDisclaimer variant="light" />
             </Card>

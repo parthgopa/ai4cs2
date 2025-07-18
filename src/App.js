@@ -14,6 +14,7 @@ import ComplianceCalendar from './components/ComplianceCalendar';
 import RegulatoryUpdation from './components/RegulatoryUpdation';
 import StatutoryRegisters from './components/StatutoryRegisters';
 import SecretarialAudit from './components/SecretarialAudit';
+import LegalOpinion from './components/LegalOpinion';
 
 function App() {
   
@@ -31,7 +32,7 @@ function App() {
               
               {/* Added routes for all functionalities */}
               <Route path="/legal-research" element={<div className="container mt-5"><h1>Legal Research</h1><p>This page is under development.</p></div>} />
-              <Route path="/legal-opinion" element={<div className="container mt-5"><h1>Legal Opinion</h1><p>This page is under development.</p></div>} />
+              <Route path="/legal-opinion" element={<LegalOpinion />} />
               <Route path="/strategic-advice" element={<div className="container mt-5"><h1>Strategic Advice</h1><p>This page is under development.</p></div>} />
               <Route path="/procedure-practice" element={<div className="container mt-5"><h1>Procedure and Practice</h1><p>This page is under development.</p></div>} />
               <Route path="/regulatory-updation" element={<RegulatoryUpdation />} />

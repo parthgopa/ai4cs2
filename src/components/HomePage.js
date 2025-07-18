@@ -57,14 +57,14 @@ const HomePage = () => {
       icon: <FaBook />
     },
     {
-      id: 'legal-research',
-      title: 'Legal Research',
-      icon: <FaBalanceScale />
-    },
-    {
       id: 'legal-opinion',
       title: 'Legal Opinion',
       icon: <FaGavel />
+    },
+    {
+      id: 'legal-research',
+      title: 'Legal Research',
+      icon: <FaBalanceScale />
     },
     {
       id: 'strategic-advice',
@@ -116,6 +116,8 @@ const HomePage = () => {
       navigate('/regulatory-updation');
     } else if (id === 'statutory-registers') {
       navigate('/statutory-registers');
+    } else if (id === 'legal-opinion') {
+      navigate('/legal-opinion');
     } else {
       openComingSoonModal(title);
     }
@@ -164,11 +166,15 @@ const HomePage = () => {
                 <Card.Body>
                   <ListGroup variant="flush" className="functionalities-list">
                     {functionalities.map((item) => (
-                      <ListGroup.Item 
-                        key={item.id} 
-                        action 
+                      <ListGroup.Item
+                        key={item.id}
+                        action
                         onClick={() => handleFunctionalityClick(item.id, item.title)}
-                        className={`functionality-item ${(item.id !== 'compliance-calendar' && item.id !== 'secretarial-audit' && item.id !== 'regulatory-updation' && item.id !== 'statutory-registers') ? 'disabled-feature' : ''}`}
+                        className={`functionality-item ${(item.id !== 'compliance-calendar' && 
+                          item.id !== 'secretarial-audit' && 
+                          item.id !== 'regulatory-updation' && 
+                          item.id !== 'statutory-registers' && 
+                          item.id !== 'legal-opinion') ? 'disabled-feature' : ''}`}
                       >
                         <div className="functionality-content">
                           <h1 className="functionality-title">

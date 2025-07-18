@@ -173,6 +173,11 @@ Omit any preface note, conclusion note, end note and disclaimer.
     { value: 'FEMA rules', label: 'FEMA rules' }
   ];
 
+  const RedStrong = ({ children }) => {
+    // Apply Tailwind CSS class 'text-red-500' to make the text red
+    return <strong style={{textDecoration: 'underline'}}>{children}</strong>;
+  };
+
   return (
     <Container>
       <Row className="justify-content-center">
@@ -319,7 +324,12 @@ Omit any preface note, conclusion note, end note and disclaimer.
                 </Button>
               </div>
               <div className="markdown-content">
-                <ReactMarkdown>{response}</ReactMarkdown>
+                <ReactMarkdown
+                components={{
+                  // Override the default 'strong' component with our custom 'RedStrong' component
+                  strong: RedStrong,
+                }}
+                >{response}</ReactMarkdown>
               </div>
               <AIDisclaimer variant="light" />
             </Card>
