@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
-import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaBalanceScale } from 'react-icons/fa';
+import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaBalanceScale, FaSearch } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
@@ -95,24 +95,29 @@ No liability shall arise on the part of the author or advisor for reliance place
 This view point is issued in good faith and without prejudice to any legal rights or remedies.
 `;
 
-try {
-    await APIService({
-      question: prompt,
-      onResponse: (data) => {
-        setLoading(false);
-        if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-          setResponse(data.candidates[0].content.parts[0].text);
-          // console.log(data.candidates[0].content.parts[0].text);
-        } else {
-          setResponse("Sorry, we couldn't generate a compliance calendar. Please try again.");
+    try {
+      await APIService({
+        question: prompt,
+        onResponse: (data) => {
+          setLoading(false);
+          if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+            setResponse(data.candidates[0].content.parts[0].text);
+            // console.log(data.candidates[0].content.parts[0].text);
+          } else {
+            setResponse("Sorry, we couldn't generate a compliance calendar. Please try again.");
+          }
         }
-      }
-    });
-  } catch (error) {
-    setLoading(false);
-    setResponse("An error occurred while generating the compliance calendar. Please try again later.");
-    console.error("Error:", error);
-  }
+      });
+    } catch (error) {
+      setLoading(false);
+      setResponse("An error occurred while generating the compliance calendar. Please try again later.");
+      console.error("Error:", error);
+    }
+  };
+
+  const RedStrong = ({ children }) => {
+    // Apply Tailwind CSS class 'text-red-500' to make the text red
+    return <strong style={{ textDecoration: 'underline' }}>{children}</strong>;
   };
 
   return (
@@ -177,19 +182,22 @@ try {
                   </Form.Text>
                 </Form.Group>
 
-                <Button 
-                  type="submit" 
-                  variant="primary" 
-                  className="w-100 py-2" 
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-100 py-2"
                   disabled={loading}
                 >
                   {loading ? (
                     <>
-                      <FaSpinner className="me-2 spin-animation" />
-                      Generating Legal Opinion...
+                      <FaSpinner className="spinner me-2" />
+                      Researching...
                     </>
                   ) : (
-                    'Generate Legal Opinion'
+                    <>
+                      <FaSearch className="me-2" />
+                      Conduct Legal Opinion
+                    </>
                   )}
                 </Button>
               </Form>
@@ -202,7 +210,7 @@ try {
         <Row className="justify-content-center mt-4">
           <Col md={10}>
             <div className="loading-container text-center py-5">
-              <FaSpinner style={{animation: 'spin 1s linear infinite', fontSize: '3rem', color: '#0d6efd' }} />
+              <FaSpinner style={{ animation: 'spin 1s linear infinite', fontSize: '3rem', color: '#0d6efd' }} />
               <p className="mt-3 text-muted">Analyzing legal context and preparing opinion...</p>
             </div>
           </Col>
@@ -216,10 +224,10 @@ try {
               <Card.Header className="bg-light d-flex justify-content-between align-items-center">
                 <h3 className="mb-0 fs-5">{formData.outputFormat}</h3>
                 <div className="d-flex">
-                  <Button 
-                    variant="outline-primary" 
+                  <Button
+                    variant="outline-primary"
                     size="sm"
-                    className="me-2" 
+                    className="me-2"
                     onClick={() => {
                       navigator.clipboard.writeText(response);
                       alert('Copied to clipboard!');
@@ -228,12 +236,12 @@ try {
                     <FaCopy className="me-1" />
                     <span className="d-none d-sm-inline">Copy</span>
                   </Button>
-                  <Button 
-                    variant="outline-danger" 
+                  <Button
+                    variant="outline-danger"
                     size="sm"
                     onClick={() => {
-                      const { generatePDF } = PDFGenerator({ 
-                        content: response, 
+                      const { generatePDF } = PDFGenerator({
+                        content: response,
                         fileName: `legal-opinion-${new Date().toISOString().split('T')[0]}.pdf`,
                         title: `Legal Opinion - ${formData.outputFormat}`
                       });
@@ -244,12 +252,12 @@ try {
                     <FaFilePdf className="me-1" />
                     <span className="d-none d-sm-inline">PDF</span>
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline-success"
-                    size="sm" 
+                    size="sm"
                     onClick={() => {
-                      const { generateWord } = WordGenerator({ 
-                        content: response, 
+                      const { generateWord } = WordGenerator({
+                        content: response,
                         fileName: `legal-opinion-${new Date().toISOString().split('T')[0]}.docx`,
                         title: `Legal Opinion - ${formData.outputFormat}`
                       });
@@ -263,7 +271,12 @@ try {
               </Card.Header>
               <Card.Body>
                 <div className="markdown-content legal-opinion-content">
-                  <ReactMarkdown>{response}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      // Override the default 'strong' component with our custom 'RedStrong' component
+                      strong: RedStrong,
+                    }}
+                  >{response}</ReactMarkdown>
                 </div>
               </Card.Body>
               <Card.Footer className="bg-light">

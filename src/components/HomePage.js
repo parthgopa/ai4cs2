@@ -118,6 +118,8 @@ const HomePage = () => {
       navigate('/statutory-registers');
     } else if (id === 'legal-opinion') {
       navigate('/legal-opinion');
+    } else if (id === 'legal-research') {
+      navigate('/legal-research');
     } else {
       openComingSoonModal(title);
     }
@@ -174,7 +176,7 @@ const HomePage = () => {
                           item.id !== 'secretarial-audit' && 
                           item.id !== 'regulatory-updation' && 
                           item.id !== 'statutory-registers' && 
-                          item.id !== 'legal-opinion') ? 'disabled-feature' : ''}`}
+                          item.id !== 'legal-opinion' && item.id !== 'legal-research') ? 'disabled-feature' : ''}`}
                       >
                         <div className="functionality-content">
                           <h1 className="functionality-title">

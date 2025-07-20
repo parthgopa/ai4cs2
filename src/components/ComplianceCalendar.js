@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
-import { FaCopy, FaFilePdf, FaSpinner, FaFileWord } from 'react-icons/fa';
+import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
@@ -16,9 +16,9 @@ const ComplianceCalendar = () => {
     quarterlyOptions: [''],
     financialEndDate: '',
     complianceFor: ['Companies Act 2013', 'Goods and Services Tax (GST)',
-       'Income Tax Act', 'Reserve Bank of India (RBI) regulations', 
-       'Non-Banking Financial Companies (NBFC) regulations', 'Foreign Exchange Management Act (FEMA)', 
-       'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)'],
+      'Income Tax Act', 'Reserve Bank of India (RBI) regulations',
+      'Non-Banking Financial Companies (NBFC) regulations', 'Foreign Exchange Management Act (FEMA)',
+      'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)'],
   });
 
   const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ const ComplianceCalendar = () => {
     setLoading(true);
     setResponse('');
 
-    
+
     const prompt = `
 Given following details
 1.\tName of the company - ${formData.companyName} 
@@ -73,7 +73,7 @@ DD/MM/YYYY
  it should be in the order of the act mention as above     
 
 `;
-// console.log(prompt);
+    // console.log(prompt);
 
     try {
       await APIService({
@@ -95,7 +95,7 @@ DD/MM/YYYY
     }
   };
 
-  const quarterlyOptions = [    
+  const quarterlyOptions = [
     { value: 'Q1-April to June', label: 'Q1-April to June' },
     { value: 'Q2-July to September', label: 'Q2-July to September' },
     { value: 'Q3-October to December', label: 'Q3-October to December' },
@@ -119,7 +119,7 @@ DD/MM/YYYY
 
   const RedStrong = ({ children }) => {
     // Apply Tailwind CSS class 'text-red-500' to make the text red
-    return <strong style={{textDecoration: 'underline'}}>{children}</strong>;
+    return <strong style={{ textDecoration: 'underline' }}>{children}</strong>;
   };
 
   return (
@@ -186,13 +186,23 @@ DD/MM/YYYY
                     />
                   ))}
                 </div>
-              </Form.Group> 
+              </Form.Group>
 
 
-              
+
 
               <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Generating Calendar...' : 'Generate Compliance Calendar'}
+                {loading ? (
+                  <>
+                    <FaSpinner className="spinner me-2" />
+                    Generating Compliance Calendar...
+                  </>
+                ) : (
+                  <>
+                    <FaSearch className="me-2" />
+                    Generate Compliance Calendar
+                  </>
+                )}
               </button>
             </Form>
           </Card>
@@ -203,7 +213,7 @@ DD/MM/YYYY
         <Row className="justify-content-center">
           <Col md={10}>
             <div className="loading-container">
-              <FaSpinner style={{animation: 'spin 1s linear infinite', fontSize: '3rem', color: 'gray' }} />
+              <FaSpinner style={{ animation: 'spin 1s linear infinite', fontSize: '3rem', color: 'gray' }} />
             </div>
           </Col>
         </Row>
@@ -212,13 +222,13 @@ DD/MM/YYYY
       {response && (
         <Row className="justify-content-center">
           <Col md={10}>
-          <h1 className="card-title" style={{marginBottom:'6px'}}> {formData.companyName} -</h1>
-          <h2 className="card-title" style={{marginBottom:'12px'}}>Compliance Calendar</h2>
+            <h1 className="card-title" style={{ marginBottom: '6px' }}> {formData.companyName} -</h1>
+            <h2 className="card-title" style={{ marginBottom: '12px' }}>Compliance Calendar</h2>
             <Card className="output-card">
               <div className="d-flex justify-content-end mt-3">
-                <Button 
-                  variant="outline-primary" 
-                  className="me-2" 
+                <Button
+                  variant="outline-primary"
+                  className="me-2"
                   onClick={() => {
                     navigator.clipboard.writeText(response);
                     alert('Copied to clipboard!');
@@ -227,12 +237,12 @@ DD/MM/YYYY
                   <FaCopy className="me-1" />
                   <span className="d-none d-sm-inline">Copy to Clipboard</span>
                 </Button>
-                <Button 
-                  variant="outline-danger" 
+                <Button
+                  variant="outline-danger"
                   onClick={() => {
-                    const { generatePDF } = PDFGenerator({ 
-                      content: response, 
-                      fileName: `${formData.companyName}-compliance-calendar.pdf` ,
+                    const { generatePDF } = PDFGenerator({
+                      content: response,
+                      fileName: `${formData.companyName}-compliance-calendar.pdf`,
                       title: `Compliance Calendar`
                     });
                     generatePDF();
@@ -242,12 +252,12 @@ DD/MM/YYYY
                   <FaFilePdf className="me-1" />
                   <span className="d-none d-sm-inline">Download PDF</span>
                 </Button>
-                <Button 
-                  variant="outline-success" 
+                <Button
+                  variant="outline-success"
                   onClick={() => {
-                    const { generateWord } = WordGenerator({ 
-                      content: response, 
-                      fileName: `${formData.companyName}-compliance-calendar.docx` ,
+                    const { generateWord } = WordGenerator({
+                      content: response,
+                      fileName: `${formData.companyName}-compliance-calendar.docx`,
                       title: `Compliance Calendar`
                     });
                     generateWord();
@@ -259,10 +269,10 @@ DD/MM/YYYY
               </div>
               <div className="markdown-content">
                 <ReactMarkdown
-                components={{
-                  // Override the default 'strong' component with our custom 'RedStrong' component
-                  strong: RedStrong,
-                }}
+                  components={{
+                    // Override the default 'strong' component with our custom 'RedStrong' component
+                    strong: RedStrong,
+                  }}
                 >{response}</ReactMarkdown>
               </div>
               <AIDisclaimer variant="light" />

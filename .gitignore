@@ -7,7 +7,7 @@
 
 # testing
 /coverage
-/build
+build/
 # production
 node_modules
 # misc
