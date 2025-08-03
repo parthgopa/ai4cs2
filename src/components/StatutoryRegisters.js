@@ -123,6 +123,13 @@ try {
     // Apply Tailwind CSS class 'text-red-500' to make the text red
     return <strong style={{textDecoration: 'underline'}}>{children}</strong>;
   };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
   
 
   return (
@@ -139,7 +146,7 @@ try {
       <Row className="justify-content-center">
         <Col md={10}>
           <Card className="input-card">
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
               <Form.Group className="form-group">
                 <Form.Label className="form-label">Type of Company</Form.Label>
                 <Form.Select
@@ -158,22 +165,19 @@ try {
               </Form.Group>
 
               <Button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Generating List...' : 'Generate Statutory Registers List'}
+                {loading ? (
+                  <>
+                    <FaSpinner className="me-2" animation="spin" />
+                    Generating List...
+                  </>
+                ) : (
+                  'Generate Statutory Registers List'
+                )}
               </Button>
             </Form>
           </Card>
         </Col>
       </Row>
-
-      {loading && (
-        <Row className="justify-content-center">
-          <Col md={10}>
-            <div className="loading-container">
-              <FaSpinner style={{animation: 'spin 1s linear infinite', fontSize: '3rem', color: 'gray' }} />
-            </div>
-          </Col>
-        </Row>
-      )}
 
       {response && (
         <Row className="justify-content-center">

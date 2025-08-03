@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 // Import icons
 import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook } from 'react-icons/fa';
-import { MdUpdate, MdAssessment, MdDescription, MdMeetingRoom, MdOutlineAppRegistration, MdPeople } from 'react-icons/md';
+import { MdUpdate, MdAssessment, MdOutlineAppRegistration } from 'react-icons/md';
 // Import Chatbot component
 import Chatbot from './Chatbot';
 // Import ComingSoonModal component
@@ -67,39 +67,30 @@ const HomePage = () => {
       icon: <FaBalanceScale />
     },
     {
-      id: 'strategic-advice',
-      title: 'Strategic Advice',
-      icon: <FaChartLine />
-    },
-    {
       id: 'procedure-practice',
       title: 'Procedure and Practice',
       icon: <FaClipboardList />
     },
     {
-      id: 'risk-assessment',
-      title: 'Risk Assessment',
+      id: 'policy-drafting',
+      title: 'Policy Drafting',
+      icon: <FaClipboardList />
+    },
+    {
+      id: 'scenario-solver',
+      title: 'Scenario Solver',
+      icon: <FaChartLine />
+    },
+
+    {
+      id: 'agreement-drafting',
+      title: 'Agreement Drafting',
       icon: <MdAssessment />
     },
     {
-      id: 'resolutions',
-      title: 'Resolutions',
-      icon: <MdDescription />
-    },
-    {
-      id: 'board-meeting-management',
-      title: 'Board Meeting Management',
-      icon: <MdMeetingRoom />
-    },
-    {
-      id: 'application-petition-appeal',
-      title: 'Application, Petition and Appeal',
+      id: 'reply-to-notice',
+      title: 'Reply to Notice',
       icon: <MdOutlineAppRegistration />
-    },
-    {
-      id: 'shareholder-communication',
-      title: 'Shareholder Communication',
-      icon: <MdPeople />
     }
   ];
   
@@ -120,7 +111,21 @@ const HomePage = () => {
       navigate('/legal-opinion');
     } else if (id === 'legal-research') {
       navigate('/legal-research');
-    } else {
+    } 
+    else if (id === 'procedure-practice') {
+      navigate('/procedure-practice');
+    } 
+    else if (id === 'policy-drafting') {
+      navigate('/policy-drafting');
+    } 
+    else if (id === 'scenario-solver') {
+      navigate('/scenario-solver');
+    } 
+    else if (id === 'agreement-drafting') {
+      navigate('/agreement-drafting');
+    } 
+    
+    else {
       openComingSoonModal(title);
     }
   };
@@ -176,7 +181,12 @@ const HomePage = () => {
                           item.id !== 'secretarial-audit' && 
                           item.id !== 'regulatory-updation' && 
                           item.id !== 'statutory-registers' && 
-                          item.id !== 'legal-opinion' && item.id !== 'legal-research') ? 'disabled-feature' : ''}`}
+                          item.id !== 'legal-opinion' && 
+                          item.id !== 'legal-research' && 
+                          item.id !== 'procedure-practice' && 
+                          item.id !== 'policy-drafting' && 
+                          item.id !== 'scenario-solver' && 
+                          item.id !== 'agreement-drafting') ? 'disabled-feature' : ''}`}
                       >
                         <div className="functionality-content">
                           <h1 className="functionality-title">
@@ -210,7 +220,7 @@ const HomePage = () => {
           }}
         />
       </Button>
-
+      
       {/* Chatbot Component */}
       <Chatbot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />
       

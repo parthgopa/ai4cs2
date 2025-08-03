@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
-import { FaCopy, FaFilePdf, FaSpinner, FaFileWord } from 'react-icons/fa';
+import { FaCopy, FaFilePdf, FaFileWord } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
@@ -97,6 +97,13 @@ try {
     return <strong style={{textDecoration: 'underline'}}>{children}</strong>;
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
     <Container className="py-4">
       <Row className="justify-content-center">
@@ -111,7 +118,7 @@ try {
       <Row className="justify-content-center">
         <Col md={10}>
           <Card className="input-card">
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
               <Form.Group className="form-group">
                 <Form.Label className="form-label">Company Name</Form.Label>
                 <Form.Control
@@ -147,16 +154,6 @@ try {
           </Card>
         </Col>
       </Row>
-
-      {loading && (
-        <Row className="justify-content-center">
-          <Col md={10}>
-            <div className="loading-container">
-              <FaSpinner style={{animation: 'spin 1s linear infinite', fontSize: '3rem', color: 'gray' }} />
-            </div>
-          </Col>
-        </Row>
-      )}
 
       {response && (
         <Row className="justify-content-center">

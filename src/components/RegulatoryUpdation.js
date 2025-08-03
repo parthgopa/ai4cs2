@@ -178,13 +178,20 @@ Omit any preface note, conclusion note, end note and disclaimer.
     return <strong style={{textDecoration: 'underline'}}>{children}</strong>;
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
     <Container>
       <Row className="justify-content-center">
         <Col md={10}>
           <Card className="input-card">
             <h2 className="card-title">Regulatory Updation</h2>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
 
               <Form.Group className="form-group">
                 <Form.Label className="form-label">Applicable Regulations</Form.Label>
@@ -258,22 +265,19 @@ Omit any preface note, conclusion note, end note and disclaimer.
               </Form.Group>
 
               <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Generating Updates...' : 'Generate Regulatory Updates'}
+                {loading ? (
+                  <>
+                    <FaSpinner className="me-2" animation="spin" />
+                    Generating Updates...
+                  </>
+                ) : (
+                  'Generate Regulatory Updates'
+                )}
               </button>
             </Form>
           </Card>
         </Col>
       </Row>
-
-      {loading && (
-        <Row className="justify-content-center">
-          <Col md={10}>
-            <div className="loading-container">
-              <FaSpinner style={{animation: 'spin 1s linear infinite', fontSize: '3rem', color: 'gray' }} />
-            </div>
-          </Col>
-        </Row>
-      )}
 
       {response && (
         <Row className="justify-content-center">

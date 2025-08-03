@@ -122,13 +122,20 @@ DD/MM/YYYY
     return <strong style={{ textDecoration: 'underline' }}>{children}</strong>;
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
     <Container>
       <Row className="justify-content-center">
         <Col md={10}>
           <Card className="input-card">
             <h2 className="card-title">Compliance Calendar Generator</h2>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
               <Form.Group className="form-group">
                 <Form.Label className="form-label">Company Name</Form.Label>
                 <Form.Control
@@ -208,16 +215,6 @@ DD/MM/YYYY
           </Card>
         </Col>
       </Row>
-
-      {loading && (
-        <Row className="justify-content-center">
-          <Col md={10}>
-            <div className="loading-container">
-              <FaSpinner style={{ animation: 'spin 1s linear infinite', fontSize: '3rem', color: 'gray' }} />
-            </div>
-          </Col>
-        </Row>
-      )}
 
       {response && (
         <Row className="justify-content-center">

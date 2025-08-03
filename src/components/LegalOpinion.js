@@ -93,6 +93,10 @@ While due care has been taken in analyzing the provisions of the Companies Act, 
 No liability shall arise on the part of the author or advisor for reliance placed on this ${formData.outputFormat}, especially where facts are misstated, incomplete, or have changed. Independent legal advice is recommended for high-risk or transaction-specific decisions.
 
 This view point is issued in good faith and without prejudice to any legal rights or remedies.
+
+Note:
+Exclude any introductory notes, prefaces,end notes or disclaimers from the output.
+
 `;
 
     try {
@@ -120,6 +124,13 @@ This view point is issued in good faith and without prejudice to any legal right
     return <strong style={{ textDecoration: 'underline' }}>{children}</strong>;
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
     <Container className="py-4">
       <Row className="justify-content-center">
@@ -140,7 +151,7 @@ This view point is issued in good faith and without prejudice to any legal right
         <Col md={10}>
           <Card className="input-card shadow-sm">
             <Card.Body>
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
                 <Form.Group className="form-group mb-4">
                   <Form.Label className="form-label fw-bold">Legal Query</Form.Label>
                   <Form.Control
