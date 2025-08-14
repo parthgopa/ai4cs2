@@ -20,6 +20,8 @@ const WordGenerator = ({ content, fileName = 'document.docx', title }) => {
       // Remove horizontal rules (---, ***, ___)
       .replace(/^(---|\*\*\*|___)$/gm, '');
 
+
+    //Make the heading style bold
     // Extract title from filename
 
     // Create document

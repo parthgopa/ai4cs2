@@ -9,6 +9,10 @@ import { ThemeProvider } from './Common/ThemeContext';
 import Header from './Common/Header';
 import Footer from './Common/Footer';
 import HomePage from './components/HomePage';
+import ScrollToTop from './Common/ScrollToTop';
+import About from './components/About';
+import Contact from './components/Contact';
+import Tools from './components/Tools';
 import ResolutionsDraftingPage from './components/ResolutionsDraftingPage';
 import ComplianceCalendar from './components/ComplianceCalendar';
 import RegulatoryUpdation from './components/RegulatoryUpdation';
@@ -26,21 +30,29 @@ import InsiderTradingPolicy from './components/InsiderTradingPolicy';
 import DocumentManagementPolicy from './components/DocumentManagementPolicy';
 import ScenarioSolver from './components/ScenarioSolver';
 import AgreementDrafting from './components/AgreementDrafting';
+import ReplyToNoticeRD from './components/ReplyToNoticeRD';
+import ReplyToNoticeNCLT from './components/ReplyToNoticeNCLT';
+import ReplyToNoticeROC from './components/ReplyToNoticeROC';
+import PetitionPreparator from './components/PetetionPrepator';
+import BoardMeetingAssistant from './components/BoardMeetingAssistant';
+import GeneralMeetingAssistant from './components/GeneralMeetingAssistant';
+
 function App() {
-  
   return (
     <ThemeProvider>
       <Router>
+        <ScrollToTop />
         <div className="app-wrapper">
           <Header />
           <main className="main-content">
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/tools" element={<Tools />} />
               <Route path="/resolutions" element={<ResolutionsDraftingPage />} />
               <Route path="/compliance-calendar" element={<ComplianceCalendar />} />
-              <Route path="/secretarial-audit" element={<SecretarialAudit />} />
               <Route path="/procedure-practice" element={<ProceduresPractice />} />
-              {/* Added routes for all functionalities */}
               <Route path="/policy-drafting" element={<PolicyDrafting />} />
               <Route path="/policy-drafting/meeting-and-minutes-policy" element={<MeetingMinutesPolicy />} />
               <Route path="/policy-drafting/statutory-registers-policy" element={<StatutoryRegisterMaintenancePolicy />} />
@@ -50,15 +62,17 @@ function App() {
               <Route path="/policy-drafting/csr-policy" element={<CSRPolicy />} />
               <Route path="/scenario-solver" element={<ScenarioSolver />} />
               <Route path="/agreement-drafting" element={<AgreementDrafting />} />
+              <Route path="/secretarial-audit-toolkit" element={<SecretarialAudit />} />
+              <Route path="/reply-to-notice-rd" element={<ReplyToNoticeRD />} />
+              <Route path="/reply-to-notice-nclt" element={<ReplyToNoticeNCLT />} />
+              <Route path="/reply-to-notice-roc" element={<ReplyToNoticeROC />} />
+              <Route path='/petetion-preparator' element={<PetitionPreparator />} />
               <Route path="/legal-research" element={<LegalResearch />} />
               <Route path="/legal-opinion" element={<LegalOpinion />} />
-              <Route path="/strategic-advice" element={<div className="container mt-5"><h1>Strategic Advice</h1><p>This page is under development.</p></div>} />
               <Route path="/regulatory-updation" element={<RegulatoryUpdation />} />
               <Route path="/statutory-registers" element={<StatutoryRegisters />} />
-              <Route path="/risk-assessment" element={<div className="container mt-5"><h1>Risk Assessment</h1><p>This page is under development.</p></div>} />
-              <Route path="/board-meeting-management" element={<div className="container mt-5"><h1>Board Meeting Management</h1><p>This page is under development.</p></div>} />
-              <Route path="/application-petition-appeal" element={<div className="container mt-5"><h1>Application, Petition and Appeal</h1><p>This page is under development.</p></div>} />
-              <Route path="/shareholder-communication" element={<div className="container mt-5"><h1>Shareholder Communication</h1><p>This page is under development.</p></div>} />
+              <Route path="/board-meeting-assistant" element={<BoardMeetingAssistant />} />
+              <Route path="/general-meeting-assistant" element={<GeneralMeetingAssistant />} />
             </Routes>
           </main>
           <Footer />

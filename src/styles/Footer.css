@@ -5,6 +5,14 @@
   margin-top: 2rem;
 }
 
+.footer-top {
+  background: transparent;
+}
+
+.footer-bottom {
+  background: transparent;
+}
+
 .footer-heading {
   color: var(--primary-color);
   font-weight: 600;
@@ -30,11 +38,17 @@
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
 }
 
 .footer-links a:hover {
   color: var(--primary-color);
   padding-left: 5px;
+}
+
+.footer-links svg {
+  margin-right: 0.5rem;
 }
 
 .footer-contact p {
@@ -50,6 +64,16 @@
 .footer-copyright {
   font-size: 0.85rem;
   color: var(--medium-gray);
+}
+
+.footer-mini {
+  font-size: 0.85rem;
+  color: var(--medium-gray);
+}
+
+/* Offset for sticky header when scrolling to #contact */
+#contact {
+  scroll-margin-top: 90px;
 }
 
 @media (max-width: 768px) {

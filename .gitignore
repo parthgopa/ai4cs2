@@ -8,6 +8,7 @@
 # testing
 /coverage
 build/
+prompts/
 # production
 node_modules
 # misc

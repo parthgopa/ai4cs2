@@ -31,38 +31,81 @@ const SecretarialAudit = () => {
     setResponse('');
 
     const prompt = `
-Name of the company :- ${formData.companyName}
-Type - Type of Companies required to undergo for secretarial audit: ${formData.companyType}
+Generate a detailed and professionally structured Secretarial Audit Toolkit for the company named "${formData.companyName}", which is a "${formData.companyType}" under Indian laws.
+The toolkit should enable a Company Secretary in Practice (PCS) to conduct a comprehensive Secretarial Audit and prepare the MR-3 report.
+Ensure that all compliance items, legal references, and document checks are tailored to the given type of company, and aligned with relevant Indian laws and SEBI regulations (if applicable).
+The output must be formatted into the following clearly labeled sections:
+ 
+1. 📘 Guidelines
+Provide an overview of the legal scope of secretarial audit for this type of company, covering:
+•	Relevant provisions of the Companies Act, 2013
+•	SEBI (LODR) Regulations, 2015, if applicable
+•	Secretarial Standards (SS-1 and SS-2)
+•	Other applicable laws (e.g., FEMA, RBI, IRDAI, CSR Rules)
+ 
+2. 🔧 Preparatory Measures
+Actionable steps for the CS before audit begins:
+•	Obtaining Board authorisation or engagement letter
+•	Review of past audit reports
+•	Planning audit calendar
+•	Confidentiality agreement and scope fixation
+•	Coordination with KMPs and Compliance Officer
+ 
+3. 📑 List of Documents to Verify
+A category-wise list of documents to check during audit, including:
+•	Notices, agendas, and minutes of meetings (Board, Committee, AGM, EGM)
+•	Statutory filings with ROC/MCA (e.g., MGT-7, AOC-4, DIR-12)
+•	Internal policies (e.g., Code of Conduct, Whistleblower, RPT policy)
+•	Shareholding structure and beneficial ownership
+•	Annual Reports and Financial Statements
+•	Agreements, contracts, declarations under law
+ 
+4. 🗂 List of Documents to Ask Copies Of
+Documents to request soft/hard copies for record or annexure:
+•	Resolutions passed
+•	Register extracts
+•	RPT disclosures
+•	DIR-8, MBP-1, CSR reports
+•	Audit reports, compliance certificates
+•	Website screenshots (mandatory disclosures)
+ 
+5. 📚 Registers and Records to Check
+Statutory and non-statutory registers applicable to the company:
+•	Register of Members
+•	Register of Directors & KMP
+•	Register of Charges
+•	Register of Contracts (MBP-4)
+•	Attendance Registers
+•	CSR Register (if applicable)
+•	Register of Investments, Loans & Guarantees (Sec. 186)
+ 
+6. 🧾 Other Audit Considerations
+Include:
+•	Compliance with SEBI (PIT), Depositories Act, IEPF
+•	Review of SCORES portal and grievance redressal
+•	Verification of website under Reg. 46 of SEBI LODR
+•	Evaluation of internal control over secretarial systems
+•	Board composition and Independent Director eligibility
+•	Proper disclosure of remuneration and KMP appointments
+•	Applicability of UDIN on signed MR-3
+ 
+7. 🌱 CSR Audit Checklist (If Applicable)
+•	Applicability test under Section 135 (net worth/turnover/profit thresholds)
+•	Proper constitution of CSR Committee
+•	Adoption and uploading of CSR Policy on website
+•	Preparation and execution of Annual Action Plan
+•	Amount spent and unspent treatment under Rule 7
+•	Filing of Form CSR-2 with MCA
+•	Review of impact assessment (if applicable)
+•	Bills and records of implementing agency or in-house CSR
+•	Schedule VII alignment of CSR projects
+ 
+🎓 Output Standards:
+•	Tone and structure must reflect the experience of a senior Company Secretary or solicitor
+•	Ensure compliance references are accurate, updated, and professionally worded
+•	Keep formatting clean and usable as a working tool for audit execution
+•	Tailor all content to the type of company input provided
 
-- Every listed company (as per SEBI 
-- Every public company having a paid-up share capital of ₹50 crores or more 
-- Every public company having a turnover of ₹250 crores or more 
-
-Conduct a Secretarial Audit for a ${formData.companyType} under the following provisions:
-
-1. Section 204 of the Companies Act, 2013, along with Rule 9 of the Companies (Appointment and Remuneration of Managerial Personnel) Rules, 2014
-2. Regulation 24A of SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015
-
-Output Requirements:
-
-1. Legal Provision, Scope, and Purpose: Provide a brief overview of the legal provision, scope, and purpose of Secretarial Audit under the mentioned sections.
-2. Practice and Procedure: Outline the practice and procedure for conducting Secretarial Audit.
-3. Act-wise List of Documents, Report & Register Required for Audit: List the documents, reports, and registers required for Secretarial Audit under the Companies Act, 2013, and SEBI (LODR) Regulations, 2015.
-4. Checklist for Secretarial Audit: Prepare a checklist for Secretarial Audit specific to the type of company, including key areas such as:
-    - Incorporation documents
-    - Board meetings and resolutions
-    - Share capital and allotment
-    - Directors and Key Managerial Personnel
-    - Compliance with statutory registers
-    - Filing of forms and returns
-    - Other compliance requirements specific to the company type
-5. Penal Provision for Non-Compliance: Describe the penal provisions for non-compliance with the Secretarial Audit requirements.
-6. Draft Email: Draft an email intimating the commencement of Secretarial Audit in the fortnight and requesting the company to keep the required documents ready and available for audit. The email should include a list of documents required for audit.
-
-Output Format:
-The output should be in a clear and concise format, with headings and bullet points as necessary. The draft email should be in a standard business format.
-
-Exclude any introductory notes, prefaces,end notes or disclaimers from the output.
 `;
 
 try {
@@ -87,9 +130,9 @@ try {
 
   // Company type options
   const companyTypes = [
-    'Listed Company',
-    'Public Company - more than 50 crores paid up share capital',
-    'Public Company - more than 250 crores turnover'
+    'Listed Public Company',
+    'Unlisted Public Company',
+    'Private Limited Company'
   ];
 
   const RedStrong = ({ children }) => {
@@ -108,7 +151,7 @@ try {
     <Container className="py-4">
       <Row className="justify-content-center">
         <Col md={10}>
-          <h1 className="page-title">Secretarial Audit</h1>
+          <h1 className="page-title">Secretarial Audit Toolkit</h1>
           <p className="page-description" style={{marginBottom:'16px',textAlign:'center'}}>
           Provision - process - practice- checklist - intimation
           </p>

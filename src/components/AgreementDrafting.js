@@ -9,7 +9,9 @@ import AIDisclaimer from './AIDisclaimer';
 
 const AgreementDrafting = () => {
   const [loading, setLoading] = useState(false);
+  const [templateLoading, setTemplateLoading] = useState(false);
   const [response, setResponse] = useState('');
+  const [currentfeature, setCurrentfeature] = useState('');
 
   // Agreement types list
   const agreementTypes = [
@@ -42,20 +44,20 @@ const AgreementDrafting = () => {
   // Agreement Drafting form data
   const [formData, setFormData] = useState({
     agreementType: '',
+    dateOfAgreement: '',
     partyAName: '',
+    partyADescription: '',
     partyAAddress: '',
     partyBName: '',
+    partyBDescription: '',
     partyBAddress: '',
+    purpose: '',
+    effectiveDate: '',
     duration: '',
-    startDate: '',
-    endDate: '',
-    briefDescription: '',
-    partyAObligations: '',
-    partyBObligations: '',
-    paymentSchedule: '',
-    paymentAmount: '',
-    terminationConditions: '',
-    noticePeriod: ''
+    governingLaw: 'Andhra Pradesh',
+    specialClauses: '',
+    signatureNames: '',
+
   });
 
   const handleInputChange = (e) => {
@@ -66,35 +68,92 @@ const AgreementDrafting = () => {
     });
   };
 
+  const handleTemplateSubmit = async (e) => {
+    e.preventDefault();
+    setTemplateLoading(true);
+    setResponse('');
+    setCurrentfeature('agreement-template');
+
+    const prompt = `Generate a Professional Template for a "${formData.agreementType}" Agreement (Template Only)
+
+Prepare a dummy draft of a "${formData.agreementType}" agreement in a highly professional format, as would be prepared by a senior and experienced solicitor practicing under Indian laws. This template is for structural preview only and should include:
+
+A formal and sophisticated legal drafting style
+
+Compliance with Indian laws and best practices for such agreement types
+
+Clearly structured clauses, definitions, schedules (if any), and annexures
+
+Use of formal legal phrases and terminology suitable for High Court or Tribunal presentation
+
+Placeholder text for all variable elements (e.g., [Party Name], [Date], [Consideration Amount], [Governing Law], etc.)
+
+The title of the agreement should be: "${formData.agreementType} Agreement (Template)"
+
+Use a consistent format with numbered clauses, section headings, and indented sub-clauses.
+
+Ensure the template maintains clarity, authority, and readability, reflecting the standard expected from top-tier legal firms in India.
+
+
+⚖ This template should not contain actual party-specific information, but be ready for such data to be inserted.
+🖋 The style should reflect that of a learned senior solicitor of over 20 years' experience in corporate law practice.
+ `;
+
+    try {
+      await APIService({
+        question: prompt,
+        onResponse: (data) => {
+          setLoading(false);
+          if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
+            setResponse(data.candidates[0].content.parts[0].text);
+          } else {
+            setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+          }
+        }
+      });
+    } catch (error) {
+      setTemplateLoading(false);
+      setResponse('An error occurred while processing your request. Please try again.');
+    }
+    setTemplateLoading(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setCurrentfeature('agreement-drafting');
     setResponse('');
 
-    const prompt = `Generate a ${formData.agreementType} agreement between ${formData.partyAName} with address ${formData.partyAAddress} and ${formData.partyBName} with address ${formData.partyBAddress}.
+    const prompt = `Generate a legally binding "${formData.agreementType}" agreement under Indian laws.
+Based on the provided input variables, prepare a complete and professionally drafted agreement as would be prepared by a senior solicitor with over 20 years of corporate law experience.
+Follow the style, structure, and terminology used in Indian legal practice, ensuring compliance with applicable laws (such as the Indian Contract Act, Companies Act, etc.).
+The document must include:
+•	A formal title (e.g., “Shareholders Agreement”)
+•	Date of execution
+•	Parties’ legal identity and addresses
+•	Recitals / Background
+•	Detailed clauses covering rights, duties, obligations, representations, indemnity, termination, and dispute resolution
+•	Jurisdiction and governing law (India)
+•	Placeholders only where input is missing
+•	Use numbered headings, sub-clauses, and professional formatting
+⚖️ Ensure tone and language match that of documents submitted before Indian regulators, High Courts, or arbitral tribunals.
 
-Term:
-The agreement shall commence on ${formData.startDate} and shall continue for ${formData.duration} or until ${formData.endDate}.
+Agreement Type: ${formData.agreementType}
+Date of Agreement: ${formData.dateOfAgreement}
+Party A Name: ${formData.partyAName}
+Party A Description: ${formData.partyADescription}
+Party A Address: ${formData.partyAAddress}
+Party B Name: ${formData.partyBName}
+Party B Description: ${formData.partyBDescription}
+Party B Address: ${formData.partyBAddress}
+Purpose: ${formData.purpose}
+Effective Date: ${formData.effectiveDate}
+Duration: ${formData.duration}
+Governing Law: ${formData.governingLaw}
+Special Clauses: ${formData.specialClauses}
+Signature Names: ${formData.signatureNames}`;
 
-Purpose:
-The purpose of this agreement is to ${formData.briefDescription}.
-
-Obligations:
-
-- Party A shall be responsible for: ${formData.partyAObligations}
-- Party B shall be responsible for: ${formData.partyBObligations}
-
-Payment Terms:
-
-- Payment Schedule: ${formData.paymentSchedule} (e.g., monthly, quarterly)
-- Payment Amount: ${formData.paymentAmount}
-
-Termination:
-
-- Conditions for termination: ${formData.terminationConditions}
-- Notice Period: ${formData.noticePeriod}
-
-Please generate a comprehensive ${formData.agreementType} agreement incorporating the above details, including all necessary clauses and provisions.`;
+console.log(prompt);
 
     try {
       await APIService({
@@ -114,12 +173,20 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && e.target.type !== 'textarea') {
-      e.preventDefault();
-      handleSubmit(e);
-    }
-  };
+  const indianRegions = [
+    // States
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+    "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+    "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+    "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+    "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+    "Uttar Pradesh", "Uttarakhand", "West Bengal","NCLT","Arbitration",
+  
+    // Union Territories
+    "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+  ];
+  
 
   return (
     <Container>
@@ -128,10 +195,10 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
           <Card className="input-card">
             <h2 className="card-title">Agreement Drafting</h2>
 
-            <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
+            <Form>
               {/* Agreement Type */}
               <Form.Group className="form-group">
-                <Form.Label className="form-label">Agreement Type *</Form.Label>
+                <Form.Label className="form-label">Agreement Type </Form.Label>
                 <Form.Select
                   name="agreementType"
                   value={formData.agreementType}
@@ -146,11 +213,24 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
                 </Form.Select>
               </Form.Group>
 
+              {/* Date of Agreement */}
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Date of Agreement </Form.Label>
+                <Form.Control
+                  type="date"
+                  name="dateOfAgreement"
+                  value={formData.dateOfAgreement}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                />
+              </Form.Group>
+
               {/* Party A Details */}
               <Row>
                 <Col md={6}>
                   <Form.Group className="form-group">
-                    <Form.Label className="form-label">Party A Name *</Form.Label>
+                    <Form.Label className="form-label">First Party Name </Form.Label>
                     <Form.Control
                       type="text"
                       name="partyAName"
@@ -161,9 +241,24 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
                     />
                   </Form.Group>
                 </Col>
+
                 <Col md={6}>
                   <Form.Group className="form-group">
-                    <Form.Label className="form-label">Party A Address *</Form.Label>
+                    <Form.Label className="form-label">First Party Description</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="partyADescription"
+                      value={formData.partyADescription}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Group className="form-group">
+                    <Form.Label className="form-label">First Party Address </Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={2}
@@ -181,7 +276,7 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
               <Row>
                 <Col md={6}>
                   <Form.Group className="form-group">
-                    <Form.Label className="form-label">Party B Name *</Form.Label>
+                    <Form.Label className="form-label">Second Party Name </Form.Label>
                     <Form.Control
                       type="text"
                       name="partyBName"
@@ -192,9 +287,24 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
                     />
                   </Form.Group>
                 </Col>
+
                 <Col md={6}>
                   <Form.Group className="form-group">
-                    <Form.Label className="form-label">Party B Address *</Form.Label>
+                    <Form.Label className="form-label">Second Party Description</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="partyBDescription"
+                      value={formData.partyBDescription}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Group className="form-group">
+                    <Form.Label className="form-label">Second Party Address </Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={2}
@@ -212,53 +322,28 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
               <Row>
                 <Col md={4}>
                   <Form.Group className="form-group">
-                    <Form.Label className="form-label">Duration *</Form.Label>
+                    <Form.Label className="form-label">Term / Duration</Form.Label>
                     <Form.Control
                       type="text"
                       name="duration"
                       value={formData.duration}
                       onChange={handleInputChange}
                       className="form-control"
-                      placeholder="e.g., 2 years, 6 months"
+                      placeholder="e.g., 3 years from Effective Date"
                       required
                     />
                   </Form.Group>
                 </Col>
-                <Col md={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label className="form-label">Start Date *</Form.Label>
-                    <Form.Control
-                      type="date"
-                      name="startDate"
-                      value={formData.startDate}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label className="form-label">End Date</Form.Label>
-                    <Form.Control
-                      type="date"
-                      name="endDate"
-                      value={formData.endDate}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </Form.Group>
-                </Col>
+                
               </Row>
-
               {/* Purpose */}
               <Form.Group className="form-group">
-                <Form.Label className="form-label">Purpose - Brief Description *</Form.Label>
+                <Form.Label className="form-label">Purpose of Agreement</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  name="briefDescription"
-                  value={formData.briefDescription}
+                  name="purpose"
+                  value={formData.purpose}
                   onChange={handleInputChange}
                   className="form-control"
                   placeholder="Describe the purpose of this agreement"
@@ -266,106 +351,64 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
                 />
               </Form.Group>
 
-              {/* Obligations */}
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="form-group">
-                    <Form.Label className="form-label">Party A Obligations *</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={4}
-                      name="partyAObligations"
-                      value={formData.partyAObligations}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      placeholder="Specify Party A's responsibilities"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="form-group">
-                    <Form.Label className="form-label">Party B Obligations *</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={4}
-                      name="partyBObligations"
-                      value={formData.partyBObligations}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      placeholder="Specify Party B's responsibilities"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+              {/* Effective Date */}
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Effective Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="effectiveDate"
+                  value={formData.effectiveDate}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                />
+              </Form.Group>
 
-              {/* Payment Terms */}
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="form-group">
-                    <Form.Label className="form-label">Payment Schedule *</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="paymentSchedule"
-                      value={formData.paymentSchedule}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      placeholder="e.g., monthly, quarterly, annually"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="form-group">
-                    <Form.Label className="form-label">Payment Amount *</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="paymentAmount"
-                      value={formData.paymentAmount}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      placeholder="e.g., $10,000, ₹50,000"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+              {/* Governing Law & Jurisdiction -dropdown of indian states*/}
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Governing Law & Jurisdiction</Form.Label>
+                <Form.Select
+                  name="governingLaw"
+                  value={formData.governingLaw}
+                  onChange={handleInputChange}
+                  className="form-select"
+                  required
+                >
+                  {indianRegions.map((region, index) => (
+                    <option key={index} value={region}>{region}</option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
 
-              {/* Termination */}
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="form-group">
-                    <Form.Label className="form-label">Termination Conditions *</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      name="terminationConditions"
-                      value={formData.terminationConditions}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      placeholder="Specify conditions for termination"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="form-group">
-                    <Form.Label className="form-label">Notice Period *</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="noticePeriod"
-                      value={formData.noticePeriod}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      placeholder="e.g., 30 days, 3 months"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+              {/* Special Clauses */}
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Special Clauses</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="specialClauses"
+                  value={formData.specialClauses}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  placeholder="IP rights, Exclusivity, Non-compete"
+                />
+              </Form.Group>
 
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              {/* Signature Names & Designations */}
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Signature Names & Designations</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="signatureNames"
+                  value={formData.signatureNames}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  placeholder="Name, title/designation for each party"
+                />
+              </Form.Group>
+
+              <button onClick={handleSubmit} className="btn btn-primary" disabled={loading}>
                 {loading ? (
                   <>
                     <FaSpinner className="spinner me-2" />
@@ -378,6 +421,22 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
                   </>
                 )}
               </button>
+
+              <button onClick={handleTemplateSubmit} className="btn btn-primary ms-2" disabled={loading}>
+                {templateLoading ? (
+                  <>
+                    <FaSpinner className="spinner me-2" />
+                    Generating Template...
+                  </>
+                ) : (
+                  <>
+                    <FaSearch className="me-2" />
+                    Generate Template
+                  </>
+                )}
+              </button>
+
+
             </Form>
           </Card>
         </Col>
@@ -386,8 +445,13 @@ Please generate a comprehensive ${formData.agreementType} agreement incorporatin
       {response && (
         <Row className="justify-content-center">
           <Col md={10}>
-            <h1 className="card-title" style={{ marginBottom: '6px' }}>{formData.agreementType}</h1>
-            <h2 className="card-title" style={{ marginBottom: '12px' }}>Between {formData.partyAName} and {formData.partyBName}</h2>
+            {currentfeature === 'agreement-template' && (
+              <h2 className="card-title" style={{ marginBottom: '20px' }}>{formData.agreementType} Agreement Template</h2>
+            )}
+            {currentfeature === 'agreement-drafting' && (
+              <h2 className="card-title" style={{ marginBottom: '20px' }}>{formData.agreementType} Agreement Draft</h2>
+            )}
+            {/* <h2 className="card-title" style={{ marginBottom: '12px' }}>Between {formData.partyAName} and {formData.partyBName}</h2> */}
             <Card className="output-card">
               <div className="d-flex justify-content-end mt-3">
                 <Button

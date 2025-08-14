@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import APIService from '../Common/API';
 import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
@@ -12,13 +13,7 @@ const ComplianceCalendar = () => {
   const [formData, setFormData] = useState({
     companyName: '',
     companyType: 'Private Limited Company',
-    // year: '2026',
-    quarterlyOptions: [''],
-    financialEndDate: '',
-    complianceFor: ['Companies Act 2013', 'Goods and Services Tax (GST)',
-      'Income Tax Act', 'Reserve Bank of India (RBI) regulations',
-      'Non-Banking Financial Companies (NBFC) regulations', 'Foreign Exchange Management Act (FEMA)',
-      'SEBI (Listing Obligations and Disclosure Requirements and other applicable regulations)'],
+    quarterlyOptions: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -37,43 +32,58 @@ const ComplianceCalendar = () => {
     setLoading(true);
     setResponse('');
 
+    // Calculate current financial year
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11, so add 1
+    const currentYear = currentDate.getFullYear();
+    
+    let financialYear;
+    if (currentMonth >= 4) {
+      // April or later: current year to next year
+      financialYear = `FY ${currentYear}-${currentYear + 1}`;
+    } else {
+      // Before April: previous year to current year
+      financialYear = `FY ${currentYear - 1}-${currentYear}`;
+    }
 
-    const prompt = `
-Given following details
-1.\tName of the company - ${formData.companyName} 
-2.\tCompany Type - ${formData.companyType} 
-3.\tLast Financial year and date - ${formData.financialEndDate}
-4.\tQuarterly options - ${formData.quarterlyOptions.join(', ')}
-5.\tApplicable laws - Companies Act 2013 and rules and regulations thereunder, SEBI (LODR)[in case of privated limited company and unlisted public limited company, ignore SEBI (LODR)] . 
-6.\tCalendar type- detailed
+    const prompt = `Generate exhaustive and detailed Statutory Compliance Calendar under Companies Act 2013 and rules made there under and incase of listed public limited companies then include SEBI (LODR),only.
+    for *${formData.companyName}* (${formData.companyType}) 
+    for the quarters ${formData.quarterlyOptions.join(', ')} of the current  year.
+    The current year is determined as follows:
 
-Task: Generate a detailed Statutory Compliance Calendar for  ${formData.companyName} ${formData.companyType} 
-for the ${formData.quarterlyOptions.join(', ')} quarter following the financial year ending ${formData.financialEndDate}. 
-Exclude any introductory notes,end note, prefaces, or disclaimers, warnings through the output( like (Note: This calendar is a simplified representation and may not cover all compliance requirements. Professional advice should be sought for comprehensive compliance.)).
-The calendar should be organized as follows( in "dot points"): 
+- If the current month is April or later, the current year is the current year to the next year 
+(e.g., April 2025 to March 2026 would be FY 2025-2026).
+- If the current month is before April, the current year is the previous year to the current year 
+(e.g., January 2025 to March 2025 would be FY 2024-2025).
 
-  1.  Quarter: [Selected Quarter] (e.g., Q1)
-    2.  Months within the Quarter: (e.g., April, May, June)
-           Act: [Name of the Act, e.g., Companies Act 2013]
-               Date: [Specific Date for Compliance]
-                   Compliance Item: [description in detail, e.g., Provision of the Act with Section and Subsection number .]
-                   Governing Act & Section: [Specify the Act and Section number from which the compliance item originates.]
-                   Applicable Form (if any): [Name of the form required for compliance, e.g., Form GSTR-3B, Form ITR-6, etc.]
-                   Due Date: [Date by which the compliance must be completed. This should match the 'Date' above.]
-                   Legal Provision,in detail, for Non-Compliance: [Specific penalty, fine, or legal consequence outlined in the Act for failing to comply. Include relevant Section number.]
-                   Remarks: [Space for additional notes or clarifications regarding the compliance item, e.g., late fee structure, conditions for exemption, relevant circulars, etc.]
+Current Year: ${financialYear}
 
-       (Repeat for each Act within the Month)
-       (Repeat for each Month within the Quarter)
-  
+Organize the calendar in the dot points form:
 
-Exclude any introductory notes, prefaces,end notes or disclaimers from the output.
- Date format should be 
-DD/MM/YYYY
- it should be in the order of the act mention as above     
+Quarter: [Quarter Number and Name]
+     Month: [Month Name]
+          [Act Name (e.g., Companies Act 2013)]
+               1. [Date] - [Compliance Item]
+                    . Applicable Form: [Form name if any]
+                    . Legal Provision for Non-Compliance: [Specific penalty/fine/consequence]
+                    . Remarks: [Additional notes/clarifications]
+               2. [Date] - [Compliance Item]
+                    . Applicable Form: [Form name if any]
+                    . Legal Provision for Non-Compliance: [Specific penalty/fine/consequence]
+                    . Remarks: [Additional notes/clarifications]
+          [Another Act Name (e.g., SEBI)]
+               1. [Date] - [Compliance Item]
+                    . Applicable Form: [Form name if any]
+                    . Legal Provision for Non-Compliance: [Specific penalty/fine/consequence]
+                    . Remarks: [Additional notes/clarifications]
 
-`;
-    // console.log(prompt);
+For each quarter, list all months within that quarter. For each month, group compliance items by the applicable Act. Number each compliance item under each Act sequentially.
+
+Applicable Acts:
+- Companies Act 2013 and rules made thereunder
+- SEBI regulations (only for listed public limited companies)
+Convert the output in the calender Format.
+Exclude any introductory notes, prefaces, end notes or disclaimers from the output.`;
 
     try {
       await APIService({
@@ -95,11 +105,16 @@ DD/MM/YYYY
     }
   };
 
+  let date=new Date();
+  let year=date.getFullYear();
+  let nextYear=year+1;
+
+
   const quarterlyOptions = [
-    { value: 'Q1-April to June', label: 'Q1-April to June' },
-    { value: 'Q2-July to September', label: 'Q2-July to September' },
-    { value: 'Q3-October to December', label: 'Q3-October to December' },
-    { value: 'Q4-January to March', label: 'Q4-January to March' },
+    { value: 'Q1 (April to June) -'+year, label: 'Q1 (April to June) -'+year },
+    { value: 'Q2 (July to September) -'+year, label: 'Q2 (July to September) -'+year },
+    { value: 'Q3 (October to December) -'+year, label: 'Q3 (October to December) -'+year },
+    { value: 'Q4 (January to March) -'+nextYear, label: 'Q4 (January to March) -'+nextYear },
   ];
 
   const handleQuarterlyCheckboxChange = (e) => {
@@ -163,22 +178,14 @@ DD/MM/YYYY
                 </Form.Select>
               </Form.Group>
 
-              {/* add a caleder for selecting finiancial end date abd year */}
+              {/* Quarterly compliance calendar selection */}
               <Form.Group className="form-group">
-                <Form.Label className="form-label">Last Financial End Date</Form.Label>
-                <Form.Control
-                  type="date"
-                  name="financialEndDate"
-                  value={formData.financialEndDate}
-                  onChange={handleInputChange}
-                  className="form-control"
-                  required
-                />
-              </Form.Group>
+                <Form.Label className="form-label">Select Quarters </Form.Label>
+                {/* red Label having text : select at most two quarters, color red and apply that logic to selection */}
+                <Form.Label className="text-muted" style={{ color: 'red' }}>
+                  (Due to limitation of AI tokenization, select any two quarters only at a time)  
+                </Form.Label>
 
-              {/* Now quaterly compliance calendar, add a 4 checkbox Q1,Q2,Q3,Q4 where Q1 - january to march, Q2 - april to june, Q3 - july to september, Q4 - october to december */}
-              <Form.Group className="form-group">
-                <Form.Label className="form-label">Quarterly Compliance Calendar</Form.Label>
                 <div>
                   {quarterlyOptions.map((option) => (
                     <Form.Check
@@ -190,15 +197,17 @@ DD/MM/YYYY
                       checked={formData.quarterlyOptions.includes(option.value)}
                       onChange={handleQuarterlyCheckboxChange}
                       className="form-check"
+                      disabled={formData.quarterlyOptions.length >= 2 && !formData.quarterlyOptions.includes(option.value)}
                     />
                   ))}
                 </div>
+              
               </Form.Group>
 
 
 
 
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              <button type="submit" className="btn btn-primary" disabled={loading || formData.quarterlyOptions.length === 0}>
                 {loading ? (
                   <>
                     <FaSpinner className="spinner me-2" />
@@ -266,9 +275,41 @@ DD/MM/YYYY
               </div>
               <div className="markdown-content">
                 <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
                   components={{
                     // Override the default 'strong' component with our custom 'RedStrong' component
                     strong: RedStrong,
+                    // Custom table components for better styling
+                  //   table: ({ children }) => (
+                  //     <Table striped bordered hover responsive className="mt-3 mb-3">
+                  //       {children}
+                  //     </Table>
+                  //   ),
+                  //   thead: ({ children }) => (
+                  //     <thead className="table-dark">
+                  //       {children}
+                  //     </thead>
+                  //   ),
+                  //   tbody: ({ children }) => (
+                  //     <tbody>
+                  //       {children}
+                  //     </tbody>
+                  //   ),
+                  //   tr: ({ children }) => (
+                  //     <tr>
+                  //       {children}
+                  //     </tr>
+                  //   ),
+                  //   th: ({ children }) => (
+                  //     <th className="text-center">
+                  //       {children}
+                  //     </th>
+                  //   ),
+                  //   td: ({ children }) => (
+                  //     <td>
+                  //       {children}
+                  //     </td>
+                  //   ),
                   }}
                 >{response}</ReactMarkdown>
               </div>
