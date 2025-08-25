@@ -48,12 +48,12 @@ const HomePage = () => {
                   
                   <p>Experience the transformative power of AI and elevate your practice to new heights. Join the future of company secretarial services with AI4CS.in and discover a more efficient, accurate, and compliant way to work.</p>
                 </div>
-                <Button 
-                  className="hero-cta"
+                <button 
+                  className="global-button"
                   onClick={navigateToTools}
                 >
                   Explore Tools
-                </Button>
+                </button>
               </div>
             </Col>
           </Row>

@@ -164,7 +164,7 @@ try {
                 </Form.Select>
               </Form.Group>
 
-              <Button type="submit" className="btn btn-primary" disabled={loading}>
+              <button type="submit" className="features-button" disabled={loading}>
                 {loading ? (
                   <>
                     <FaSpinner className="me-2" animation="spin" />
@@ -173,7 +173,7 @@ try {
                 ) : (
                   'Generate Statutory Registers List'
                 )}
-              </Button>
+              </button>
             </Form>
           </Card>
         </Col>

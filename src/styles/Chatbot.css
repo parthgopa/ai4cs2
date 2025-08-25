@@ -13,6 +13,7 @@
 
 /* Full Screen Mode */
 .chatbot-container.fullscreen {
+  margin-top: 7rem;
   top: 0;
   left: 0;
   right: 0;
@@ -356,7 +357,8 @@
 @media (max-width: 768px) {
   .chatbot-container:not(.fullscreen) {
     width: 90vw;
-    bottom: 70px;
+    bottom: 80px;
+    right: 10px;
   }
   
   .chatbot-container:not(.fullscreen) .chatbot-card {
@@ -367,21 +369,37 @@
     max-width: 90%;
   }
   
-  /* Automatically go fullscreen on very small devices */
-  @media (max-width: 480px) {
-    .chatbot-container {
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      max-width: 100%;
-      border-radius: 0;
-    }
-    
-    .chatbot-card {
-      height: 100%;
-      border-radius: 0;
-    }
+  .chatbot-toggle {
+    width: 55px;
+    height: 55px;
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .chatbot-toggle img {
+    width: 30px;
+    height: 30px;
   }
 }
+ @media (max-width: 480px) {
+  /* .chatbot-container:not(.fullscreen) {
+    top: 10px;
+    width: 95vw;
+    bottom: 75px;
+    right: 2.5vw;
+  } */
+  
+  .chatbot-toggle {
+    width: 50px;
+    height: 50px;
+    bottom: 10px;
+    right: 10px;
+    position: fixed;
+    top: 10px;
+  }
+  
+  .chatbot-toggle img {
+    width: 28px;
+    height: 28px;
+  }
+} 

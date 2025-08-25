@@ -408,7 +408,7 @@ console.log(prompt);
                 />
               </Form.Group>
 
-              <button onClick={handleSubmit} className="btn btn-primary" disabled={loading}>
+              <button onClick={handleSubmit} className="features-button" disabled={loading}>
                 {loading ? (
                   <>
                     <FaSpinner className="spinner me-2" />
@@ -422,7 +422,7 @@ console.log(prompt);
                 )}
               </button>
 
-              <button onClick={handleTemplateSubmit} className="btn btn-primary ms-2" disabled={loading}>
+              <button onClick={handleTemplateSubmit} className="features-button ms-2" disabled={loading}>
                 {templateLoading ? (
                   <>
                     <FaSpinner className="spinner me-2" />

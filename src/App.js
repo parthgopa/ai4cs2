@@ -36,6 +36,7 @@ import ReplyToNoticeROC from './components/ReplyToNoticeROC';
 import PetitionPreparator from './components/PetetionPrepator';
 import BoardMeetingAssistant from './components/BoardMeetingAssistant';
 import GeneralMeetingAssistant from './components/GeneralMeetingAssistant';
+import Forms from './components/Forms';
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
               <Route path="/statutory-registers" element={<StatutoryRegisters />} />
               <Route path="/board-meeting-assistant" element={<BoardMeetingAssistant />} />
               <Route path="/general-meeting-assistant" element={<GeneralMeetingAssistant />} />
+              <Route path="/forms" element={<Forms />} />
             </Routes>
           </main>
           <Footer />

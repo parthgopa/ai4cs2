@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { FaPhone, FaEnvelope,  FaHandshake } from 'react-icons/fa';
 import '../styles/Contact.css';
+import { IoCallOutline, IoMailOutline } from 'react-icons/io5';
 
 const Contact = () => {
   return (
@@ -36,7 +37,7 @@ const Contact = () => {
                 <Card className="contact-card phone-card">
                   <Card.Body>
                     <div className="contact-icon">
-                      <FaPhone />
+                      <IoCallOutline size={40} className='navbar-buttons'/>
                     </div>
                     <h3 className="contact-method-title">Call Us</h3>
                     <p className="contact-description">
@@ -47,10 +48,6 @@ const Contact = () => {
                         +91 9978062293
                       </a>
                     </div>
-                    {/* <div className="contact-hours">
-                      <FaClock className="hours-icon" />
-                      <span>Mon - Fri, 9:00 AM - 6:00 PM IST</span>
-                    </div> */}
                   </Card.Body>
                 </Card>
               </Col>
@@ -60,7 +57,7 @@ const Contact = () => {
                 <Card className="contact-card email-card">
                   <Card.Body>
                     <div className="contact-icon">
-                      <FaEnvelope />
+                      <IoMailOutline size={40} className='navbar-buttons'/>
                     </div>
                     <h3 className="contact-method-title">Email Us</h3>
                     <p className="contact-description">
@@ -71,10 +68,6 @@ const Contact = () => {
                         info@ai4cs.in
                       </a>
                     </div>
-                    {/* <div className="contact-hours">
-                      <FaClock className="hours-icon" />
-                      <span>Response within 24 hours</span>
-                    </div> */}
                   </Card.Body>
                 </Card>
               </Col>
@@ -88,7 +81,7 @@ const Contact = () => {
             <Card className="contact-card help-card">
               <Card.Body>
                 <div className="card-icon">
-                  <FaHandshake />
+                  <FaHandshake size={40} className='navbar-buttons'/>
                 </div>
                 <h2 className="section-title">How Can We Help You?</h2>
                 <Row className="g-4">
@@ -175,10 +168,10 @@ const Contact = () => {
               </p>
               <div className="cta-buttons">
                 <a href="tel:+919978062293" className="cta-button cta-phone">
-                  <FaPhone /> Call Now
+                  <IoCallOutline size={20} /> Call Now
                 </a>
                 <a href="mailto:info@ai4cs.in" className="cta-button cta-email">
-                  <FaEnvelope /> Send Email
+                  <IoMailOutline size={20} /> Send Email
                 </a>
               </div>
             </div>

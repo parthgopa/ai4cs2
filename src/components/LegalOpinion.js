@@ -193,10 +193,10 @@ Exclude any introductory notes, prefaces,end notes or disclaimers from the outpu
                   </Form.Text>
                 </Form.Group>
 
-                <Button
+                <button
                   type="submit"
                   variant="primary"
-                  className="w-100 py-2"
+                  className="features-button"
                   disabled={loading}
                 >
                   {loading ? (
@@ -210,7 +210,7 @@ Exclude any introductory notes, prefaces,end notes or disclaimers from the outpu
                       Conduct Legal Opinion
                     </>
                   )}
-                </Button>
+                </button>
               </Form>
             </Card.Body>
           </Card>

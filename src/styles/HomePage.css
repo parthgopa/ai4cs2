@@ -131,8 +131,7 @@
 }
 
 .hero-cta:hover, .hero-cta:focus {
-  background-color: var(--primary-color-dark);
-  border-color: var(--primary-color-dark);
+  /* border-color: var(--primary-color-dark); */
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(var(--primary-color-rgb), 0.35);
 }
@@ -163,3 +162,16 @@
     font-size: 1rem;
   }
 }
+
+.chatbot-container-outside {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 350px;
+  max-width: 90vw;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+

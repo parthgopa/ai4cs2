@@ -207,7 +207,7 @@ Exclude any introductory notes, prefaces, end notes or disclaimers from the outp
 
 
 
-              <button type="submit" className="btn btn-primary" disabled={loading || formData.quarterlyOptions.length === 0}>
+              <button type="submit" className="features-button" disabled={loading || formData.quarterlyOptions.length === 0}>
                 {loading ? (
                   <>
                     <FaSpinner className="spinner me-2" />

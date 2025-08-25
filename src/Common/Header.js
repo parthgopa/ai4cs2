@@ -16,29 +16,41 @@ const Header = () => {
         <Navbar.Brand as={Link} to="/" className="brand">
           {/*Add a image logo*/}
           <div className="logo-container">
-            <img src="/logo.jpg" alt="Logo" className="logo" />
+            <img src="/logo2.jpg" alt="Logo" className="logo" />
           </div>
         </Navbar.Brand>
-        <Navbar.Toggle 
-          aria-controls="main-offcanvas" 
-          onClick={() => setShowMenu(true)}
-          className="custom-toggler ms-auto ms-lg-4"
-        >
-          <div className="toggle-icon">
-            <span className="toggle-bar"></span>
-            <span className="toggle-bar"></span>
-            <span className="toggle-bar"></span>
-          </div>
-        </Navbar.Toggle>
-        <Button 
-          onClick={toggleTheme} 
-          variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
-          size="sm" 
-          className="theme-toggle-btn d-none d-lg-flex ms-3"
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? <BsFillSunFill size={18} /> : <BsFillMoonFill size={18} />}
-        </Button>
+        <div className="d-flex align-items-right">
+          <Button 
+            onClick={toggleTheme} 
+            variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
+            size="sm" 
+            className="theme-toggle-btn d-none d-lg-flex align-items-center me-2"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? (
+              <>
+                <BsFillSunFill size={16} className="me-1" /> 
+                <span className="theme-text">Light</span>
+              </>
+            ) : (
+              <>
+                <BsFillMoonFill size={16} className="me-1" /> 
+                <span className="theme-text">Dark</span>
+              </>
+            )}
+          </Button>
+          <Navbar.Toggle 
+            aria-controls="main-offcanvas" 
+            onClick={() => setShowMenu(true)}
+            className="custom-toggler d-lg-none"
+          >
+            <div className="toggle-icon">
+              <span className="toggle-bar"></span>
+              <span className="toggle-bar"></span>
+              <span className="toggle-bar"></span>
+            </div>
+          </Navbar.Toggle>
+        </div>
         <Navbar.Offcanvas
           id="main-offcanvas"
           aria-labelledby="main-offcanvas-label"
@@ -51,7 +63,7 @@ const Header = () => {
             <Offcanvas.Title id="main-offcanvas-label" className="offcanvas-title">Menu</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <Nav className="ms-auto align-items-lg-center">
+            <Nav className="align-items-lg-center">
               <Nav.Link as={Link} to="/" className="nav-link" onClick={() => setShowMenu(false)}> <IoHomeOutline size={20} className='navbar-buttons'/> Home</Nav.Link>
               <Nav.Link as={Link} to="/about" className="nav-link" onClick={() => setShowMenu(false)}> <IoInformationCircleOutline size={20} className='navbar-buttons'/> About</Nav.Link>
               <Nav.Link as={Link} to="/contact" className="nav-link" onClick={() => setShowMenu(false)}> <IoCallOutline size={20} className='navbar-buttons'/> Contact Us</Nav.Link>
