@@ -1,45 +1,74 @@
 :root {
     /* Light Theme (Default) */
-    --primary-blue: #064991;
-    --secondary-blue: #2c88d9;
-    --accent-color: #e0ecf9;
-    --light-gray: #e5e7e8;
+    --primary-blue: #0b5ed7; /* brand primary */
+    --secondary-blue: #4ba3f5; /* supporting accent */
+    --accent-color: #e8f1fd; /* soft blue surface */
+    --light-gray: #f6f8fb; /* app background */
     --medium-gray: #6c757d;
     --dark-gray: #343a40;
     --white: #ffffff;
-    --dark-text: #212529;
+    --dark-text: #0f172a;
     --light-text: #f8f9fa;
-  
+
     /* Default theme variables */
     --background-color: var(--light-gray);
     --text-color: var(--dark-text);
-    --primary-color: black;
+    --primary-color: var(--primary-blue);
     --secondary-color: var(--secondary-blue);
     --card-bg: var(--white);
     --header-footer-bg: var(--white);
-    --border-color: #dee2e6;
+    --border-color: #e5e7eb;
+
+    /* HomePage specific helpers (light) */
+    --hero-gradient-end: #f8fafc;
+    --icon-bg: rgba(11, 94, 215, 0.08);
+    --focus-ring: rgba(11, 94, 215, 0.25);
+    --muted-color: #5c6570;
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.10);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --image-filter: none;
   }
   
   /* Dark theme variables */
   .dark-theme {
-    --background-color: #1a2130;
-    --text-color: var(--light-text);
-    --primary-color: #3b78b8;
-    --secondary-color: #3b78b8; 
-    --card-bg: #283447;
-    --header-footer-bg: #1a2130;
-    --border-color: #4a5568;
-  }
+    --background-color: #0f172a; /* slate-900 */
+    --text-color: #e5e7eb; /* slate-200 */
+    --primary-color: #6debf5; /* blue-400 */
+    --secondary-color: #93c5fd; /* blue-300 */
+    --accent-color: #1e293b; /* slate-800 */
+    --card-bg: #111827; /* gray-900 */
+    --header-footer-bg: #0f172a; /* match body for seamless */
+    --border-color: #334155; /* slate-700 */
 
+    /* HomePage specific helpers (dark) */
+    --hero-gradient-end: #0b1222; /* subtle darker end */
+    --icon-bg: rgba(96, 165, 250, 0.15);
+    --focus-ring: rgba(96, 165, 250, 0.35);
+    --muted-color: #94a3b8; /* slate-400 */
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --image-filter: brightness(0.98) contrast(1.03);
+  }
+  
 /* Light theme variables */
 .light-theme {
   --background-color: var(--light-gray);
   --text-color: var(--dark-text);
   --primary-color: var(--primary-blue);
-  --secondary-color: var(--primary-blue);
+  --secondary-color: var(--secondary-blue);
   --card-bg: var(--white);
   --header-footer-bg: var(--white);
-  --border-color: #e1e1e1;
+  --border-color: #e5e7eb;
+  --hero-gradient-end: #f8fafc;
+  --icon-bg: rgba(11, 94, 215, 0.08);
+  --focus-ring: rgba(11, 94, 215, 0.25);
+  --muted-color: #5c6570;
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --image-filter: none;
 }
 
 body {

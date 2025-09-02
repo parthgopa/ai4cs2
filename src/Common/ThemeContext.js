@@ -5,9 +5,16 @@ export const ThemeContext = createContext();
 
 // Theme provider component
 export const ThemeProvider = ({ children }) => {
-  // Check if user has a saved theme preference
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  const [theme, setTheme] = useState(savedTheme);
+  // Determine initial theme: saved preference or system preference
+  const getInitialTheme = () => {
+    const stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  };
+  const [theme, setTheme] = useState(getInitialTheme);
 
   // Toggle theme function
   const toggleTheme = () => {

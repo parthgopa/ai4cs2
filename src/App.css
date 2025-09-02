@@ -5,11 +5,11 @@
   min-height: 100vh;
 }
 
-.main-content {
+/* .main-content {
   flex: 1;
   padding-top: 1rem;
   padding-bottom: 2rem;
-}
+} */
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {

@@ -2,11 +2,11 @@ import axios from "axios";
 
 const APIService = async ({ question, onResponse }) => {
   // const API_KEY = "AIzaSyAiUqUOYbZs2blgfFRBiD6XGyBeZKTiQRI";
-  const API_KEY = "AIzaSyDAwwkHabXKN7vAhN9Akf7YunjFJ2D67CI";
+  const API_KEY = "AIzaSyAqer8lSgxUPRLune-U57cEtVmRcKBS0kQ";
 
   try {
     const response = await axios({
-      url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
+      url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
       method: "POST",
       data: {
         contents: [{ parts: [{ text: question }] }],
