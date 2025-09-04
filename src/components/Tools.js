@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Tools.css';
 // Import icons
-import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook } from 'react-icons/fa';
+import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook, FaFileAlt } from 'react-icons/fa';
 import { MdUpdate, MdAssessment, MdOutlineAppRegistration } from 'react-icons/md';
 // Import ComingSoonModal component
 import ComingSoonModal from './ComingSoonModal';
@@ -70,6 +70,12 @@ const Tools = () => {
       title: 'Procedure and Practice',
       category: 'Compliance',
       icon: <FaClipboardList />,
+    },
+    {
+      id: 'forms',
+      title: 'Forms',
+      category: 'Compliance',
+      icon: <FaFileAlt />,
     },
     {
       id: 'policy-drafting',
@@ -144,7 +150,8 @@ const Tools = () => {
     'reply-to-notice-roc',
     'board-meeting-assistant',
     'general-meeting-assistant',
-    'petetion-preparator'
+    'petetion-preparator',
+    'forms'
   ]);
 
   // Get unique categories for filtering
@@ -201,6 +208,8 @@ const Tools = () => {
       navigate('/board-meeting-assistant');
     } else if (id === 'general-meeting-assistant') {
       navigate('/general-meeting-assistant');
+    } else if (id === 'forms') {
+      navigate('/forms');
     } else {
       openComingSoonModal(title);
     }

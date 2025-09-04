@@ -147,11 +147,11 @@ User query - "${formData.userQuery}"`;
                 </Row>
 
                 <div className="text-center">
-                  <Button
+                  <button
                     variant="primary"
                     type="submit"
                     disabled={loading || !formData.userQuery.trim()}
-                    className="submit-btn"
+                    className="features-button"
                   >
                     {loading ? (
                       <>
@@ -164,7 +164,7 @@ User query - "${formData.userQuery}"`;
                         Conduct Legal Research
                       </>
                     )}
-                  </Button>
+                  </button>
                 </div>
               </Form>
 

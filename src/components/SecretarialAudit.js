@@ -190,7 +190,7 @@ try {
                 </Form.Select>
               </Form.Group>
 
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              <button type="submit" className="features-button" disabled={loading}>
                 {loading ? 'Generating Audit Report...' : 'Generate Secretarial Audit Report'}
               </button>
             </Form>

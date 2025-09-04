@@ -96,7 +96,7 @@ const DocumentManagementPolicy = () => {
                 />
               </Form.Group>
 
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              <button type="submit" className="features-button" disabled={loading}>
                 {loading ? (
                   <>
                     <FaSpinner className="spinner me-2" />

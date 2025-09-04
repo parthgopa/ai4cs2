@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
+import { Card, Form, Container, Row, Col } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
 import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/fa';
@@ -84,7 +84,7 @@ const CSRPolicy = () => {
                 />
               </Form.Group>
 
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
                 {loading ? (
                   <>
                     <FaSpinner className="spinner me-2" />
@@ -109,9 +109,8 @@ const CSRPolicy = () => {
             <h2 className="card-title" style={{ marginBottom: '12px' }}>CSR Policy</h2>
             <Card className="output-card">
               <div className="d-flex justify-content-end mt-3">
-                <Button
-                  variant="outline-primary"
-                  className="me-2"
+                <button
+                  className="btn btn-outline-primary me-2"
                   onClick={() => {
                     navigator.clipboard.writeText(response);
                     alert('Copied to clipboard!');
@@ -119,9 +118,9 @@ const CSRPolicy = () => {
                 >
                   <FaCopy className="me-1" />
                   <span className="d-none d-sm-inline">Copy to Clipboard</span>
-                </Button>
-                <Button
-                  variant="outline-danger"
+                </button>
+                <button
+                  className="btn btn-outline-danger me-2"
                   onClick={() => {
                     const { generatePDF } = PDFGenerator({
                       content: response,
@@ -130,13 +129,12 @@ const CSRPolicy = () => {
                     });
                     generatePDF();
                   }}
-                  className="me-2"
                 >
                   <FaFilePdf className="me-1" />
                   <span className="d-none d-sm-inline">Download PDF</span>
-                </Button>
-                <Button
-                  variant="outline-success"
+                </button>
+                <button
+                  className="btn btn-outline-success"
                   onClick={() => {
                     const { generateWord } = WordGenerator({
                       content: response,
@@ -148,7 +146,7 @@ const CSRPolicy = () => {
                 >
                   <FaFileWord className="me-1" />
                   <span className="d-none d-sm-inline">Download Word</span>
-                </Button>
+                </button>
               </div>
               <div className="markdown-content">
                 <ReactMarkdown>{response}</ReactMarkdown>

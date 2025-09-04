@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import '../styles/Footer.css';
-import { FaPhone, FaEnvelope } from 'react-icons/fa';
+import { IoCallOutline, IoMailOutline } from 'react-icons/io5';
 
 
 const Footer = () => {
@@ -25,12 +25,12 @@ const Footer = () => {
             <address className="footer-contact">
               <p>
                 <a href="tel:+919978062293" aria-label="Call AI4CS">
-                  <FaPhone />  +91 9978062293
+                  <IoCallOutline />  +91 9978062293
                 </a>
               </p>
               <p>
                 <a href="mailto:info@ai4cs.in" aria-label="Email AI4CS">
-                  <FaEnvelope /> info@ai4cs.in
+                  <IoMailOutline /> info@ai4cs.in
                 </a>
               </p>
             </address>

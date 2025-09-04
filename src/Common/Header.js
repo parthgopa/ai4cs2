@@ -5,10 +5,14 @@ import '../styles/Header.css';
 import { ThemeContext } from './ThemeContext';
 import { IoHomeOutline, IoInformationCircleOutline, IoCallOutline } from 'react-icons/io5';
 import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs';
+import Chatbot from '../components/Chatbot';
 
 const Header = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [showMenu, setShowMenu] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  
+  const toggleChatbot = () => setIsChatbotOpen(!isChatbotOpen);
 
   return (
     <Navbar expand="lg" sticky="top" variant={theme === 'dark' ? 'dark' : 'light'} className="header-navbar shadow-sm">
@@ -19,26 +23,69 @@ const Header = () => {
             <img src="/logo.jpg" alt="Logo" className="logo" />
           </div>
         </Navbar.Brand>
-        <Navbar.Toggle 
-          aria-controls="main-offcanvas" 
-          onClick={() => setShowMenu(true)}
-          className="custom-toggler ms-auto ms-lg-4"
-        >
-          <div className="toggle-icon">
-            <span className="toggle-bar"></span>
-            <span className="toggle-bar"></span>
-            <span className="toggle-bar"></span>
-          </div>
-        </Navbar.Toggle>
-        <Button 
-          onClick={toggleTheme} 
-          variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
-          size="sm" 
-          className="theme-toggle-btn d-none d-lg-flex ms-3"
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? <BsFillSunFill size={18} /> : <BsFillMoonFill size={18} />}
-        </Button>
+        
+        {/* Chatbot Toggle Button - Center */}
+        <div className="chatbot-header-toggle d-flex justify-content-center flex-grow-1">
+          <Button 
+            className="chatbot-toggle-header d-none d-lg-flex"
+            onClick={toggleChatbot}
+            aria-label="Toggle AI Assistant"
+            variant="outline-primary"
+          >
+            <img src="/images/chatbot.jpg" alt="AI Assistant" className="chatbot-image" />
+            <div className="ms-2" style={{ fontWeight: 'bold',fontSize: '18px',alignItems: 'center',display: 'flex' }}>AI Assistant</div>
+          </Button>
+          
+          {/* Mobile Chatbot Image Toggle */}
+          <Button 
+            className="chatbot-toggle-image d-lg-none"
+            onClick={toggleChatbot}
+            aria-label="Toggle AI Assistant"
+          >
+            <img 
+              src="/images/chatbot.jpg" 
+              alt="AI Assistant"
+              className="chatbot-image-mobile"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.style.display = 'none';
+              }}
+            />
+          </Button>
+        </div>
+        
+        <div className="d-flex align-items-right">
+          <Button 
+            onClick={toggleTheme} 
+            variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
+            size="sm" 
+            className="theme-toggle-btn d-none d-lg-flex align-items-center me-2"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? (
+              <>
+                <BsFillSunFill size={16} className="me-1" /> 
+                <span className="theme-text">Light</span>
+              </>
+            ) : (
+              <>
+                <BsFillMoonFill size={16} className="me-1" /> 
+                <span className="theme-text">Dark</span>
+              </>
+            )}
+          </Button>
+          <Navbar.Toggle 
+            aria-controls="main-offcanvas" 
+            onClick={() => setShowMenu(true)}
+            className="custom-toggler d-lg-none"
+          >
+            <div className="toggle-icon">
+              <span className="toggle-bar"></span>
+              <span className="toggle-bar"></span>
+              <span className="toggle-bar"></span>
+            </div>
+          </Navbar.Toggle>
+        </div>
         <Navbar.Offcanvas
           id="main-offcanvas"
           aria-labelledby="main-offcanvas-label"
@@ -51,7 +98,7 @@ const Header = () => {
             <Offcanvas.Title id="main-offcanvas-label" className="offcanvas-title">Menu</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <Nav className="ms-auto align-items-lg-center">
+            <Nav className="align-items-lg-center ms-lg-auto">
               <Nav.Link as={Link} to="/" className="nav-link" onClick={() => setShowMenu(false)}> <IoHomeOutline size={20} className='navbar-buttons'/> Home</Nav.Link>
               <Nav.Link as={Link} to="/about" className="nav-link" onClick={() => setShowMenu(false)}> <IoInformationCircleOutline size={20} className='navbar-buttons'/> About</Nav.Link>
               <Nav.Link as={Link} to="/contact" className="nav-link" onClick={() => setShowMenu(false)}> <IoCallOutline size={20} className='navbar-buttons'/> Contact Us</Nav.Link>
@@ -71,6 +118,9 @@ const Header = () => {
           </Offcanvas.Body>
         </Navbar.Offcanvas>
       </Container>
+      
+      {/* Chatbot Component */}
+      <Chatbot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />
     </Navbar>
   );
 };

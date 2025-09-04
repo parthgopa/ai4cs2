@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
-// Import Chatbot component
-import Chatbot from './Chatbot';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  
-  // State for chatbot visibility
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  
-  // Function to toggle chatbot visibility
-  const toggleChatbot = () => setIsChatbotOpen(!isChatbotOpen);
   
   // Function to navigate to tools page
   const navigateToTools = () => {
@@ -26,9 +18,9 @@ const HomePage = () => {
     <main className="home-page">
       {/* Hero Section */}
       <section className="hero-section">
-        <Container>
+        <Container fluid className="px-2">
           <Row className="justify-content-center">
-            <Col lg={8} xl={7} className="text-center">
+            <Col xs={12} sm={11} md={10} lg={8} xl={7} className="text-center">
               <div className="hero-content">
                 <h1 className="hero-title">Unlock AI-Powered Efficiency in Your Practice</h1>
                 <div className="hero-description">
@@ -48,36 +40,17 @@ const HomePage = () => {
                   
                   <p>Experience the transformative power of AI and elevate your practice to new heights. Join the future of company secretarial services with AI4CS.in and discover a more efficient, accurate, and compliant way to work.</p>
                 </div>
-                <Button 
-                  className="hero-cta"
+                <button 
+                  className="global-button"
                   onClick={navigateToTools}
                 >
                   Explore Tools
-                </Button>
+                </button>
               </div>
             </Col>
           </Row>
         </Container>
       </section>
-
-      {/* Chatbot Toggle Button */}
-      <Button 
-        className="chatbot-toggle"
-        onClick={toggleChatbot}
-        aria-label="Toggle AI Assistant"
-      >
-        <img 
-          src="/images/chatbot.jpg" 
-          alt="AI Assistant"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.style.display = 'none';
-          }}
-        />
-      </Button>
-      
-      {/* Chatbot Component */}
-      <Chatbot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />
     </main>
   );
 };

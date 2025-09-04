@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
+import { Card, Form, Container, Row, Col } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
 import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaBalanceScale, FaSearch } from 'react-icons/fa';
@@ -149,150 +149,132 @@ Exclude any introductory notes, prefaces,end notes or disclaimers from the outpu
 
       <Row className="justify-content-center">
         <Col md={10}>
-          <Card className="input-card shadow-sm">
-            <Card.Body>
-              <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
-                <Form.Group className="form-group mb-4">
-                  <Form.Label className="form-label fw-bold">Legal Query</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={6}
-                    name="legalQuery"
-                    value={formData.legalQuery}
-                    onChange={handleInputChange}
-                    placeholder="Enter your legal query related to the Companies Act, 2013..."
-                    required
-                    className="form-control"
-                  />
-                  <Form.Text className="text-muted">
-                    Provide detailed context for a more accurate legal opinion.
-                  </Form.Text>
-                </Form.Group>
+          <Card className="input-card">
+            <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Legal Query</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={6}
+                  name="legalQuery"
+                  value={formData.legalQuery}
+                  onChange={handleInputChange}
+                  placeholder="Enter your legal query related to the Companies Act, 2013..."
+                  required
+                  className="form-control"
+                />
+                <Form.Text className="text-muted">
+                  Provide detailed context for a more accurate legal opinion.
+                </Form.Text>
+              </Form.Group>
 
-                <Form.Group className="form-group mb-4">
-                  <Form.Label className="form-label fw-bold">Output Format</Form.Label>
-                  <Form.Select
-                    name="outputFormat"
-                    value={formData.outputFormat}
-                    onChange={handleInputChange}
-                    className="form-control"
-                    required
-                  >
-                    {outputFormats.map((format) => (
-                      <option key={format} value={format}>{format}</option>
-                    ))}
-                  </Form.Select>
-                  <Form.Text className="text-muted">
-                    Select the format that best suits your needs:
-                    <ul className="mt-2 small">
-                      <li><strong>Concise Opinion Note:</strong> Brief, practical advice with key points</li>
-                      <li><strong>Detailed Compliance Memo:</strong> Comprehensive analysis with full legal citations</li>
-                      <li><strong>Board Note:</strong> Decision-ready document with draft resolution</li>
-                      <li><strong>Executive Summary:</strong> Dashboard-style overview with risk assessment</li>
-                    </ul>
-                  </Form.Text>
-                </Form.Group>
-
-                <Button
-                  type="submit"
-                  variant="primary"
-                  className="w-100 py-2"
-                  disabled={loading}
+              <Form.Group className="form-group">
+                <Form.Label className="form-label">Output Format</Form.Label>
+                <Form.Select
+                  name="outputFormat"
+                  value={formData.outputFormat}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
                 >
-                  {loading ? (
-                    <>
-                      <FaSpinner className="spinner me-2" />
-                      Researching...
-                    </>
-                  ) : (
-                    <>
-                      <FaSearch className="me-2" />
-                      Conduct Legal Opinion
-                    </>
-                  )}
-                </Button>
-              </Form>
-            </Card.Body>
+                  {outputFormats.map((format) => (
+                    <option key={format} value={format}>{format}</option>
+                  ))}
+                </Form.Select>
+                <Form.Text className="text-muted">
+                  Select the format that best suits your needs:
+                  <ul className="mt-2 small">
+                    <li><strong>Concise Opinion Note:</strong> Brief, practical advice with key points</li>
+                    <li><strong>Detailed Compliance Memo:</strong> Comprehensive analysis with full legal citations</li>
+                    <li><strong>Board Note:</strong> Decision-ready document with draft resolution</li>
+                    <li><strong>Executive Summary:</strong> Dashboard-style overview with risk assessment</li>
+                  </ul>
+                </Form.Text>
+              </Form.Group>
+
+              <button
+                type="submit"
+                className="btn btn-primary btn-block"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <FaSpinner className="spinner me-2" />
+                    Researching...
+                  </>
+                ) : (
+                  <>
+                    <FaSearch className="me-2" />
+                    Conduct Legal Opinion
+                  </>
+                )}
+              </button>
+            </Form>
           </Card>
         </Col>
       </Row>
 
-      {loading && (
-        <Row className="justify-content-center mt-4">
-          <Col md={10}>
-            <div className="loading-container text-center py-5">
-              <FaSpinner style={{ animation: 'spin 1s linear infinite', fontSize: '3rem', color: '#0d6efd' }} />
-              <p className="mt-3 text-muted">Analyzing legal context and preparing opinion...</p>
-            </div>
-          </Col>
-        </Row>
-      )}
-
       {response && (
-        <Row className="justify-content-center mt-4">
+        <Row className="justify-content-center">
           <Col md={10}>
-            <Card className="output-card shadow">
-              <Card.Header className="bg-light d-flex justify-content-between align-items-center">
-                <h3 className="mb-0 fs-5">{formData.outputFormat}</h3>
-                <div className="d-flex">
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => {
-                      navigator.clipboard.writeText(response);
-                      alert('Copied to clipboard!');
-                    }}
-                  >
-                    <FaCopy className="me-1" />
-                    <span className="d-none d-sm-inline">Copy</span>
-                  </Button>
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => {
-                      const { generatePDF } = PDFGenerator({
-                        content: response,
-                        fileName: `legal-opinion-${new Date().toISOString().split('T')[0]}.pdf`,
-                        title: `Legal Opinion - ${formData.outputFormat}`
-                      });
-                      generatePDF();
-                    }}
-                    className="me-2"
-                  >
-                    <FaFilePdf className="me-1" />
-                    <span className="d-none d-sm-inline">PDF</span>
-                  </Button>
-                  <Button
-                    variant="outline-success"
-                    size="sm"
-                    onClick={() => {
-                      const { generateWord } = WordGenerator({
-                        content: response,
-                        fileName: `legal-opinion-${new Date().toISOString().split('T')[0]}.docx`,
-                        title: `Legal Opinion - ${formData.outputFormat}`
-                      });
-                      generateWord();
-                    }}
-                  >
-                    <FaFileWord className="me-1" />
-                    <span className="d-none d-sm-inline">Word</span>
-                  </Button>
+            <Card className="output-card">
+              <div className="d-flex justify-content-end mb-3">
+                <button
+                  className="btn btn-outline-primary me-2"
+                  onClick={() => {
+                    navigator.clipboard.writeText(response);
+                    alert('Copied to clipboard!');
+                  }}
+                >
+                  <FaCopy className="me-1" />
+                  Copy
+                </button>
+                <button
+                  className="btn btn-outline-danger me-2"
+                  onClick={() => {
+                    const { generatePDF } = PDFGenerator({
+                      content: response,
+                      fileName: `legal-opinion-${new Date().toISOString().split('T')[0]}.pdf`,
+                      title: `Legal Opinion - ${formData.outputFormat}`
+                    });
+                    generatePDF();
+                  }}
+                >
+                  <FaFilePdf className="me-1" />
+                  PDF
+                </button>
+                <button
+                  className="btn btn-outline-success"
+                  onClick={() => {
+                    const { generateWord } = WordGenerator({
+                      content: response,
+                      fileName: `legal-opinion-${new Date().toISOString().split('T')[0]}.docx`,
+                      title: `Legal Opinion - ${formData.outputFormat}`
+                    });
+                    generateWord();
+                  }}
+                >
+                  <FaFileWord className="me-1" />
+                  Word
+                </button>
+              </div>
+              <div className="markdown-content legal-opinion-content">
+                <ReactMarkdown
+                  components={{
+                    strong: RedStrong,
+                  }}
+                >{response}</ReactMarkdown>
+                <div>
+                  Disclaimer:
+                  This {formData.outputFormat} is prepared based on the facts and legal position provided or understood as of the date of issuance. It is intended solely for internal use by the requesting party for advisory purposes.
+                  While due care has been taken in analyzing the provisions of the Companies Act, 2013 and applicable legal sources, this {formData.outputFormat} does not constitute a binding legal position nor substitute formal legal representation or adjudication.
+                  No liability shall arise on the part of the author or advisor for reliance placed on this {formData.outputFormat}, especially where facts are misstated, incomplete, or have changed. Independent legal advice is recommended for high-risk or transaction-specific decisions.
+                  This view point is issued in good faith and without prejudice to any legal rights or remedies.
                 </div>
-              </Card.Header>
-              <Card.Body>
-                <div className="markdown-content legal-opinion-content">
-                  <ReactMarkdown
-                    components={{
-                      // Override the default 'strong' component with our custom 'RedStrong' component
-                      strong: RedStrong,
-                    }}
-                  >{response}</ReactMarkdown>
-                </div>
-              </Card.Body>
-              <Card.Footer className="bg-light">
+              </div>
+              <div className="mt-3">
                 <AIDisclaimer variant="light" />
-              </Card.Footer>
+              </div>
             </Card>
           </Col>
         </Row>
@@ -304,7 +286,7 @@ Exclude any introductory notes, prefaces,end notes or disclaimers from the outpu
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
-        .spin-animation {
+        .spinner {
           animation: spin 1s linear infinite;
         }
         .legal-opinion-content {
@@ -338,6 +320,19 @@ Exclude any introductory notes, prefaces,end notes or disclaimers from the outpu
           border-left: 4px solid #ced4da;
           padding-left: 1rem;
           color: #6c757d;
+        }
+        .dark-theme .legal-opinion-content,
+        .dark-theme .legal-opinion-content * {
+          color: var(--text-color) !important;
+        }
+        .dark-theme .legal-opinion-content h1,
+        .dark-theme .legal-opinion-content h2,
+        .dark-theme .legal-opinion-content h3,
+        .dark-theme .legal-opinion-content h4 {
+          color: var(--primary-color) !important;
+        }
+        .dark-theme .legal-opinion-content table th {
+          background-color: var(--accent-color);
         }
       `}</style>
     </Container>

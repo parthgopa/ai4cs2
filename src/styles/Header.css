@@ -7,7 +7,7 @@
 .brand {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   margin: 0;
   padding: 0.5rem 0;
 }
@@ -98,14 +98,18 @@
 .logo-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 5px;
 }
-
-.logo {
-  height: 100px;
-  width: 100px;
+.chatbot-image{
+  height: 40px;
+  width: 40px;
   border-radius: 50%;
+}
+.logo {
+  height: 60px;
+  width: 60px;
+  /* border-radius: 50%; */
   object-fit: cover;
   transition: transform 0.3s ease;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
@@ -118,66 +122,51 @@
 }
 
 .theme-toggle-btn {
-  width: 38px;
   height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  padding: 0;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  white-space: nowrap;
 }
 
+.theme-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Large screen layout - nav links on the right */
 @media (min-width: 992px) {
   .header-navbar .container {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
     align-items: center;
-  }
-  
-  .brand {
-    grid-column: 2;
-    text-align: center;
+    justify-content: space-between;
   }
   
   .navbar-nav {
-    grid-column: 3;
-    justify-self: end;
-  }
-  
-  .custom-toggler {
-    grid-column: 3;
-    justify-self: end;
-  }
-  
-  .theme-toggle-btn {
-    grid-column: 1;
-    justify-self: start;
+    margin-left: auto !important;
   }
 }
 
 @media (max-width: 991px) {
   .logo {
-    height: 100px;
-    width: 100px;
-    margin: 0 auto;
-  }
-  
-  .brand {
-    margin: 0 auto;
+    height: 50px;
+    width: 50px;
   }
 }
 
 @media (max-width: 768px) {
   .logo {
-    height: 100px;
-    width: 100px;
+    height: 45px;
+    width: 45px;
   }
 }
 
 @media (max-width: 576px) {
   .logo {
-    height: 80px;
-    width: 80px;
+    height: 40px;
+    width: 40px;
   }
 }
 
@@ -279,11 +268,9 @@
 
 @media (max-width: 480px) {
   .logo{
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    margin-left:80px
+    height: 55px;
+    width: 55px;
+    /* border-radius: 50%; */
   }
-
 }
 

@@ -265,7 +265,7 @@ Omit any preface note, conclusion note, end note and disclaimer.
                 </Form.Text>
               </Form.Group>
 
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              <button type="submit" className="features-button" disabled={loading}>
                 {loading ? (
                   <>
                     <FaSpinner className="me-2" animation="spin" />

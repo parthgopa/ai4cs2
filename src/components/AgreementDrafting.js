@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
+import { Card, Form, Container, Row, Col } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
 import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/fa';
@@ -408,7 +408,7 @@ console.log(prompt);
                 />
               </Form.Group>
 
-              <button onClick={handleSubmit} className="btn btn-primary" disabled={loading}>
+              <button onClick={handleSubmit} className="btn btn-primary btn-block" disabled={loading}>
                 {loading ? (
                   <>
                     <FaSpinner className="spinner me-2" />
@@ -422,7 +422,7 @@ console.log(prompt);
                 )}
               </button>
 
-              <button onClick={handleTemplateSubmit} className="btn btn-primary ms-2" disabled={loading}>
+              <button onClick={handleTemplateSubmit} className="btn btn-outline-secondary ms-2" disabled={loading}>
                 {templateLoading ? (
                   <>
                     <FaSpinner className="spinner me-2" />
@@ -453,10 +453,9 @@ console.log(prompt);
             )}
             {/* <h2 className="card-title" style={{ marginBottom: '12px' }}>Between {formData.partyAName} and {formData.partyBName}</h2> */}
             <Card className="output-card">
-              <div className="d-flex justify-content-end mt-3">
-                <Button
-                  variant="outline-primary"
-                  className="me-2"
+              <div className="d-flex justify-content-end mb-3">
+                <button
+                  className="btn btn-outline-primary me-2"
                   onClick={() => {
                     navigator.clipboard.writeText(response);
                     alert('Copied to clipboard!');
@@ -464,9 +463,9 @@ console.log(prompt);
                 >
                   <FaCopy className="me-1" />
                   <span className="d-none d-sm-inline">Copy to Clipboard</span>
-                </Button>
-                <Button
-                  variant="outline-danger"
+                </button>
+                <button
+                  className="btn btn-outline-danger me-2"
                   onClick={() => {
                     const { generatePDF } = PDFGenerator({
                       content: response,
@@ -475,13 +474,12 @@ console.log(prompt);
                     });
                     generatePDF();
                   }}
-                  className="me-2"
                 >
                   <FaFilePdf className="me-1" />
                   <span className="d-none d-sm-inline">Download PDF</span>
-                </Button>
-                <Button
-                  variant="outline-success"
+                </button>
+                <button
+                  className="btn btn-outline-success"
                   onClick={() => {
                     const { generateWord } = WordGenerator({
                       content: response,
@@ -493,7 +491,7 @@ console.log(prompt);
                 >
                   <FaFileWord className="me-1" />
                   <span className="d-none d-sm-inline">Download Word</span>
-                </Button>
+                </button>
               </div>
               <div className="markdown-content">
                 <ReactMarkdown>{response}</ReactMarkdown>

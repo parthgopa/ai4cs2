@@ -13,28 +13,24 @@ const Chatbot = ({ isOpen, toggleChatbot }) => {
   const messagesEndRef = useRef(null);
   
   // Check if device is small screen
-  const isMobileDevice = () => window.innerWidth <= 768;
+  // const isMobileDevice = () => window.innerWidth <= 768;
 
-  // Auto-scroll to bottom when messages update
+  // Auto-scroll to bottom when messages update (disabled in fullscreen)
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-  
-  // Set full screen mode automatically on small screens
-  useEffect(() => {
-    if (isOpen && isMobileDevice()) {
-      setIsFullScreen(true);
+    if (!isFullScreen) {
+      // scrollToBottom();
     }
-  }, [isOpen]);
+  }, [messages, isFullScreen]);
+  
   
   // Toggle full screen mode
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
