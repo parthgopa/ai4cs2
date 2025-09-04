@@ -78,6 +78,8 @@ body {
   margin: 0;
   padding: 0;
   transition: all 0.3s ease;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 a {
@@ -165,6 +167,16 @@ a:hover {
   transition: border-color 0.2s ease;
 }
 
+.form-control::placeholder {
+  color: var(--text-color);
+  opacity: 0.6;
+}
+
+.dark-theme .form-control::placeholder {
+  color: #e5e7eb;
+  opacity: 0.7;
+}
+
 .form-control:focus {
   border-color: var(--primary-color);
   outline: none;
@@ -183,6 +195,10 @@ a:hover {
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
   background-size: 16px 12px;
+}
+
+.dark-theme .form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23e5e7eb' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
 }
 
 .form-select:focus {
@@ -229,8 +245,20 @@ a:hover {
 
 /* Markdown Output Styles */
 .markdown-content {
-  color: var(--text-color);
+  color: var(--text-color) !important;
   line-height: 1.6;
+  background-color: var(--card-bg);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.dark-theme .markdown-content {
+  color: #e5e7eb !important;
+  background-color: var(--card-bg);
+}
+
+.dark-theme .markdown-content * {
+  color: inherit !important;
 }
 
 .markdown-content h1, 
@@ -239,9 +267,18 @@ a:hover {
 .markdown-content h4, 
 .markdown-content h5, 
 .markdown-content h6 {
-  color: var(--primary-color);
+  color: var(--primary-color) !important;
   margin-top: 1.5rem;
   margin-bottom: 1rem;
+}
+
+.dark-theme .markdown-content h1,
+.dark-theme .markdown-content h2,
+.dark-theme .markdown-content h3,
+.dark-theme .markdown-content h4,
+.dark-theme .markdown-content h5,
+.dark-theme .markdown-content h6 {
+  color: var(--primary-color) !important;
 }
 
 .markdown-content h1 {
@@ -258,16 +295,32 @@ a:hover {
 
 .markdown-content p {
   margin-bottom: 1rem;
+  color: var(--text-color) !important;
+}
+
+.dark-theme .markdown-content p {
+  color: #e5e7eb !important;
 }
 
 .markdown-content ul, 
 .markdown-content ol {
   margin-bottom: 1rem;
   padding-left: 1.5rem;
+  color: var(--text-color) !important;
+}
+
+.dark-theme .markdown-content ul,
+.dark-theme .markdown-content ol {
+  color: #e5e7eb !important;
 }
 
 .markdown-content li {
   margin-bottom: 0.5rem;
+  color: var(--text-color) !important;
+}
+
+.dark-theme .markdown-content li {
+  color: #e5e7eb !important;
 }
 
 .markdown-content table {
@@ -281,12 +334,24 @@ a:hover {
   border: 1px solid var(--border-color);
   padding: 0.75rem;
   text-align: left;
+  color: var(--text-color) !important;
+}
+
+.dark-theme .markdown-content th,
+.dark-theme .markdown-content td {
+  color: #e5e7eb !important;
+  border-color: var(--border-color);
 }
 
 .markdown-content th {
   background-color: var(--accent-color);
-  color: var(--primary-color);
+  color: var(--primary-color) !important;
   font-weight: 600;
+}
+
+.dark-theme .markdown-content th {
+  background-color: var(--accent-color);
+  color: var(--primary-color) !important;
 }
 
 .markdown-content code {
@@ -294,6 +359,12 @@ a:hover {
   padding: 0.2rem 0.4rem;
   border-radius: 3px;
   font-family: monospace;
+  color: var(--text-color) !important;
+}
+
+.dark-theme .markdown-content code {
+  background-color: var(--accent-color);
+  color: #e5e7eb !important;
 }
 
 .markdown-content pre {
@@ -302,6 +373,12 @@ a:hover {
   border-radius: 4px;
   overflow-x: auto;
   margin-bottom: 1.5rem;
+  color: var(--text-color) !important;
+}
+
+.dark-theme .markdown-content pre {
+  background-color: var(--accent-color);
+  color: #e5e7eb !important;
 }
 
 .markdown-content pre code {
@@ -315,7 +392,11 @@ a:hover {
   margin-left: 0;
   margin-right: 0;
   font-style: italic;
-  color: var(--medium-gray);
+  color: var(--medium-gray) !important;
+}
+
+.dark-theme .markdown-content blockquote {
+  color: #94a3b8 !important;
 }
 
 /* Loading Spinner */
@@ -344,6 +425,10 @@ a:hover {
 @media (max-width: 768px) {
   .input-card, .output-card {
     padding: 1rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    width: calc(100% - 1rem);
+    box-sizing: border-box;
   }
   
   .card-title {
@@ -352,6 +437,12 @@ a:hover {
   
   .btn-primary {
     padding: 0.6rem 1.2rem;
+    width: 100%;
+  }
+  
+  .form-control, .form-select {
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .markdown-content h1 {
@@ -364,5 +455,36 @@ a:hover {
   
   .markdown-content h3 {
     font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .input-card, .output-card {
+    padding: 0.75rem;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    width: calc(100% - 0.5rem);
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-label {
+    font-size: 0.9rem;
+  }
+  
+  .form-control, .form-select {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+  
+  .btn-primary {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
   }
 }

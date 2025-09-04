@@ -14,7 +14,7 @@ const Forms = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState('');
+  const [combinedResponse, setCombinedResponse] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,88 +27,111 @@ const Forms = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setResponse('');
+    setCombinedResponse('');
 
-    const prompt = `Provide an exhaustive, event-wise list of statutory forms under the Companies Act, 2013 (and relevant Rules), applicable to all types of companies. For each form, include:
+    const promptPart1 = `Generate a brief list of statutory forms under India's Companies Act, 2013, referencing official MCA data. If any detail is unverified, state "(Verify on MCA)".
 
-Section number (or Rule, where applicable)
+Title "Exhaustive Event-wise List of Statutory Forms under the Companies Act, 2013 "
 
-Short purpose/provision
+Formatting Rules:
+* Use a dot point format only; **no tables**.
+* Bold all headings and sub-headings.
+* Use strict indentation: 1. for main categories, - for forms, and • for form details.
+* For each form, provide the following details in this specific order:
+    * Form:
+    * Section/Rule:
+    * Purpose:
+    * Due Date:
+    * Non-Compliance:
+    * Notes (if any):
 
-Due date (last date for filing)
+**Content Structure**:
+Organize all forms under these exact categories in the specified order:
+1.  Incorporation & Registration
+2.  Annual Filings
+3.  Director & KMP-related
+4.  Charge-related
+5.  Share Capital & Debenture-related
 
-Consequences of non-compliance
-
-Organise the forms under these categories:
-
-Incorporation & Registration
-(e.g. INC-1, INC-2, INC-9, INC-20A, SPICe+ including INC-32 / INC-33 / INC-34)
-
-Annual Filings
-(e.g. MGT-7, MGT-7A, AOC-4, AOC-4 CFS, etc.)
-
-Director & KMP-related
-(e.g. DIR-3, DIR-5, DIR-6, DIR-3 KYC, etc.)
-
-Charge-related
-(e.g. CHG-1, CHG-4, CHG-6, CHG-9, etc.)
-
-Share Capital & Debenture-related
-(e.g. PAS-3, SH-7, SH-8, SH-11)
-
-Forms relating to board meeting and general Meeting 
-
-Dormant & Strike-off filings
-(e.g. MSC-1, MSC-3, STK-2)
-
-Foreign Company filings
-(e.g. FC-1, FC-2, FC-3, FC-4)
-
-Miscellaneous / Event-based
-(e.g. MGT-14, DPT-3, CRA-2, GNL-2, MSME-1, etc.)
-
-Any other forms which are very special and rarely to be file like
-
-Forms Related to Board Meetings and Resolutions
-
-MGT-15: This is a report on the Annual General Meeting (AGM) and is required for listed companies. 
-MGT-11: This form is a proxy form, given to a member so they can appoint a proxy to attend and vote at a company meeting. 
-
-Forms for Specific Company Types or Events
-
-PAS-4: This form is the private placement offer letter. 
-
-INC-28: This form is for filing a certified copy of a court or Tribunal order. 
-
-INC-24: This form is used for an application to change the company name. 
-
-Forms Related to Special Officers or Activities
-
-DIR-5: This form is for an application to surrender a Director Identification Number (DIN). .
-
-ADJ: This is an application for condonation of delay. 
-
-DIR-11: This is an intimation of resignation by a director.
-
-Base the information primarily on MCA (Ministry of Corporate Affairs) official data
-
-Company Name: ${formData.companyName}`;
+Provide brief details for each form in these 5 categories only.
+`;
 
     try {
       await APIService({
-        question: prompt,
+        question: promptPart1,
+        retries: 3,
         onResponse: (data) => {
-          setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const part1Text = data.candidates[0].content.parts[0].text;
+            // Automatically trigger Part 2 API call
+            handlePart2Submit(part1Text);
           } else {
-            setResponse("Sorry, we couldn't generate the forms list. Please try again.");
+            setLoading(false);
+            setCombinedResponse("Sorry, we couldn't generate the forms list. Please try again.");
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse("An error occurred while generating the forms list. Please try again later.");
+      setCombinedResponse("An error occurred while generating the forms list. Please try again later.");
+      console.error("Error:", error);
+    }
+  };
+
+  const handlePart2Submit = async (part1Text) => {
+    const promptPart2 = `Generate a brief list of statutory forms under India's Companies Act, 2013, referencing official MCA data. If any detail is unverified, state "(Verify on MCA)".
+
+Formatting Rules:
+* Use a dot point format only; **no tables**.
+* Bold all headings and sub-headings.
+* Use strict indentation: 1. for main categories, - for forms, and • for form details.
+* For each form, provide the following details in this specific order:
+    * Form:
+    * Section/Rule:
+    * Purpose:
+    * Due Date:
+    * Non-Compliance:
+    * Notes (if any):
+
+**Content Structure**:
+Organize all forms under these exact categories in the specified order:
+6.  Board Meetings & General Meetings
+7.  Dormant & Strike-off filings
+8.  Foreign Company filings
+9.  Miscellaneous / Event-based
+10. Rare/Special Forms
+
+**Concluding Sections**:
+End the entire output with these three appendices in detail:
+1.  Appendix A: Abbreviations (list common acronyms like AGM, KMP, DIN).
+2.  Appendix B: Quick Date Triggers (summarize common timelines, e.g., "within X days of Board approval").
+3.  Revision Log (include version and source).
+
+Provide details for each form in these 5 categories plus the concluding sections.
+`;
+
+    try {
+      await APIService({
+        question: promptPart2,
+        retries: 3,
+        onResponse: (data) => {
+          setLoading(false);
+          if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+            const part2Text = data.candidates[0].content.parts[0].text;
+            const combined = part1Text + '\n\n' + part2Text;
+            setCombinedResponse(combined);
+          } else {
+            const errorMsg = "Sorry, we couldn't generate the second part of the forms list. Please try again.";
+            setCombinedResponse(part1Text + '\n\n' + errorMsg);
+          }
+        }
+      });
+      
+
+    } catch (error) {
+      setLoading(false);
+      const errorMsg = "An error occurred while generating the second part of the forms list. Please try again later.";
+      setCombinedResponse(part1Text + '\n\n' + errorMsg);
       console.error("Error:", error);
     }
   };
@@ -120,9 +143,15 @@ Company Name: ${formData.companyName}`;
     }
   };
 
+
+  // const copyToClipboard = (content) => {
+  //   navigator.clipboard.writeText(content);
+  //   alert('Content copied to clipboard!');
+  // };
+
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(response);
-    alert('Content copied to clipboard!');
+    navigator.clipboard.writeText(combinedResponse);
+    alert('Complete forms list copied to clipboard!');
   };
 
   return (
@@ -163,21 +192,22 @@ Company Name: ${formData.companyName}`;
         </Col>
       </Row>
 
-      {response && (
+      {combinedResponse && (
         <Row className="justify-content-center mt-4">
           <Col md={10}>
+            <h2 className="card-title" style={{marginBottom:'12px'}}>Statutory Forms List for {formData.companyName}</h2>
             <Card className="output-card">
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h3 className="card-title mb-0">Statutory Forms List</h3>
                 <div className="export-buttons">
                   <button onClick={copyToClipboard} className="btn btn-outline-primary me-2">
-                    <FaCopy className="me-1" /> Copy
+                    <FaCopy className="me-1" /> Copy All
                   </button>
                   <button
                     className="btn btn-outline-danger me-2"
                     onClick={() => {
                       const { generatePDF } = PDFGenerator({
-                        content: response,
+                        content: combinedResponse,
                         fileName: `${formData.companyName}_Statutory_Forms_List.pdf`,
                         title: `Statutory Forms List`
                       });
@@ -190,7 +220,7 @@ Company Name: ${formData.companyName}`;
                     className="btn btn-outline-success"
                     onClick={() => {
                       const { generateWord } = WordGenerator({
-                        content: response,
+                        content: combinedResponse,
                         fileName: `${formData.companyName}_Statutory_Forms_List.docx`,
                         title: `Statutory Forms List`
                       });
@@ -201,9 +231,17 @@ Company Name: ${formData.companyName}`;
                   </button>
                 </div>
               </div>
-              <div className="markdown-content">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{response}</ReactMarkdown>
-              </div>
+              
+              {loading ? (
+                <div className="text-center my-4">
+                  <FaSpinner className="spinner me-2" />
+                  <span>Generating complete statutory forms list...</span>
+                </div>
+              ) : (
+                <div className="markdown-content">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{combinedResponse}</ReactMarkdown>
+                </div>
+              )}
             </Card>
           </Col>
         </Row>

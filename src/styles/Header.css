@@ -101,11 +101,15 @@
   justify-content: flex-start;
   padding: 5px;
 }
-
+.chatbot-image{
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+}
 .logo {
   height: 60px;
   width: 60px;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   object-fit: cover;
   transition: transform 0.3s ease;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
@@ -132,13 +136,18 @@
   font-weight: 500;
 }
 
-/* @media (min-width: 992px) {
+/* Large screen layout - nav links on the right */
+@media (min-width: 992px) {
   .header-navbar .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-} */
+  
+  .navbar-nav {
+    margin-left: auto !important;
+  }
+}
 
 @media (max-width: 991px) {
   .logo {
@@ -261,7 +270,7 @@
   .logo{
     height: 55px;
     width: 55px;
-    border-radius: 50%;
+    /* border-radius: 50%; */
   }
 }
 
