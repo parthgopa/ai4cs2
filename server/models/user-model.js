@@ -26,6 +26,38 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     require: false,
   },
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  // Login tracking fields
+  firstLoginDate: {
+    type: Date,
+    default: null,
+  },
+  lastLoginDate: {
+    type: Date,
+    default: null,
+  },
+  loginCount: {
+    type: Number,
+    default: 0,
+  },
+  // Failed login attempt tracking
+  failedLoginAttempts: {
+    type: Number,
+    default: 0,
+  },
+  accountLockedUntil: {
+    type: Date,
+    default: null,
+  },
+  lastFailedLoginAttempt: {
+    type: Date,
+    default: null,
+  },
+}, {
+  timestamps: true
 })
 
 //secure the password with the bcrypt using pre method

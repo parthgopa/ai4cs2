@@ -16,6 +16,16 @@ router.route("/").get(authcontrollers.home);
 router
   .route("/register")
   .post(validate(signupSchema), authcontrollers.register);
+
+// OTP verification endpoints
+router
+  .route("/verify-otp")
+  .post(authcontrollers.verifyOTP);
+
+router
+  .route("/resend-otp")
+  .post(authcontrollers.resendOTP);
+
 router
   .route("/login")
   .post(validate(loginSchema), authcontrollers.login);

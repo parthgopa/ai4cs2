@@ -41,11 +41,12 @@ import CapitalRaisingAdvisoryAgreement from './components/CapitalRaisingAdvisory
 import { Register } from './components/Register';
 import { Login } from './components/Login';
 import { Logout } from './components/Logout';
+import { OTPVerification } from './components/OTPVerification';
 
 // Layout wrapper component to conditionally show header/footer
 function Layout({ children }) {
   const location = useLocation();
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/verify-otp';
 
   if (isAuthPage) {
     return <>{children}</>;
@@ -75,6 +76,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="/verify-otp" element={<OTPVerification />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/resolutions" element={<ResolutionsDraftingPage />} />
             <Route path="/compliance-calendar" element={<ComplianceCalendar />} />

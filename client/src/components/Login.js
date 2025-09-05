@@ -54,11 +54,42 @@ export const Login = () => {
         toast.success("Login Successful");
         navigate("/");
       } else {
-        toast.error(res_data.extraDetails ? res_data.extraDetails : res_data.message);
+        // Check if the error is related to email verification
+        if (res_data.message === "Please verify your email before logging in" || 
+            res_data.message === "Email not verified") {
+          toast.error("Please verify your email first. Redirecting to OTP verification...");
+          setTimeout(() => {
+            navigate("/verify-otp", { state: { email: user.email } });
+          }, 2000);
+        } 
+        // Check if account is locked
+        else if (res_data.accountLocked) {
+          toast.error(res_data.message, {
+            duration: 6000,
+            style: {
+              background: '#dc3545',
+              color: 'white',
+            },
+          });
+        }
+        // Check if this is a failed login attempt with remaining attempts
+        else if (res_data.attemptsRemaining !== undefined) {
+          toast.error(res_data.message, {
+            duration: 4000,
+            style: {
+              background: '#fd7e14',
+              color: 'white',
+            },
+          });
+        } 
+        else {
+          toast.error(res_data.extraDetails ? res_data.extraDetails : res_data.message);
+        }
       }
 
     } catch (error) {
       console.log(error);
+      toast.error("Login failed. Please try again.");
     }
   };
 

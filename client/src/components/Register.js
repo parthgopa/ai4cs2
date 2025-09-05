@@ -50,20 +50,18 @@ export const Register = () => {
       console.log("res from server", res_data.extraDetails);
 
       if (response.ok) {
-
-        //stored the token in localstorage
-        storeTokenInLS(res_data.token);
-        // localStorage.setItem("token", res_data.token);
+        // Clear form data
         setUser({ username: "", email: "", phone: "", password: "" });
-        toast.success("Registration Successful");
-        navigate("/login");
+        toast.success("Registration successful! Please check your email for OTP verification.");
+        // Navigate to OTP verification with email as state
+        navigate("/verify-otp", { state: { email: user.email } });
       } else {
         toast.error(res_data.extraDetails ? res_data.extraDetails : res_data.message);
       }
 
-
     } catch (error) {
       console.log("register ", error);
+      toast.error("Registration failed. Please try again.");
     }
   };
 
