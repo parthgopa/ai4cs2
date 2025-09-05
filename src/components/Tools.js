@@ -80,7 +80,7 @@ const Tools = () => {
     {
       id: 'policy-drafting',
       title: 'Policy Drafting',
-      category: 'Drafting',
+      category: 'Policy',
       icon: <FaClipboardList />,
     },
     {
@@ -92,7 +92,13 @@ const Tools = () => {
     {
       id: 'agreement-drafting',
       title: 'Agreement Drafting',
-      category: 'Drafting',
+      category: 'Agreement',
+      icon: <MdAssessment />,
+    },
+    {
+      id: 'capital-raising-advisory-agreement',
+      title: 'Capital Raising Advisory Agreement',
+      category: 'Agreement',
       icon: <MdAssessment />,
     },
     {
@@ -151,7 +157,8 @@ const Tools = () => {
     'board-meeting-assistant',
     'general-meeting-assistant',
     'petetion-preparator',
-    'forms'
+    'forms',
+    'capital-raising-advisory-agreement'
   ]);
 
   // Get unique categories for filtering
@@ -210,6 +217,8 @@ const Tools = () => {
       navigate('/general-meeting-assistant');
     } else if (id === 'forms') {
       navigate('/forms');
+    } else if (id === 'capital-raising-advisory-agreement') {
+      navigate('/capital-raising-advisory-agreement');
     } else {
       openComingSoonModal(title);
     }

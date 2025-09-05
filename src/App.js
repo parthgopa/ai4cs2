@@ -37,6 +37,7 @@ import PetitionPreparator from './components/PetetionPrepator';
 import BoardMeetingAssistant from './components/BoardMeetingAssistant';
 import GeneralMeetingAssistant from './components/GeneralMeetingAssistant';
 import Forms from './components/Forms';
+import CapitalRaisingAdvisoryAgreement from './components/CapitalRaisingAdvisoryAgreement';
 
 function App() {
   return (
@@ -75,6 +76,7 @@ function App() {
               <Route path="/board-meeting-assistant" element={<BoardMeetingAssistant />} />
               <Route path="/general-meeting-assistant" element={<GeneralMeetingAssistant />} />
               <Route path="/forms" element={<Forms />} />
+              <Route path="/capital-raising-advisory-agreement" element={<CapitalRaisingAdvisoryAgreement />} />
             </Routes>
           </main>
           <Footer />
