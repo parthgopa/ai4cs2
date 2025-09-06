@@ -148,17 +148,17 @@ const Tools = () => {
     'legal-opinion',
     'legal-research',
     'procedure-practice',
+    'forms',
     'policy-drafting',
     'scenario-solver',
     'agreement-drafting',
+    'capital-raising-advisory-agreement',
     'reply-to-notice-rd',
     'reply-to-notice-nclt',
     'reply-to-notice-roc',
+    'petetion-preparator',
     'board-meeting-assistant',
     'general-meeting-assistant',
-    'petetion-preparator',
-    'forms',
-    'capital-raising-advisory-agreement'
   ]);
 
   // Get unique categories for filtering
