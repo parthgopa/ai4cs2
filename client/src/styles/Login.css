@@ -1,0 +1,217 @@
+/* Login Page Styles - Consistent with theme.css */
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--background-color) 0%, var(--hero-gradient-end) 100%);
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.section-registration {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+
+.registration-form {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.registration-form:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.main-heading {
+  color: var(--primary-color);
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-transform: capitalize;
+}
+
+.registration-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.registration-form div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.registration-form label {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
+.registration-form input {
+  padding: 0.8rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.registration-form input::placeholder {
+  color: var(--muted-color);
+  opacity: 0.7;
+}
+
+.registration-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+  transform: translateY(-1px);
+}
+
+/* .btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+} */
+
+.btn-submit {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  margin-top: 1rem;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+}
+
+/* .btn-outline-primary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  width: 100%;
+} */
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.google-login-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.divider {
+  color: var(--muted-color);
+  font-weight: 500;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .section-registration {
+    max-width: 100%;
+  }
+  
+  .main-heading {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-container {
+    padding: 0.5rem;
+  }
+  
+  .registration-form {
+    padding: 1.5rem;
+  }
+  
+  .main-heading {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .registration-form {
+    padding: 1rem;
+  }
+  
+  .main-heading {
+    font-size: 1.5rem;
+  }
+  
+  .registration-form input {
+    padding: 0.8rem;
+  }
+  
+  .btn {
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+/* Dark theme specific adjustments */
+.dark-theme .registration-form input {
+  background-color: var(--accent-color);
+  border-color: var(--border-color);
+}
+
+.dark-theme .registration-form input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.dark-theme .divider::before,
+.dark-theme .divider::after {
+  background-color: var(--border-color);
+}
