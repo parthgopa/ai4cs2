@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/theme.css';
+import './styles/Profile.css';
 
 // Custom Components
 import { ThemeProvider } from './Common/ThemeContext';
@@ -42,6 +43,9 @@ import { Register } from './components/Register';
 import { Login } from './components/Login';
 import { Logout } from './components/Logout';
 import { OTPVerification } from './components/OTPVerification';
+import Profile from './components/Profile';
+import ProfileSettings from './components/ProfileSettings';
+import ProfilePreferences from './components/ProfilePreferences';
 
 // Layout wrapper component to conditionally show header/footer
 function Layout({ children }) {
@@ -103,6 +107,9 @@ function App() {
             <Route path="/general-meeting-assistant" element={<GeneralMeetingAssistant />} />
             <Route path="/forms" element={<Forms />} />
             <Route path="/capital-raising-advisory-agreement" element={<CapitalRaisingAdvisoryAgreement />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/settings" element={<ProfileSettings />} />
+            <Route path="/profile/preferences" element={<ProfilePreferences />} />
           </Routes>
         </Layout>
       </Router>

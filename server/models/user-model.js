@@ -30,6 +30,47 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  // Profile fields
+  profileImage: {
+    type: String,
+    default: null,
+  },
+  designation: {
+    type: String,
+    default: null,
+  },
+  companyName: {
+    type: String,
+    default: null,
+  },
+  companyType: {
+    type: String,
+    default: 'Private Limited Company',
+  },
+  cin: {
+    type: String,
+    default: null,
+  },
+  address: {
+    type: String,
+    default: null,
+  },
+  // User preferences
+  preferences: {
+    autoFillForms: {
+      type: Boolean,
+      default: true,
+    },
+    defaultQuarters: {
+      type: [String],
+      default: [],
+    },
+    darkModePreference: {
+      type: String,
+      default: 'system',
+      enum: ['system', 'light', 'dark'],
+    },
+  },
   // Login tracking fields
   firstLoginDate: {
     type: Date,
