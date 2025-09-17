@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
@@ -6,8 +6,13 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { usePreferences } from '../store/preferences';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const DocumentManagementPolicy = () => {
+  const { getAutofillData, isAutoFillEnabled } = usePreferences();
+  const { trackActivity } = useActivityTracker();
+  
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
 
@@ -15,6 +20,19 @@ const DocumentManagementPolicy = () => {
   const [formData, setFormData] = useState({
     companyName: '',
   });
+
+  // Auto-fill company data when component mounts or preferences change
+  useEffect(() => {
+    if (isAutoFillEnabled) {
+      const autofillData = getAutofillData();
+      if (autofillData.companyName) {
+        setFormData(prev => ({
+          ...prev,
+          companyName: autofillData.companyName
+        }));
+      }
+    }
+  }, [isAutoFillEnabled, getAutofillData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,20 +70,76 @@ const DocumentManagementPolicy = () => {
     Exclude other details from the policy like definitions, purpose, effective date,scope etc.`;
 
     try {
+      // Track activity before API call
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.POLICY_GENERATION,
+        feature: FEATURES.DOCUMENT_MANAGEMENT_POLICY,
+        action: 'Generate Document Management Policy',
+        inputData: {
+          companyName: formData.companyName
+        },
+        metadata: {
+          promptLength: prompt.length
+        }
+      });
+
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.POLICY_GENERATION,
+              feature: FEATURES.DOCUMENT_MANAGEMENT_POLICY,
+              action: 'Document Management Policy Generated Successfully',
+              inputData: {
+                companyName: formData.companyName
+              },
+              outputData: {
+                contentLength: generatedContent.length,
+                success: true
+              }
+            });
           } else {
             setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.POLICY_GENERATION,
+              feature: FEATURES.DOCUMENT_MANAGEMENT_POLICY,
+              action: 'Document Management Policy Generation Failed',
+              inputData: {
+                companyName: formData.companyName
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
       setResponse('An error occurred while processing your request. Please try again.');
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.POLICY_GENERATION,
+        feature: FEATURES.DOCUMENT_MANAGEMENT_POLICY,
+        action: 'Document Management Policy Generation Error',
+        inputData: {
+          companyName: formData.companyName
+        },
+        outputData: {
+          success: false,
+          error: error.message
+        }
+      });
     }
   };
 

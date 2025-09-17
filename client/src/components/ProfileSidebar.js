@@ -1,7 +1,7 @@
 import React from 'react';
 import { Offcanvas, Button, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { FaUserCog, FaSignOutAlt, FaUser } from 'react-icons/fa';
+import { FaUserCog, FaSignOutAlt, FaUser, FaHistory } from 'react-icons/fa';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useAuth } from '../store/auth';
 import '../styles/theme.css';
@@ -102,6 +102,19 @@ const ProfileSidebar = ({ show, handleClose }) => {
             }}
           >
             <FaUserCog className="me-2" /> Preferences
+          </Button>
+          
+          <Button 
+            variant="outline-primary" 
+            className="w-100 mb-3 d-flex align-items-center"
+            onClick={() => handleNavigate('/profile/history')}
+            style={{
+              backgroundColor: 'var(--accent-color)',
+              color: 'var(--text-color)',
+              borderColor: 'var(--border-color)'
+            }}
+          >
+            <FaHistory className="me-2" /> History
           </Button>
           
           <hr style={{ borderColor: 'var(--border-color)' }} />

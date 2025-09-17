@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -7,9 +7,13 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { usePreferences } from '../store/preferences';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 
 const ComplianceCalendar = () => {
+  const { getAutofillData, isAutoFillEnabled, preferences } = usePreferences();
+  const { trackActivity } = useActivityTracker();
   const [formData, setFormData] = useState({
     companyName: '',
     companyType: 'Private Limited Company',
@@ -18,6 +22,19 @@ const ComplianceCalendar = () => {
 
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
+
+  // Auto-fill form data when component mounts
+  useEffect(() => {
+    if (isAutoFillEnabled) {
+      const autofillData = getAutofillData();
+      setFormData(prev => ({
+        ...prev,
+        companyName: autofillData.companyName || prev.companyName,
+        companyType: autofillData.companyType || prev.companyType,
+        quarterlyOptions: preferences.defaultQuarters || prev.quarterlyOptions,
+      }));
+    }
+  }, [isAutoFillEnabled, getAutofillData, preferences.defaultQuarters]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,15 +103,69 @@ Convert the output in the calender Format.
 Exclude any introductory notes, prefaces, end notes or disclaimers from the output.`;
 
     try {
+      // Track activity before API call
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.COMPLIANCE_CALENDAR,
+        feature: FEATURES.COMPLIANCE_CALENDAR,
+        action: 'Generate Compliance Calendar',
+        inputData: {
+          companyName: formData.companyName,
+          companyType: formData.companyType,
+          quarterlyOptions: formData.quarterlyOptions,
+          financialYear
+        },
+        metadata: {
+          promptLength: prompt.length,
+          selectedQuarters: formData.quarterlyOptions.length
+        }
+      });
+
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
-            // console.log(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.COMPLIANCE_CALENDAR,
+              feature: FEATURES.COMPLIANCE_CALENDAR,
+              action: 'Compliance Calendar Generated Successfully',
+              inputData: {
+                companyName: formData.companyName,
+                quarterlyOptions: formData.quarterlyOptions,
+                promptLength: prompt.length
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                generationTime: Date.now(),
+                financialYear
+              }
+            });
           } else {
             setResponse("Sorry, we couldn't generate a compliance calendar. Please try again.");
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.COMPLIANCE_CALENDAR,
+              feature: FEATURES.COMPLIANCE_CALENDAR,
+              action: 'Compliance Calendar Generation Failed',
+              inputData: {
+                companyName: formData.companyName,
+                companyType: formData.companyType,
+                quarterlyOptions: formData.quarterlyOptions
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              }
+            });
           }
         }
       });
@@ -102,6 +173,22 @@ Exclude any introductory notes, prefaces, end notes or disclaimers from the outp
       setLoading(false);
       setResponse("An error occurred while generating the compliance calendar. Please try again later.");
       console.error("Error:", error);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.COMPLIANCE_CALENDAR,
+        feature: FEATURES.COMPLIANCE_CALENDAR,
+        action: 'Compliance Calendar Generation Error',
+        inputData: {
+          companyName: formData.companyName,
+          companyType: formData.companyType,
+          quarterlyOptions: formData.quarterlyOptions
+        },
+        outputData: {
+          success: false,
+          error: error.message
+        }
+      });
     }
   };
 

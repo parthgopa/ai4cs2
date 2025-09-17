@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Container, Row, Col } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -7,14 +7,27 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaFileAlt } from 'react-icons
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { usePreferences } from '../store/preferences';
 
 const Forms = () => {
+  const { getAutofillData, isAutoFillEnabled } = usePreferences();
   const [formData, setFormData] = useState({
     companyName: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [combinedResponse, setCombinedResponse] = useState('');
+
+  // Auto-fill form data when component mounts
+  useEffect(() => {
+    if (isAutoFillEnabled) {
+      const autofillData = getAutofillData();
+      setFormData(prev => ({
+        ...prev,
+        companyName: autofillData.companyName || prev.companyName,
+      }));
+    }
+  }, [isAutoFillEnabled, getAutofillData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

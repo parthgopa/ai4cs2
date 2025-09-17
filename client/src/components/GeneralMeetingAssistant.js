@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -7,8 +7,11 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { usePreferences } from '../store/preferences';
 
 const GeneralMeetingAssistant = () => {
+  const { getAutofillData, isAutoFillEnabled } = usePreferences();
+  
   const [formData, setFormData] = useState({
     documentType: 'Notice', // Notice or Minutes
     meetingType: 'AGM', // AGM or EGM
@@ -30,6 +33,19 @@ const GeneralMeetingAssistant = () => {
 
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
+
+  // Auto-fill company data when component mounts or preferences change
+  useEffect(() => {
+    if (isAutoFillEnabled) {
+      const autofillData = getAutofillData();
+      if (autofillData.companyName) {
+        setFormData(prev => ({
+          ...prev,
+          companyName: autofillData.companyName
+        }));
+      }
+    }
+  }, [isAutoFillEnabled, getAutofillData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

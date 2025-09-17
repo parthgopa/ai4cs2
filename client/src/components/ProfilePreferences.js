@@ -98,6 +98,10 @@ const ProfilePreferences = () => {
 
       if (response.ok) {
         toast.success('Preferences updated successfully');
+        // Reload the page after successful update to reflect changes across the app
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500); // Small delay to show the success message
       } else {
         toast.error(data.message || 'Failed to update preferences');
       }

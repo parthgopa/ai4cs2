@@ -7,6 +7,7 @@ import './styles/Profile.css';
 
 // Custom Components
 import { ThemeProvider } from './Common/ThemeContext';
+import { PreferencesProvider } from './store/preferences';
 import Header from './Common/Header';
 import Footer from './Common/Footer';
 import HomePage from './components/HomePage';
@@ -46,6 +47,7 @@ import { OTPVerification } from './components/OTPVerification';
 import Profile from './components/Profile';
 import ProfileSettings from './components/ProfileSettings';
 import ProfilePreferences from './components/ProfilePreferences';
+import UserHistory from './components/UserHistory';
 
 // Layout wrapper component to conditionally show header/footer
 function Layout({ children }) {
@@ -70,10 +72,11 @@ function Layout({ children }) {
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <ScrollToTop />
-        <Layout>
-          <Routes>
+      <PreferencesProvider>
+        <Router>
+          <ScrollToTop />
+          <Layout>
+            <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
@@ -110,9 +113,11 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/settings" element={<ProfileSettings />} />
             <Route path="/profile/preferences" element={<ProfilePreferences />} />
+            <Route path="/profile/history" element={<UserHistory />} />
           </Routes>
         </Layout>
       </Router>
+      </PreferencesProvider>
     </ThemeProvider>
   );
 }

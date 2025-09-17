@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Tools.css';
 // Import icons
-import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook, FaFileAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook, FaFileAlt, FaBuilding, FaCheckCircle, FaCog } from 'react-icons/fa';
 import { MdUpdate, MdAssessment, MdOutlineAppRegistration } from 'react-icons/md';
 // Import ComingSoonModal component
 import ComingSoonModal from './ComingSoonModal';
+import { usePreferences } from '../store/preferences';
+import { useAuth } from '../store/auth';
 
 const Tools = () => {
   const navigate = useNavigate();
+  const { preferences, isAutoFillEnabled } = usePreferences();
+  const { isLoggedIn } = useAuth();
   
   // State for ComingSoonModal
   const [showModal, setShowModal] = useState(false);
@@ -238,6 +242,45 @@ const Tools = () => {
             </div>
           </Col>
         </Row>
+
+        {/* User Preferences Info */}
+        {isLoggedIn && (
+          <Row className="justify-content-center mb-4">
+            <Col lg={10}>
+              {preferences.defaultCompanyName && isAutoFillEnabled ? (
+                <Alert variant="success" className="d-flex align-items-center">
+                  <FaCheckCircle className="me-2" />
+                  <div className="flex-grow-1">
+                    <strong>Auto-fill enabled</strong> for <FaBuilding className="mx-1" /> 
+                    <strong>{preferences.defaultCompanyName}</strong>
+                    {preferences.defaultCIN && (
+                      <span className="text-muted ms-2">({preferences.defaultCIN})</span>
+                    )}
+                  </div>
+                  <button 
+                    className="btn btn-sm btn-outline-primary ms-2"
+                    onClick={() => navigate('/profile/preferences')}
+                  >
+                    <FaCog className="me-1" /> Settings
+                  </button>
+                </Alert>
+              ) : isLoggedIn ? (
+                <Alert variant="info" className="d-flex align-items-center">
+                  <FaBuilding className="me-2" />
+                  <div className="flex-grow-1">
+                    Set up your company preferences to auto-fill forms across all tools
+                  </div>
+                  <button 
+                    className="btn btn-sm btn-primary ms-2"
+                    onClick={() => navigate('/profile/preferences')}
+                  >
+                    <FaCog className="me-1" /> Setup Preferences
+                  </button>
+                </Alert>
+              ) : null}
+            </Col>
+          </Row>
+        )}
 
         {/* Search and Filter Section */}
         <Row className="justify-content-center mb-4">

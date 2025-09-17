@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import '../styles/Header.css';
 import { ThemeContext } from './ThemeContext';
 import { IoHomeOutline, IoInformationCircleOutline, IoCallOutline, IoPersonAddOutline, IoLogInOutline } from 'react-icons/io5';
+import { IoSettingsOutline } from 'react-icons/io5';
 import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs';
 import { FaUserCircle } from 'react-icons/fa';
 import Chatbot from '../components/Chatbot';
@@ -63,6 +64,7 @@ const Header = () => {
         </div>
 
         <div className="d-flex align-items-right">
+          {/* Theme Toggle Button - Desktop */}
           <Button 
             onClick={toggleTheme} 
             variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
@@ -82,6 +84,7 @@ const Header = () => {
               </>
             )}
           </Button>
+          
           <Navbar.Toggle 
             aria-controls="main-offcanvas" 
             onClick={() => setShowMenu(true)}
@@ -108,6 +111,7 @@ const Header = () => {
           <Offcanvas.Body>
             <Nav className="align-items-lg-center ms-lg-auto">
               <Nav.Link as={Link} to="/" className="nav-link" onClick={() => setShowMenu(false)}> <IoHomeOutline size={20} className='navbar-buttons'/> Home</Nav.Link>
+              <Nav.Link as={Link} to="/tools" className="nav-link" onClick={() => setShowMenu(false)}> <IoSettingsOutline size={20} className='navbar-buttons'/> Tools</Nav.Link>
               <Nav.Link as={Link} to="/about" className="nav-link" onClick={() => setShowMenu(false)}> <IoInformationCircleOutline size={20} className='navbar-buttons'/> About</Nav.Link>
               <Nav.Link as={Link} to="/contact" className="nav-link" onClick={() => setShowMenu(false)}> <IoCallOutline size={20} className='navbar-buttons'/> Contact Us</Nav.Link>
               {isLoggedIn ? (
@@ -158,6 +162,7 @@ const Header = () => {
                 </>
               )}
               
+              {/* Theme Toggle Button - Mobile */}
               <Button
                 variant="outline-secondary"
                 className="theme-toggle ms-lg-3 my-2 d-lg-none d-flex align-items-center"
