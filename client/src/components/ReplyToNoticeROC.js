@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
@@ -6,8 +6,11 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { usePreferences } from '../store/preferences';
 
 const ReplyToNoticeROC = () => {
+  const { getAutofillData, isAutoFillEnabled } = usePreferences();
+  
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
   const [selectedNoticeType, setSelectedNoticeType] = useState('');
@@ -51,6 +54,19 @@ const ReplyToNoticeROC = () => {
     correctionDate: '',
     supportingDocs: ''
   });
+
+  // Auto-fill company data when component mounts or preferences change
+  useEffect(() => {
+    if (isAutoFillEnabled) {
+      const autofillData = getAutofillData();
+      if (autofillData.companyName) {
+        setFormData(prev => ({
+          ...prev,
+          companyName: autofillData.companyName
+        }));
+      }
+    }
+  }, [isAutoFillEnabled, getAutofillData]);
 
   const noticeTypes = [
     { id: 'section-137', title: 'Section 137 – Delay in Filing Financial Statement' },

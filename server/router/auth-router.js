@@ -5,11 +5,10 @@
 const express = require("express");
 const router = express.Router();
 const authcontrollers = require("../controllers/auth-controller");
+const profileController = require("../controllers/profile-controller");
 const { signupSchema, loginSchema } = require("../validators/auth-validator");
 const validate = require("../middlewares/validate-middleware");
 const authMiddleware = require("../middlewares/auth-middleware");
-
-
 
 router.route("/").get(authcontrollers.home);
 
@@ -36,5 +35,16 @@ router
   .post(authcontrollers.firebaseLogin);
 
 router.route("/user").get(authMiddleware, authcontrollers.user);
+
+// Profile routes
+router.route("/update-profile").post(
+  authMiddleware,
+  profileController.updateProfile
+);
+
+router.route("/update-preferences").post(
+  authMiddleware,
+  profileController.updatePreferences
+);
 
 module.exports = router;

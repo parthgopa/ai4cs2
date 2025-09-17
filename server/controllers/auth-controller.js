@@ -145,9 +145,17 @@ const verifyOTP = async (req, res) => {
         return res.status(429).json({ message: "Too many failed attempts. Please register again." });
       }
 
-      // Verify OTP
-      if (pendingUser.otp !== otp) {
-        console.log("Invalid OTP for pending user");
+      // Verify OTP - ensure both are strings and trimmed
+      const storedOtp = String(pendingUser.otp).trim();
+      const enteredOtp = String(otp).trim();
+      
+      console.log("OTP Comparison:");
+      console.log("Stored OTP:", storedOtp, "(length:", storedOtp.length, ")");
+      console.log("Entered OTP:", enteredOtp, "(length:", enteredOtp.length, ")");
+      console.log("Match:", storedOtp === enteredOtp);
+      
+      if (storedOtp !== enteredOtp) {
+        console.log("Invalid OTP for pending user - OTP mismatch");
         pendingUser.otpAttempts += 1;
         storePendingUser(email, pendingUser);
         return res.status(400).json({ 
@@ -210,8 +218,16 @@ const verifyOTP = async (req, res) => {
         return res.status(429).json({ message: "Too many failed attempts. Please request a new OTP." });
       }
 
-      // Verify OTP
-      if (user.otp !== otp) {
+      // Verify OTP - ensure both are strings and trimmed
+      const storedOtp = String(user.otp).trim();
+      const enteredOtp = String(otp).trim();
+      
+      console.log("DB User OTP Comparison:");
+      console.log("Stored OTP:", storedOtp, "(length:", storedOtp.length, ")");
+      console.log("Entered OTP:", enteredOtp, "(length:", enteredOtp.length, ")");
+      console.log("Match:", storedOtp === enteredOtp);
+      
+      if (storedOtp !== enteredOtp) {
         await User.findByIdAndUpdate(user._id, {
           $inc: { otpAttempts: 1 }
         });
@@ -238,8 +254,16 @@ const verifyOTP = async (req, res) => {
     
     console.log("=== OTP VERIFICATION END ===");
   } catch (error) {
-    console.error("OTP verification error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("=== OTP VERIFICATION ERROR ===");
+    console.error("Error details:", error);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    console.error("=== OTP VERIFICATION ERROR END ===");
+    res.status(500).json({ 
+      message: "Internal server error",
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import { FaPhone, FaEnvelope,  FaHandshake } from 'react-icons/fa';
+import {  FaHandshake } from 'react-icons/fa';
 import '../styles/Contact.css';
 import { IoCallOutline, IoMailOutline } from 'react-icons/io5';
 
