@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Tools.css';
 // Import icons
-import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook, FaFileAlt, FaBuilding, FaCheckCircle, FaCog } from 'react-icons/fa';
+import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook, FaFileAlt, FaSearch, FaEnvelope } from 'react-icons/fa';
 import { MdUpdate, MdAssessment, MdOutlineAppRegistration } from 'react-icons/md';
 // Import ComingSoonModal component
 import ComingSoonModal from './ComingSoonModal';
-import { usePreferences } from '../store/preferences';
-import { useAuth } from '../store/auth';
 
 const Tools = () => {
   const navigate = useNavigate();
-  const { preferences, isAutoFillEnabled } = usePreferences();
-  const { isLoggedIn } = useAuth();
   
   // State for ComingSoonModal
   const [showModal, setShowModal] = useState(false);
@@ -68,6 +64,12 @@ const Tools = () => {
       title: 'Legal Research',
       category: 'Legal',
       icon: <FaBalanceScale />,
+    },
+    {
+      id: 'research-assistant',
+      title: 'Research Assistant',
+      category: 'Legal',
+      icon: <FaSearch />,
     },
     {
       id: 'procedure-practice',
@@ -141,6 +143,36 @@ const Tools = () => {
       category: 'Meetings',
       icon: <FaCalendarAlt />,
     },
+    {
+      id: 'resolution-assistant',
+      title: 'Resolution Assistant',
+      category: 'Meetings',
+      icon: <FaGavel />,
+    },
+    {
+      id: 'mini-law-library',
+      title: 'Mini-Law Library',
+      category: 'Legal',
+      icon: <FaBook />,
+    },
+    {
+      id: 'case-digest',
+      title: 'Case Digest',
+      category: 'Legal',
+      icon: <FaGavel />,
+    },
+    {
+      id: 'judgment-simulator',
+      title: 'Judgment Simulator',
+      category: 'Legal',
+      icon: <FaGavel />,
+    },
+    {
+      id: 'email-drafter',
+      title: 'Email Drafter',
+      category: 'Communication',
+      icon: <FaEnvelope />,
+    },
   ];
   
   // Implemented/active feature IDs
@@ -152,17 +184,23 @@ const Tools = () => {
     'legal-opinion',
     'legal-research',
     'procedure-practice',
-    'forms',
     'policy-drafting',
     'scenario-solver',
     'agreement-drafting',
-    'capital-raising-advisory-agreement',
     'reply-to-notice-rd',
     'reply-to-notice-nclt',
     'reply-to-notice-roc',
-    'petetion-preparator',
     'board-meeting-assistant',
     'general-meeting-assistant',
+    'petetion-preparator',
+    'forms',
+    'capital-raising-advisory-agreement',
+    'mini-law-library',
+    'case-digest',
+    'judgment-simulator',
+    'research-assistant',
+    'resolution-assistant',
+    'email-drafter'
   ]);
 
   // Get unique categories for filtering
@@ -223,6 +261,18 @@ const Tools = () => {
       navigate('/forms');
     } else if (id === 'capital-raising-advisory-agreement') {
       navigate('/capital-raising-advisory-agreement');
+    } else if (id === 'mini-law-library') {
+      navigate('/mini-law-library');
+    } else if (id === 'case-digest') {
+      navigate('/case-digest');
+    } else if (id === 'judgment-simulator') {
+      navigate('/judgment-simulator');
+    } else if (id === 'research-assistant') {
+      navigate('/research-assistant');
+    } else if (id === 'resolution-assistant') {
+      navigate('/resolution-assistant');
+    } else if (id === 'email-drafter') {
+      navigate('/email-drafter');
     } else {
       openComingSoonModal(title);
     }
@@ -242,45 +292,6 @@ const Tools = () => {
             </div>
           </Col>
         </Row>
-
-        {/* User Preferences Info */}
-        {isLoggedIn && (
-          <Row className="justify-content-center mb-4">
-            <Col lg={10}>
-              {preferences.defaultCompanyName && isAutoFillEnabled ? (
-                <Alert variant="success" className="d-flex align-items-center">
-                  <FaCheckCircle className="me-2" />
-                  <div className="flex-grow-1">
-                    <strong>Auto-fill enabled</strong> for <FaBuilding className="mx-1" /> 
-                    <strong>{preferences.defaultCompanyName}</strong>
-                    {preferences.defaultCIN && (
-                      <span className="text-muted ms-2">({preferences.defaultCIN})</span>
-                    )}
-                  </div>
-                  <button 
-                    className="btn btn-sm btn-outline-primary ms-2"
-                    onClick={() => navigate('/profile/preferences')}
-                  >
-                    <FaCog className="me-1" /> Settings
-                  </button>
-                </Alert>
-              ) : isLoggedIn ? (
-                <Alert variant="info" className="d-flex align-items-center">
-                  <FaBuilding className="me-2" />
-                  <div className="flex-grow-1">
-                    Set up your company preferences to auto-fill forms across all tools
-                  </div>
-                  <button 
-                    className="btn btn-sm btn-primary ms-2"
-                    onClick={() => navigate('/profile/preferences')}
-                  >
-                    <FaCog className="me-1" /> Setup Preferences
-                  </button>
-                </Alert>
-              ) : null}
-            </Col>
-          </Row>
-        )}
 
         {/* Search and Filter Section */}
         <Row className="justify-content-center mb-4">

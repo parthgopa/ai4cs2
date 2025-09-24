@@ -1,13 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/theme.css';
-import './styles/Profile.css';
 
 // Custom Components
 import { ThemeProvider } from './Common/ThemeContext';
-import { PreferencesProvider } from './store/preferences';
 import Header from './Common/Header';
 import Footer from './Common/Footer';
 import HomePage from './components/HomePage';
@@ -40,84 +38,62 @@ import BoardMeetingAssistant from './components/BoardMeetingAssistant';
 import GeneralMeetingAssistant from './components/GeneralMeetingAssistant';
 import Forms from './components/Forms';
 import CapitalRaisingAdvisoryAgreement from './components/CapitalRaisingAdvisoryAgreement';
-import { Register } from './components/Register';
-import { Login } from './components/Login';
-import { Logout } from './components/Logout';
-import { OTPVerification } from './components/OTPVerification';
-import Profile from './components/Profile';
-import ProfileSettings from './components/ProfileSettings';
-import ProfilePreferences from './components/ProfilePreferences';
-import UserHistory from './components/UserHistory';
-
-// Layout wrapper component to conditionally show header/footer
-function Layout({ children }) {
-  const location = useLocation();
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/verify-otp';
-
-  if (isAuthPage) {
-    return <>{children}</>;
-  }
-
-  return (
-    <div className="app-wrapper">
-      <Header />
-      <main className="main-content">
-        {children}
-      </main>
-      <Footer />
-    </div>
-  );
-}
+import MiniLawLibrary from './components/MiniLawLibrary';
+import CaseDigest from './components/CaseDigest';
+// import JudgmentSimulator from './components/JudgmentSimulator';
+import ResearchAssistant from './components/ResearchAssistant';
+import ResolutionAssistant from './components/ResolutionAssistant';
+import EmailDrafter from './components/EmailDrafter';
 
 function App() {
   return (
     <ThemeProvider>
-      <PreferencesProvider>
-        <Router>
-          <ScrollToTop />
-          <Layout>
+      <Router>
+        <ScrollToTop />
+        <div className="app-wrapper">
+          <Header />
+          <main className="main-content">
             <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/verify-otp" element={<OTPVerification />} />
-            <Route path="/tools" element={<Tools />} />
-            <Route path="/resolutions" element={<ResolutionsDraftingPage />} />
-            <Route path="/compliance-calendar" element={<ComplianceCalendar />} />
-            <Route path="/procedure-practice" element={<ProceduresPractice />} />
-            <Route path="/policy-drafting" element={<PolicyDrafting />} />
-            <Route path="/policy-drafting/meeting-and-minutes-policy" element={<MeetingMinutesPolicy />} />
-            <Route path="/policy-drafting/statutory-registers-policy" element={<StatutoryRegisterMaintenancePolicy />} />
-            <Route path="/policy-drafting/related-party-transaction-policy" element={<RelatedPartyTransactionPolicy />} />
-            <Route path="/policy-drafting/insider-trading-policy" element={<InsiderTradingPolicy />} />
-            <Route path="/policy-drafting/document-management-policy" element={<DocumentManagementPolicy />} />
-            <Route path="/policy-drafting/csr-policy" element={<CSRPolicy />} />
-            <Route path="/scenario-solver" element={<ScenarioSolver />} />
-            <Route path="/agreement-drafting" element={<AgreementDrafting />} />
-            <Route path="/secretarial-audit-toolkit" element={<SecretarialAudit />} />
-            <Route path="/reply-to-notice-rd" element={<ReplyToNoticeRD />} />
-            <Route path="/reply-to-notice-nclt" element={<ReplyToNoticeNCLT />} />
-            <Route path="/reply-to-notice-roc" element={<ReplyToNoticeROC />} />
-            <Route path='/petetion-preparator' element={<PetitionPreparator />} />
-            <Route path="/legal-research" element={<LegalResearch />} />
-            <Route path="/legal-opinion" element={<LegalOpinion />} />
-            <Route path="/regulatory-updation" element={<RegulatoryUpdation />} />
-            <Route path="/statutory-registers" element={<StatutoryRegisters />} />
-            <Route path="/board-meeting-assistant" element={<BoardMeetingAssistant />} />
-            <Route path="/general-meeting-assistant" element={<GeneralMeetingAssistant />} />
-            <Route path="/forms" element={<Forms />} />
-            <Route path="/capital-raising-advisory-agreement" element={<CapitalRaisingAdvisoryAgreement />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/settings" element={<ProfileSettings />} />
-            <Route path="/profile/preferences" element={<ProfilePreferences />} />
-            <Route path="/profile/history" element={<UserHistory />} />
-          </Routes>
-        </Layout>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/tools" element={<Tools />} />
+              <Route path="/resolutions" element={<ResolutionsDraftingPage />} />
+              <Route path="/compliance-calendar" element={<ComplianceCalendar />} />
+              <Route path="/procedure-practice" element={<ProceduresPractice />} />
+              <Route path="/policy-drafting" element={<PolicyDrafting />} />
+              <Route path="/policy-drafting/meeting-and-minutes-policy" element={<MeetingMinutesPolicy />} />
+              <Route path="/policy-drafting/statutory-registers-policy" element={<StatutoryRegisterMaintenancePolicy />} />
+              <Route path="/policy-drafting/related-party-transaction-policy" element={<RelatedPartyTransactionPolicy />} />
+              <Route path="/policy-drafting/insider-trading-policy" element={<InsiderTradingPolicy />} />
+              <Route path="/policy-drafting/document-management-policy" element={<DocumentManagementPolicy />} />
+              <Route path="/policy-drafting/csr-policy" element={<CSRPolicy />} />
+              <Route path="/scenario-solver" element={<ScenarioSolver />} />
+              <Route path="/agreement-drafting" element={<AgreementDrafting />} />
+              <Route path="/secretarial-audit-toolkit" element={<SecretarialAudit />} />
+              <Route path="/reply-to-notice-rd" element={<ReplyToNoticeRD />} />
+              <Route path="/reply-to-notice-nclt" element={<ReplyToNoticeNCLT />} />
+              <Route path="/reply-to-notice-roc" element={<ReplyToNoticeROC />} />
+              <Route path='/petetion-preparator' element={<PetitionPreparator />} />
+              <Route path="/legal-research" element={<LegalResearch />} />
+              <Route path="/legal-opinion" element={<LegalOpinion />} />
+              <Route path="/regulatory-updation" element={<RegulatoryUpdation />} />
+              <Route path="/statutory-registers" element={<StatutoryRegisters />} />
+              <Route path="/board-meeting-assistant" element={<BoardMeetingAssistant />} />
+              <Route path="/general-meeting-assistant" element={<GeneralMeetingAssistant />} />
+              <Route path="/forms" element={<Forms />} />
+              <Route path="/capital-raising-advisory-agreement" element={<CapitalRaisingAdvisoryAgreement />} />
+              <Route path="/mini-law-library" element={<MiniLawLibrary />} />
+              <Route path="/case-digest" element={<CaseDigest />} />
+              {/* <Route path="/judgment-simulator" element={<JudgmentSimulator />} /> */}
+              <Route path="/research-assistant" element={<ResearchAssistant />} />
+              <Route path="/resolution-assistant" element={<ResolutionAssistant />} />
+              <Route path="/email-drafter" element={<EmailDrafter />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
       </Router>
-      </PreferencesProvider>
     </ThemeProvider>
   );
 }
