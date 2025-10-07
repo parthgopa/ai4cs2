@@ -77,25 +77,6 @@ Exclude introductory paragraph, notes, disclaimers.
 `;
 
     try {
-      // Track activity before API call
-      await trackActivity({
-        activityType: ACTIVITY_TYPES.MEETING_ASSISTANCE,
-        feature: FEATURES.BOARD_MEETING_ASSISTANT,
-        action: 'Generate Board Meeting Assistance',
-        inputData: {
-          companyName: formData.companyName,
-          meetingType: 'General Board Meeting',
-          meetingDate: formData.dateTime.split(', ')[0],
-          meetingTime: formData.dateTime.split(', ')[1],
-          meetingVenue: formData.venueMode,
-          selectedItems: formData.agendaItems
-        },
-        metadata: {
-          promptLength: prompt.length,
-          itemsCount: formData.agendaItems.split(',').length
-        }
-      });
-
       await APIService({
         question: prompt,
         onResponse: async (data) => {
@@ -112,12 +93,20 @@ Exclude introductory paragraph, notes, disclaimers.
               inputData: {
                 companyName: formData.companyName,
                 meetingType: 'General Board Meeting',
+                meetingDate: formData.dateTime.split(', ')[0],
+                meetingTime: formData.dateTime.split(', ')[1],
+                meetingVenue: formData.venueMode,
                 selectedItems: formData.agendaItems
               },
               outputData: {
                 success: true,
                 content: generatedContent,
                 contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                itemsCount: formData.agendaItems.split(',').length,
+                generationTime: Date.now()
               }
             });
           } else {
@@ -136,6 +125,9 @@ Exclude introductory paragraph, notes, disclaimers.
               outputData: {
                 success: false,
                 error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length
               }
             });
           }
@@ -159,6 +151,9 @@ Exclude introductory paragraph, notes, disclaimers.
         outputData: {
           success: false,
           error: error.message
+        },
+        metadata: {
+          promptLength: prompt.length
         }
       });
     }

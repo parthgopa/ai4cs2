@@ -7,8 +7,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaArrowRight, FaArrowLeft, Fa
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const CapitalRaisingAdvisoryAgreement = () => {
+  const { trackActivity } = useActivityTracker();
   // Step management
   const [currentStep, setCurrentStep] = useState(1);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -133,19 +135,88 @@ const CapitalRaisingAdvisoryAgreement = () => {
     try {
       await APIService({
         question: fullPrompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.CAPITAL_RAISING_AGREEMENT,
+              action: 'Capital Raising Advisory Agreement generated successfully',
+              inputData: {
+                companyName: formData.companyName,
+                consultantName: formData.consultantName,
+                serviceType: formData.serviceType,
+                feeStructure: formData.feeStructure,
+                governingLaw: formData.governingLaw
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: fullPrompt.length,
+                generationTime: new Date().toISOString(),
+                stepsCompleted: 3
+              }
+            });
           } else {
-            setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+            const errorMessage = 'Sorry, we couldn\'t generate a response. Please try again.';
+            setResponse(errorMessage);
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.CAPITAL_RAISING_AGREEMENT,
+              action: 'Failed to generate Capital Raising Advisory Agreement',
+              inputData: {
+                companyName: formData.companyName,
+                consultantName: formData.consultantName,
+                serviceType: formData.serviceType
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: fullPrompt.length,
+                generationTime: new Date().toISOString(),
+                stepsCompleted: 3
+              }
+            });
           }
         }
       });
     } catch (error) {
       console.error('Error fetching response:', error);
-      setResponse('Error fetching response. Please try again.');
+      const errorMessage = 'Error fetching response. Please try again.';
+      setResponse(errorMessage);
       setLoading(false);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.CAPITAL_RAISING_AGREEMENT,
+        action: 'Error in generating Capital Raising Advisory Agreement',
+        inputData: {
+          companyName: formData.companyName,
+          consultantName: formData.consultantName,
+          serviceType: formData.serviceType
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: fullPrompt.length,
+          generationTime: new Date().toISOString(),
+          stepsCompleted: 3
+        }
+      });
     }
   };
 

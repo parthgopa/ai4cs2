@@ -7,8 +7,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch, FaArrowRight, FaArr
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { ACTIVITY_TYPES, FEATURES, useActivityTracker } from '../store/activityTracker';
 
 const ResearchAssistant = () => {
+  const { trackActivity } = useActivityTracker();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     topic: '',
@@ -180,19 +182,92 @@ Remove all introductory paragraph, end notes and any other non-relevant content.
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful activity
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.RESEARCH_ASSISTANT,
+              action: 'Generated research report',
+              inputData: {
+                topic: formData.topic,
+                researchType: formData.researchType,
+                scope: formData.scope,
+                outputStyle: formData.outputStyle,
+                preferredSources: formData.preferredSources
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                stepsCompleted: 5
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the research output. Please try again.");
+            const errorMessage = "Sorry, we couldn't generate the research output. Please try again.";
+            setResponse(errorMessage);
+            
+            // Track failed activity
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.RESEARCH_ASSISTANT,
+              action: 'Failed to generate research report',
+              inputData: {
+                topic: formData.topic,
+                researchType: formData.researchType,
+                scope: formData.scope,
+                outputStyle: formData.outputStyle,
+                preferredSources: formData.preferredSources
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                stepsCompleted: 5
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse("An error occurred while generating the research output. Please try again later.");
+      const errorMessage = "An error occurred while generating the research output. Please try again later.";
+      setResponse(errorMessage);
       console.error("Error:", error);
+      
+      // Track error activity
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.RESEARCH_ASSISTANT,
+        action: 'Error in generating research report',
+        inputData: {
+          topic: formData.topic,
+          researchType: formData.researchType,
+          scope: formData.scope,
+          outputStyle: formData.outputStyle,
+          preferredSources: formData.preferredSources
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          stepsCompleted: 5
+        }
+      });
     }
   };
 

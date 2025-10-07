@@ -6,8 +6,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { ACTIVITY_TYPES, FEATURES, useActivityTracker } from '../store/activityTracker';
 
 const LegalResearch = () => {
+  const { trackActivity } = useActivityTracker();
   const [formData, setFormData] = useState({
     userQuery: '',
   });
@@ -74,19 +76,77 @@ User query - "${formData.userQuery}"`;
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            console.log(data.candidates[0].content.parts[0].text);
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            console.log(generatedContent);
+            setResponse(generatedContent);
+            
+            // Track successful activity
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: 'Legal Research',
+              action: 'Generated legal research response',
+              inputData: {
+                userQuery: formData.userQuery
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString()
+              }
+            });
           } else {
-            setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+            const errorMessage = 'Sorry, we couldn\'t generate a response. Please try again.';
+            setResponse(errorMessage);
+            
+            // Track failed activity
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: 'Legal Research',
+              action: 'Failed to generate legal research response',
+              inputData: {
+                userQuery: formData.userQuery
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString()
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse('An error occurred while processing your request. Please try again.');
+      const errorMessage = 'An error occurred while processing your request. Please try again.';
+      setResponse(errorMessage);
+      
+      // Track error activity
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: 'Legal Research',
+        action: 'Error in generating legal research response',
+        inputData: {
+          userQuery: formData.userQuery
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString()
+        }
+      });
     }
   };
 

@@ -70,19 +70,6 @@ const DocumentManagementPolicy = () => {
     Exclude other details from the policy like definitions, purpose, effective date,scope etc.`;
 
     try {
-      // Track activity before API call
-      await trackActivity({
-        activityType: ACTIVITY_TYPES.POLICY_GENERATION,
-        feature: FEATURES.DOCUMENT_MANAGEMENT_POLICY,
-        action: 'Generate Document Management Policy',
-        inputData: {
-          companyName: formData.companyName
-        },
-        metadata: {
-          promptLength: prompt.length
-        }
-      });
-
       await APIService({
         question: prompt,
         onResponse: async (data) => {
@@ -100,8 +87,13 @@ const DocumentManagementPolicy = () => {
                 companyName: formData.companyName
               },
               outputData: {
-                contentLength: generatedContent.length,
-                success: true
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: Date.now()
               }
             });
           } else {
@@ -118,6 +110,9 @@ const DocumentManagementPolicy = () => {
               outputData: {
                 success: false,
                 error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length
               }
             });
           }
@@ -138,6 +133,9 @@ const DocumentManagementPolicy = () => {
         outputData: {
           success: false,
           error: error.message
+        },
+        metadata: {
+          promptLength: prompt.length
         }
       });
     }

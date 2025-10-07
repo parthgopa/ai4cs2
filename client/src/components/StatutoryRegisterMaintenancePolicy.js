@@ -7,9 +7,11 @@ import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
 import { usePreferences } from '../store/preferences';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const StatutoryRegisterMaintenancePolicy = () => {
   const { getAutofillData, isAutoFillEnabled } = usePreferences();
+  const { trackActivity } = useActivityTracker();
   
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
@@ -58,18 +60,76 @@ const StatutoryRegisterMaintenancePolicy = () => {
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.POLICY_GENERATION,
+              feature: FEATURES.STATUTORY_REGISTER_POLICY,
+              action: 'Statutory Register Maintenance Policy Generated Successfully',
+              inputData: {
+                companyName: formData.companyName
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString()
+              }
+            });
           } else {
-            setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+            const errorMessage = 'Sorry, we couldn\'t generate a response. Please try again.';
+            setResponse(errorMessage);
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.POLICY_GENERATION,
+              feature: FEATURES.STATUTORY_REGISTER_POLICY,
+              action: 'Statutory Register Maintenance Policy Generation Failed',
+              inputData: {
+                companyName: formData.companyName
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString()
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse('An error occurred while processing your request. Please try again.');
+      const errorMessage = 'An error occurred while processing your request. Please try again.';
+      setResponse(errorMessage);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.POLICY_GENERATION,
+        feature: FEATURES.STATUTORY_REGISTER_POLICY,
+        action: 'Statutory Register Maintenance Policy Generation Error',
+        inputData: {
+          companyName: formData.companyName
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString()
+        }
+      });
     }
   };
 

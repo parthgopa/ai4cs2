@@ -1,28 +1,35 @@
-import { createContext, useEffect, useContext, useState } from "react";
+import React, { createContext, useEffect, useContext, useState } from "react";
 
 export const AuthContext = createContext();
-
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useState("");
-
-  // function to stored the token in local storage
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const storeTokenInLS = (serverToken) => {
     setToken(serverToken);
     return localStorage.setItem("token", serverToken);
+  };
+
+  // Store user ID in localStorage
+  const storeUserIdInLS = (userIdValue) => {
+    setUserId(userIdValue);
+    return localStorage.setItem("userId", userIdValue);
   };
 
   //   this is the get the value in either true or false in the original state of token
   let isLoggedIn = !!token;
   console.log("token", token);
   console.log("isLoggedin ", isLoggedIn);
+  console.log("userId", userId);
 
   //   to check whether is loggedIn or not
   const LogoutUser = () => {
     setToken("");
     setUser("");
-    return localStorage.removeItem("token");
+    setUserId("");
+    localStorage.removeItem("token");
+    return localStorage.removeItem("userId");
   };
 
   // JWT Authentication - to get the currently loggedIn user data
@@ -44,6 +51,14 @@ export const AuthProvider = ({ children }) => {
 
         // our main goal is to get the user data 
         setUser(data.userData);
+        
+        // Store user ID in localStorage and state
+        if (data.userData && data.userData._id) {
+          console.log('👤 Storing userId:', data.userData._id);
+          storeUserIdInLS(data.userData._id);
+        } else {
+          console.warn('⚠️ No userId found in user data:', data.userData);
+        }
       } else {
         console.error("Error fetching user data");
       }
@@ -57,7 +72,15 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, storeTokenInLS, LogoutUser, user }}>
+    <AuthContext.Provider value={{ 
+      isLoggedIn, 
+      storeTokenInLS, 
+      storeUserIdInLS,
+      LogoutUser, 
+      user, 
+      userId,
+      token 
+    }}>
       {children}
     </AuthContext.Provider>
   );

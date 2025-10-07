@@ -7,8 +7,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch, FaGavel } from 'rea
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const CaseDigest = () => {
+  const { trackActivity } = useActivityTracker();
   const [formData, setFormData] = useState({
     caseInput: '',
     reliefInput: 'No',
@@ -75,25 +77,91 @@ INSTRUCTIONS:
 3) If no reported cases are found, state exactly: "No reported judgments available." Do not hallucinate citations—mark any unverified fact as *unverified*. 
 
 4) Always include Citation + Court + Year for each precedent. If you quote act text, keep wording exact and short (≤ 60 words per quoted extract). If an amendment exists, label Old vs New and give amendment date. 
-
 5) Tone: professional, neutral, concise.`;
 
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.CASE_DIGEST,
+              action: 'Case digest generated successfully',
+              inputData: {
+                caseInput: formData.caseInput,
+                reliefInput: formData.reliefInput,
+                lawFilter: formData.lawFilter
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                lawFilter: formData.lawFilter
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the case digest. Please try again with different search terms.");
+            const errorMessage = "Sorry, we couldn't generate a response. Please try again.";
+            setResponse(errorMessage);
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.CASE_DIGEST,
+              action: 'Failed to generate case digest',
+              inputData: {
+                caseInput: formData.caseInput,
+                reliefInput: formData.reliefInput,
+                lawFilter: formData.lawFilter
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                lawFilter: formData.lawFilter
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse("An error occurred while generating the case digest. Please try again later.");
+      const errorMessage = "An error occurred while processing your request. Please try again.";
+      setResponse(errorMessage);
       console.error("Error:", error);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.CASE_DIGEST,
+        action: 'Error in generating case digest',
+        inputData: {
+          caseInput: formData.caseInput,
+          reliefInput: formData.reliefInput,
+          lawFilter: formData.lawFilter
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          lawFilter: formData.lawFilter
+        }
+      });
     }
   };
 

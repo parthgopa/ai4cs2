@@ -7,8 +7,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaEnvelope, FaArrowRight, FaA
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const EmailDrafter = () => {
+  const { trackActivity } = useActivityTracker();
   // Primary mode state - controls entire UI
   const [mode, setMode] = useState('New Email');
   
@@ -544,19 +546,94 @@ Remove all introductory paragraph, end notes and any other non-relevant content.
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.EMAIL_DRAFTER,
+              action: 'Email drafted successfully',
+              inputData: {
+                connotation: formData.connotation,
+                subject: formData.subject,
+                language: formData.language,
+                tone: formData.tone,
+                length: formData.length,
+                signatory: formData.signatory
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                currentStep: currentStep,
+                mode: mode
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the email. Please try again.");
+            const errorMessage = "Sorry, we couldn't generate the email. Please try again.";
+            setResponse(errorMessage);
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.EMAIL_DRAFTER,
+              action: 'Failed to draft email',
+              inputData: {
+                connotation: formData.connotation,
+                subject: formData.subject,
+                language: formData.language,
+                tone: formData.tone
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                currentStep: currentStep,
+                mode: mode
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse("An error occurred while generating the email. Please try again later.");
+      const errorMessage = "An error occurred while generating the email. Please try again later.";
+      setResponse(errorMessage);
       console.error("Error:", error);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.EMAIL_DRAFTER,
+        action: 'Error in drafting email',
+        inputData: {
+          connotation: formData.connotation,
+          subject: formData.subject,
+          language: formData.language,
+          tone: formData.tone
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          currentStep: currentStep,
+          mode: mode
+        }
+      });
     }
   };
 
@@ -599,19 +676,84 @@ Remove all introductory paragraph, end notes and any other non-relevant content.
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful reply generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.EMAIL_DRAFTER,
+              action: 'Email reply generated successfully',
+              inputData: {
+                originalEmail: replyData.originalEmail,
+                replyTone: replyData.replyTone,
+                replyObjective: replyData.replyObjective
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                mode: 'Reply Email'
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the reply. Please try again.");
+            const errorMessage = "Sorry, we couldn't generate the reply. Please try again.";
+            setResponse(errorMessage);
+            
+            // Track failed reply generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.EMAIL_DRAFTER,
+              action: 'Failed to generate email reply',
+              inputData: {
+                replyTone: replyData.replyTone,
+                replyObjective: replyData.replyObjective
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                mode: 'Reply Email'
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse("An error occurred while generating the reply. Please try again later.");
+      const errorMessage = "An error occurred while generating the reply. Please try again later.";
+      setResponse(errorMessage);
       console.error("Error:", error);
+      
+      // Track reply generation error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.EMAIL_DRAFTER,
+        action: 'Error in generating email reply',
+        inputData: {
+          replyTone: replyData.replyTone,
+          replyObjective: replyData.replyObjective
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          mode: 'Reply Email'
+        }
+      });
     }
   };
 
@@ -651,19 +793,81 @@ Remove all introductory paragraph, end notes and any other non-relevant content.
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful summary generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.EMAIL_DRAFTER,
+              action: 'Email summary generated successfully',
+              inputData: {
+                textToSummarize: summarizeData.textToSummarize,
+                summaryType: summarizeData.summaryType
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                mode: 'Summarize Email'
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the summary. Please try again.");
+            const errorMessage = "Sorry, we couldn't generate the summary. Please try again.";
+            setResponse(errorMessage);
+            
+            // Track failed summary generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.EMAIL_DRAFTER,
+              action: 'Failed to generate email summary',
+              inputData: {
+                summaryType: summarizeData.summaryType
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                mode: 'Summarize Email'
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse("An error occurred while generating the summary. Please try again later.");
+      const errorMessage = "An error occurred while generating the summary. Please try again later.";
+      setResponse(errorMessage);
       console.error("Error:", error);
+      
+      // Track summary generation error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.EMAIL_DRAFTER,
+        action: 'Error in generating email summary',
+        inputData: {
+          summaryType: summarizeData.summaryType
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          mode: 'Summarize Email'
+        }
+      });
     }
   };
 
@@ -701,19 +905,80 @@ Remove all introductory paragraph, end notes and any other non-relevant content.
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful template generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.EMAIL_DRAFTER,
+              action: 'Email template generated successfully',
+              inputData: {
+                selectedTemplate: templateData.selectedTemplate
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                mode: 'Template Generator'
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the template. Please try again.");
+            const errorMessage = "Sorry, we couldn't generate the template. Please try again.";
+            setResponse(errorMessage);
+            
+            // Track failed template generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.EMAIL_DRAFTER,
+              action: 'Failed to generate email template',
+              inputData: {
+                selectedTemplate: templateData.selectedTemplate
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                mode: 'Template Generator'
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse("An error occurred while generating the template. Please try again later.");
+      const errorMessage = "An error occurred while generating the template. Please try again later.";
+      setResponse(errorMessage);
       console.error("Error:", error);
+      
+      // Track template generation error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.EMAIL_DRAFTER,
+        action: 'Error in generating email template',
+        inputData: {
+          selectedTemplate: templateData.selectedTemplate
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          mode: 'Template Generator'
+        }
+      });
     }
   };
 

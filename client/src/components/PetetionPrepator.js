@@ -7,8 +7,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaGavel } from 'react-icons/f
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const PetitionPreparator = () => {
+  const { trackActivity } = useActivityTracker();
   const [formData, setFormData] = useState({
     petitionerName: '',
     respondentName: '',
@@ -40,7 +42,6 @@ const PetitionPreparator = () => {
 - Respondent Name: ${formData.respondentName}
 - Jurisdiction: ${formData.jurisdiction}
 - Relief Sought: ${formData.reliefSought}
-- Background Facts: ${formData.backgroundFacts}
 - Grounds: ${formData.grounds}
 - Sections Invoked: ${formData.sectionsInvoked}
 
@@ -49,19 +50,90 @@ Structure the output with proper legal formatting, clear section headings, and m
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.PETITION_PREPARATOR,
+              action: 'Petition generated successfully',
+              inputData: {
+                petitionerName: formData.petitionerName,
+                respondentName: formData.respondentName,
+                jurisdiction: formData.jurisdiction,
+                reliefSought: formData.reliefSought,
+                sectionsInvoked: formData.sectionsInvoked
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                jurisdiction: formData.jurisdiction
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the petition. Please try again.");
+            const errorMessage = "Sorry, we couldn't generate the petition. Please try again.";
+            setResponse(errorMessage);
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.PETITION_PREPARATOR,
+              action: 'Failed to generate petition',
+              inputData: {
+                petitionerName: formData.petitionerName,
+                respondentName: formData.respondentName,
+                jurisdiction: formData.jurisdiction,
+                reliefSought: formData.reliefSought
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                jurisdiction: formData.jurisdiction
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse("An error occurred while generating the petition. Please try again later.");
+      const errorMessage = "An error occurred while generating the petition. Please try again later.";
+      setResponse(errorMessage);
       console.error("Error:", error);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.PETITION_PREPARATOR,
+        action: 'Error in generating petition',
+        inputData: {
+          petitionerName: formData.petitionerName,
+          respondentName: formData.respondentName,
+          jurisdiction: formData.jurisdiction,
+          reliefSought: formData.reliefSought
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          jurisdiction: formData.jurisdiction
+        }
+      });
     }
   };
 

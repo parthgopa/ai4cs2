@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Container, Row, Col, Form, Button, Modal, Badge, Spinner, Alert } from 'react-bootstrap';
-import { FaCalendarAlt, FaFilter, FaDownload, FaTrash, FaEye, FaSearch, FaTimes, FaCopy, FaHistory } from 'react-icons/fa';
+import { Card, Container, Row, Col, Form, Button, Modal, Badge, Alert } from 'react-bootstrap';
+import { 
+  FaCalendarAlt, 
+  FaEye, 
+  FaCopy, 
+  FaTrash, 
+  FaSearch, 
+  FaTimes,
+  FaDownload,
+  FaFilter,
+  FaClock,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaEdit,
+  FaFileAlt,
+  FaInfoCircle
+} from 'react-icons/fa';
 import { useActivityTracker } from '../store/activityTracker';
 import ReactMarkdown from 'react-markdown';
+import LoadingSpinner from '../Common/LoadingSpinner';
+import ActivityCard from '../Common/ActivityCard';
+import ExportModal from '../Common/ExportModal';
 
 const UserHistory = () => {
   const { getActivityHistory, clearAllHistory, deleteActivity } = useActivityTracker();
@@ -12,6 +30,7 @@ const UserHistory = () => {
   const [hasMore, setHasMore] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   const [filters, setFilters] = useState({
     startDate: '',
     endDate: '',
@@ -32,22 +51,37 @@ const UserHistory = () => {
 
   useEffect(() => {
     loadActivities();
+    loadActivityStats();
   }, []);
 
   const loadActivities = async () => {
     setLoading(true);
     try {
+      console.log('Loading activities with filters:', filters);
       const response = await getActivityHistory(filters);
-      if (response && response.activities) {
+      console.log('Activity response:', response);
+      
+      // Add a 2.5 second delay for better UX with new loading spinner
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      
+      if (response && response.data && response.data.activities) {
+        console.log('Activities found:', response.data.activities.length);
         // Group activities by date
-        const groupedActivities = groupActivitiesByDate(response.activities);
+        const groupedActivities = groupActivitiesByDate(response.data.activities);
+        console.log('Grouped activities:', groupedActivities);
         setActivities(groupedActivities);
-        setTotalCount(response.pagination?.total || response.activities.length);
-        setHasMore(response.pagination?.hasMore || false);
-        calculateStats(response.activities);
+        setTotalCount(response.data.totalCount || response.data.activities.length);
+        setHasMore(response.data.hasMore || false);
+        calculateStats(response.data.activities);
+      } else {
+        console.log('No activities data in response');
+        setActivities({});
+        setTotalCount(0);
       }
     } catch (error) {
       console.error('Error loading activities:', error);
+      setActivities({});
+      setTotalCount(0);
     } finally {
       setLoading(false);
     }
@@ -114,17 +148,11 @@ const UserHistory = () => {
       feature: '',
       limit: 50
     });
+    loadActivities();
   };
 
-
-  const handleDeleteActivity = async (activityId) => {
-    if (window.confirm('Are you sure you want to delete this activity?')) {
-      const success = await deleteActivity(activityId);
-      if (success) {
-        loadActivityHistory();
-        loadActivityStats();
-      }
-    }
+  const applyFilters = () => {
+    loadActivities();
   };
 
   const handleClearAllHistory = async () => {
@@ -158,45 +186,29 @@ const UserHistory = () => {
   const getActivityIcon = (feature) => {
     const icons = {
       'Compliance Calendar': '📅',
+      'Secretarial Audit': '🔍',
+      'Regulatory Updation': '📰',
       'CSR Policy': '📋',
       'Board Meeting Assistant': '🏢',
+      'General Meeting Assistant': '👥',
       'Document Management Policy': '📄',
       'Insider Trading Policy': '📊',
       'Meeting Minutes Policy': '📝',
       'Related Party Transaction Policy': '🤝',
-      'Statutory Register Maintenance Policy': '📚'
+      'Statutory Register Maintenance Policy': '📚',
+      'Reply to Notice RD': '📨',
+      'Reply to Notice ROC': '📧',
+      'Reply to Notice NCLT': '⚖️',
+      'Email Drafter': '✉️',
+      'Research Assistant': '🔬',
+      'Resolution Assistant': '📜',
+      'Agreement Drafting': '📑'
     };
     return icons[feature] || '📄';
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString();
-  };
-
-  const getActivityTypeColor = (type) => {
-    const colors = {
-      'compliance_calendar': 'primary',
-      'policy_generation': 'success',
-      'document_generation': 'info',
-      'meeting_assistance': 'warning',
-      'notice_reply': 'danger',
-      'form_submission': 'secondary',
-      'profile_update': 'dark',
-      'settings_change': 'light'
-    };
-    return colors[type] || 'secondary';
-  };
-
-  const exportData = () => {
-    const dataStr = JSON.stringify(activities, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-    const exportFileDefaultName = `activity-history-${new Date().toISOString().split('T')[0]}.json`;
-
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
+  const handleExportClick = () => {
+    setShowExportModal(true);
   };
 
   const calculateStats = (activitiesArray) => {
@@ -235,16 +247,13 @@ const UserHistory = () => {
   };
 
   return (
-    <Container fluid className="py-4">
-      <Row className="justify-content-center">
-        <Col lg={12}>
-          <Card className="input-card">
+    <>
+      <Container className="py-4">
+        <Row className="justify-content-center">
+          <Col md={12}>
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
-                <h2 className="card-title mb-2">
-                  <FaHistory className="me-2" />
-                  Activity History
-                </h2>
+                <h1 className="page-title">📊 User Activity History</h1>
                 {stats && (
                   <p style={{ color: 'var(--muted-color)' }}>
                     {stats.totalActivities} activities in the last {stats.period} days
@@ -265,11 +274,11 @@ const UserHistory = () => {
                   variant="outline-success"
                   size="sm"
                   className="me-2"
-                  onClick={exportData}
+                  onClick={handleExportClick}
                   disabled={Object.keys(activities).length === 0}
                 >
                   <FaDownload className="me-1" />
-                  Export
+                  Export Excel
                 </Button>
                 <Button
                   variant="outline-danger"
@@ -363,6 +372,8 @@ const UserHistory = () => {
                         >
                           <option value="">All Features</option>
                           <option value="Compliance Calendar">Compliance Calendar</option>
+                          <option value="Secretarial Audit">Secretarial Audit</option>
+                          <option value="Regulatory Updation">Regulatory Updation</option>
                           <option value="CSR Policy">CSR Policy</option>
                           <option value="Document Management Policy">Document Management Policy</option>
                           <option value="Insider Trading Policy">Insider Trading Policy</option>
@@ -374,14 +385,26 @@ const UserHistory = () => {
                           <option value="Reply to Notice RD">Reply to Notice RD</option>
                           <option value="Reply to Notice ROC">Reply to Notice ROC</option>
                           <option value="Reply to Notice NCLT">Reply to Notice NCLT</option>
+                          <option value="Email Drafter">Email Drafter</option>
+                          <option value="Research Assistant">Research Assistant</option>
+                          <option value="Resolution Assistant">Resolution Assistant</option>
+                          <option value="Agreement Drafting">Agreement Drafting</option>
                         </Form.Select>
                       </Form.Group>
                     </Col>
-                    <Col md={2} className="d-flex align-items-end">
+                    <Col md={2} className="d-flex align-items-end gap-2">
+                      <Button
+                        variant="primary"
+                        onClick={applyFilters}
+                        className="flex-fill"
+                      >
+                        <FaSearch className="me-1" />
+                        Apply
+                      </Button>
                       <Button
                         variant="outline-secondary"
                         onClick={resetFilters}
-                        className="w-100"
+                        className="flex-fill"
                       >
                         <FaTimes className="me-1" />
                         Reset
@@ -394,10 +417,12 @@ const UserHistory = () => {
 
             {/* Activity List */}
             {loading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" variant="primary" />
-                <p className="mt-3">Loading your activity history...</p>
-              </div>
+              <LoadingSpinner 
+                size={80}
+                message="📊 Loading Your Work History"
+                subMessage="Fetching your detailed activity records and analyzing usage patterns..."
+                showDots={true}
+              />
             ) : Object.keys(activities).length === 0 ? (
               <Alert variant="info" className="text-center">
                 <FaSearch className="mb-2" size={24} />
@@ -419,70 +444,14 @@ const UserHistory = () => {
                       {activities[date]
                         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
                         .map((activity, index) => (
-                          <Card key={activity._id} className="mb-3 activity-card shadow-sm">
-                            <Card.Body>
-                              <div className="d-flex justify-content-between align-items-start">
-                                <div className="flex-grow-1">
-                                  <div className="d-flex align-items-center mb-2">
-                                    <span className="me-2" style={{ fontSize: '1.2em' }}>
-                                      {getActivityIcon(activity.feature)}
-                                    </span>
-                                    <Badge bg="primary" className="me-2">
-                                      {activity.feature}
-                                    </Badge>
-                                    <small className="text-muted">
-                                      {formatTimestamp(activity.timestamp)}
-                                    </small>
-                                  </div>
-                                  <h6 className="mb-2 text-success">{activity.action}</h6>
-
-                                  {/* Input Data Display */}
-                                  {activity.inputData && Object.keys(activity.inputData).length > 0 && (
-                                    <div className="mb-2">
-                                      <strong className="text-primary">📝 Input:</strong>
-                                      <div className="bg-light p-2 rounded mt-1">
-                                        {activity.inputData.companyName && (
-                                          <div><strong>Company:</strong> {activity.inputData.companyName}</div>
-                                        )}
-                                        {activity.inputData.quarterlyOptions && (
-                                          <div><strong>Quarters:</strong> {activity.inputData.quarterlyOptions.join(', ')}</div>
-                                        )}
-                                        {activity.inputData.agendaItems && (
-                                          <div><strong>Agenda Items:</strong> {activity.inputData.agendaItems.join(', ')}</div>
-                                        )}
-                                        {activity.inputData.meetingType && (
-                                          <div><strong>Meeting Type:</strong> {activity.inputData.meetingType}</div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  {/* Output Preview */}
-                                  {activity.outputData && activity.outputData.success && (
-                                    <div className="mb-2">
-                                      <strong className="text-success">✅ Output Generated:</strong>
-                                      <div className="text-muted small">
-                                        {activity.outputData.contentLength || 0} characters
-                                        {activity.outputData.content && (
-                                          <div className="mt-1">
-                                            <em>Preview: {activity.outputData.content.substring(0, 100)}...</em>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                                <Button
-                                  variant="outline-primary"
-                                  size="sm"
-                                  onClick={() => viewActivity(activity)}
-                                >
-                                  <FaEye className="me-1" />
-                                  View Details
-                                </Button>
-                              </div>
-                            </Card.Body>
-                          </Card>
+                          <ActivityCard
+                            key={activity._id}
+                            activity={activity}
+                            onViewDetails={viewActivity}
+                            onCopyContent={copyToClipboard}
+                            formatTimestamp={formatTimestamp}
+                            getActivityIcon={getActivityIcon}
+                          />
                         ))
                       }
                     </div>
@@ -505,9 +474,8 @@ const UserHistory = () => {
                 </Button>
               )}
             </div>
-          </Card>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
 
       {/* Activity Details Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="xl" scrollable>
@@ -652,7 +620,17 @@ const UserHistory = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </Container>
+
+      {/* Export Modal */}
+      <ExportModal
+        show={showExportModal}
+        onHide={() => setShowExportModal(false)}
+        activities={activities}
+        totalCount={totalCount}
+        onApplyFilters={loadActivities}
+      />
+      </Container>
+    </>
   );
 };
 
