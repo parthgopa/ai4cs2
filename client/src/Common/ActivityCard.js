@@ -8,14 +8,16 @@ import {
   FaTimesCircle, 
   FaEdit, 
   FaFileAlt, 
-  FaInfoCircle 
+  FaInfoCircle,
+  FaTrash
 } from 'react-icons/fa';
 import './ActivityCard.css';
 
 const ActivityCard = ({ 
   activity, 
   onViewDetails, 
-  onCopyContent, 
+  onCopyContent,
+  onDelete,
   formatTimestamp,
   getActivityIcon 
 }) => {
@@ -255,9 +257,9 @@ const ActivityCard = ({
               size="sm"
               onClick={() => onViewDetails(activity)}
               className="action-button"
+              title="View details"
             >
               <FaEye className="button-icon" />
-              View Details
             </Button>
             {activity.outputData?.success && activity.outputData?.content && (
               <Button
@@ -265,9 +267,20 @@ const ActivityCard = ({
                 size="sm"
                 onClick={() => onCopyContent(activity.outputData.content)}
                 className="action-button"
+                title="Copy output"
               >
                 <FaCopy className="button-icon" />
-                Copy Output
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => onDelete(activity._id || activity.id)}
+                className="action-button"
+                title="Delete this activity"
+              >
+                <FaTrash className="button-icon" />
               </Button>
             )}
           </div>
