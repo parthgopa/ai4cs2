@@ -21,10 +21,10 @@ router.get("/history", getActivityHistory);
 // GET /api/activity/stats - Get activity statistics
 router.get("/stats", getActivityStats);
 
+// DELETE /api/activity/clear - Clear all user activities (must be before :activityId)
+router.delete("/clear", clearAllActivities);
+
 // DELETE /api/activity/:activityId - Delete specific activity
 router.delete("/:activityId", deleteActivity);
-
-// DELETE /api/activity/clear - Clear all user activities
-router.delete("/clear", clearAllActivities);
 
 module.exports = router;

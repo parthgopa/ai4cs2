@@ -57,24 +57,16 @@ const UserHistory = () => {
   const loadActivities = async () => {
     setLoading(true);
     try {
-      console.log('Loading activities with filters:', filters);
       const response = await getActivityHistory(filters);
-      console.log('Activity response:', response);
-      
-      // Add a 2.5 second delay for better UX with new loading spinner
-      await new Promise(resolve => setTimeout(resolve, 2500));
       
       if (response && response.data && response.data.activities) {
-        console.log('Activities found:', response.data.activities.length);
         // Group activities by date
         const groupedActivities = groupActivitiesByDate(response.data.activities);
-        console.log('Grouped activities:', groupedActivities);
         setActivities(groupedActivities);
         setTotalCount(response.data.totalCount || response.data.activities.length);
         setHasMore(response.data.hasMore || false);
         calculateStats(response.data.activities);
       } else {
-        console.log('No activities data in response');
         setActivities({});
         setTotalCount(0);
       }
@@ -141,14 +133,21 @@ const UserHistory = () => {
     }));
   };
 
+  // Auto-apply filters when they change (with debounce for date inputs)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      loadActivities();
+    }, 300); // Small debounce for smoother UX
+    return () => clearTimeout(timeoutId);
+  }, [filters.startDate, filters.endDate, filters.feature]);
+
   const resetFilters = () => {
     setFilters({
       startDate: '',
       endDate: '',
       feature: '',
-      limit: 50
+      searchTerm: ''
     });
-    loadActivities();
   };
 
   const applyFilters = () => {
@@ -161,6 +160,25 @@ const UserHistory = () => {
       setActivities({});
       setTotalCount(0);
       setShowClearModal(false);
+      loadActivityStats();
+    }
+  };
+
+  const handleDeleteActivity = async (activityId) => {
+    const success = await deleteActivity(activityId);
+    if (success) {
+      // Remove from local state without reloading
+      setActivities(prev => {
+        const updated = {};
+        Object.keys(prev).forEach(date => {
+          const filtered = prev[date].filter(a => a._id !== activityId && a.id !== activityId);
+          if (filtered.length > 0) {
+            updated[date] = filtered;
+          }
+        });
+        return updated;
+      });
+      setTotalCount(prev => prev - 1);
       loadActivityStats();
     }
   };
@@ -445,10 +463,11 @@ const UserHistory = () => {
                         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
                         .map((activity, index) => (
                           <ActivityCard
-                            key={activity._id}
+                            key={activity._id || activity.id}
                             activity={activity}
                             onViewDetails={viewActivity}
                             onCopyContent={copyToClipboard}
+                            onDelete={handleDeleteActivity}
                             formatTimestamp={formatTimestamp}
                             getActivityIcon={getActivityIcon}
                           />

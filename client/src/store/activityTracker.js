@@ -2,7 +2,6 @@ import { useAuth } from './auth';
 
 // Activity tracking hook
 export const useActivityTracker = () => {
-  const { user, token, userId } = useAuth();
 
   const trackActivity = async (activityData) => {
     const storedToken = localStorage.getItem('token');
@@ -86,7 +85,9 @@ export const useActivityTracker = () => {
   };
 
   const deleteActivity = async (activityId) => {
-    if (!user || !token) {
+    const storedToken = localStorage.getItem('token');
+    
+    if (!storedToken) {
       console.warn('User not authenticated');
       return false;
     }
@@ -95,7 +96,7 @@ export const useActivityTracker = () => {
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/activity/${activityId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${storedToken}`
         }
       });
 
@@ -107,7 +108,9 @@ export const useActivityTracker = () => {
   };
 
   const clearAllHistory = async () => {
-    if (!user || !token) {
+    const storedToken = localStorage.getItem('token');
+    
+    if (!storedToken) {
       console.warn('User not authenticated');
       return false;
     }
@@ -116,7 +119,7 @@ export const useActivityTracker = () => {
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/activity/clear`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${storedToken}`
         }
       });
 
