@@ -19,9 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   //   this is the get the value in either true or false in the original state of token
   let isLoggedIn = !!token;
-  console.log("token", token);
   console.log("isLoggedin ", isLoggedIn);
-  console.log("userId", userId);
 
   //   to check whether is loggedIn or not
   const LogoutUser = () => {
@@ -54,7 +52,6 @@ export const AuthProvider = ({ children }) => {
         
         // Store user ID in localStorage and state
         if (data.userData && data.userData._id) {
-          console.log('👤 Storing userId:', data.userData._id);
           storeUserIdInLS(data.userData._id);
         } else {
           console.warn('⚠️ No userId found in user data:', data.userData);
