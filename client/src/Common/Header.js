@@ -35,7 +35,7 @@ const Header = () => {
 
         {/* Chatbot Toggle Button - Center */}
         <div className="chatbot-header-toggle d-flex justify-content-center flex-grow-1">
-          <Button 
+          <button 
             className="chatbot-toggle-header d-none d-lg-flex"
             onClick={toggleChatbot}
             aria-label="Toggle AI Assistant"
@@ -43,10 +43,10 @@ const Header = () => {
           >
             <img src="/images/chatbot.jpg" alt="AI Assistant" className="chatbot-image" />
             <div className="ms-2" style={{ fontWeight: 'bold',fontSize: '18px',alignItems: 'center',display: 'flex' }}>AI Assistant</div>
-          </Button>
+          </button>
 
           {/* Mobile Chatbot Image Toggle */}
-          <Button 
+          <button 
             className="chatbot-toggle-image d-lg-none"
             onClick={toggleChatbot}
             aria-label="Toggle AI Assistant"
@@ -60,12 +60,12 @@ const Header = () => {
                 e.target.style.display = 'none';
               }}
             />
-          </Button>
+          </button>
         </div>
 
         <div className="d-flex align-items-right">
           {/* Theme Toggle Button - Desktop */}
-          <Button 
+          <button 
             onClick={toggleTheme} 
             variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
             size="sm" 
@@ -83,7 +83,7 @@ const Header = () => {
                 <span className="theme-text">Dark</span>
               </>
             )}
-          </Button>
+          </button>
           
           <Navbar.Toggle 
             aria-controls="main-offcanvas" 

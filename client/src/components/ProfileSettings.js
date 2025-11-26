@@ -53,9 +53,9 @@ const ProfileSettings = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (limit to 1MB for base64)
-      if (file.size > 1024 * 1024) {
-        toast.error('Image size should be less than 1MB');
+      // Check file size (limit to 5MB for base64)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB');
         return;
       }
       
