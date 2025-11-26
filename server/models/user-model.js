@@ -84,6 +84,10 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  isProfileSetupComplete: {
+    type: Boolean,
+    default: false,
+  },
   // Failed login attempt tracking
   failedLoginAttempts: {
     type: Number,

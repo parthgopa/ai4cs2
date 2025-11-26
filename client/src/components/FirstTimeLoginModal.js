@@ -21,8 +21,9 @@ const FirstTimeLoginModal = () => {
   });
 
   useEffect(() => {
-    // Check if this is first login
-    if (user && user.loginCount === 1) {
+    // Check if this is first login AND profile setup is not complete (using localStorage)
+    const isProfileSetupDone = localStorage.getItem('profileSetupComplete');
+    if (user && user.loginCount === 1 && !isProfileSetupDone) {
       setShow(true);
       // Pre-fill any existing data
       setFormData(prevData => ({
@@ -79,6 +80,8 @@ const FirstTimeLoginModal = () => {
 
       if (response.ok) {
         toast.success('Profile setup completed successfully!');
+        // Mark profile setup as complete in localStorage
+        localStorage.setItem('profileSetupComplete', 'true');
         setShow(false);
         // Force refresh to update user data
         window.location.reload();
