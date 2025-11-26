@@ -6,8 +6,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaPlus, FaFileWord } from 'react-icons/fa
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const RegulatoryUpdation = () => {
+  const { trackActivity } = useActivityTracker();
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -137,12 +139,55 @@ Omit any preface note, conclusion note, end note and disclaimer.
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: 'Regulatory Updation',
+              action: 'Regulatory Updates Generated Successfully',
+              inputData: {
+                selectedRegulations: formData.selectedRegulations,
+                monthsCount: formData.monthsCount,
+                periodCovered: monthsString
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                regulationsCount: formData.selectedRegulations.length,
+                generationTime: Date.now()
+              }
+            });
           } else {
             setResponse("Sorry, we couldn't generate regulatory updates. Please try again.");
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: 'Regulatory Updation',
+              action: 'Regulatory Updates Generation Failed',
+              inputData: {
+                selectedRegulations: formData.selectedRegulations,
+                monthsCount: formData.monthsCount,
+                periodCovered: monthsString
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                regulationsCount: formData.selectedRegulations.length
+              }
+            });
           }
         }
       });
@@ -150,6 +195,26 @@ Omit any preface note, conclusion note, end note and disclaimer.
       setLoading(false);
       setResponse("An error occurred while generating the regulatory updates. Please try again later.");
       console.error("Error:", error);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: 'Regulatory Updation',
+        action: 'Regulatory Updates Generation Error',
+        inputData: {
+          selectedRegulations: formData.selectedRegulations,
+          monthsCount: formData.monthsCount,
+          periodCovered: monthsString
+        },
+        outputData: {
+          success: false,
+          error: error.message
+        },
+        metadata: {
+          promptLength: prompt.length,
+          regulationsCount: formData.selectedRegulations.length
+        }
+      });
     }
   };
 

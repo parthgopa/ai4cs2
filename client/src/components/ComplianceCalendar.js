@@ -103,23 +103,6 @@ Convert the output in the calender Format.
 Exclude any introductory notes, prefaces, end notes or disclaimers from the output.`;
 
     try {
-      // Track activity before API call
-      await trackActivity({
-        activityType: ACTIVITY_TYPES.COMPLIANCE_CALENDAR,
-        feature: FEATURES.COMPLIANCE_CALENDAR,
-        action: 'Generate Compliance Calendar',
-        inputData: {
-          companyName: formData.companyName,
-          companyType: formData.companyType,
-          quarterlyOptions: formData.quarterlyOptions,
-          financialYear
-        },
-        metadata: {
-          promptLength: prompt.length,
-          selectedQuarters: formData.quarterlyOptions.length
-        }
-      });
-
       await APIService({
         question: prompt,
         onResponse: async (data) => {
@@ -135,8 +118,9 @@ Exclude any introductory notes, prefaces, end notes or disclaimers from the outp
               action: 'Compliance Calendar Generated Successfully',
               inputData: {
                 companyName: formData.companyName,
+                companyType: formData.companyType,
                 quarterlyOptions: formData.quarterlyOptions,
-                promptLength: prompt.length
+                financialYear
               },
               outputData: {
                 success: true,
@@ -144,8 +128,9 @@ Exclude any introductory notes, prefaces, end notes or disclaimers from the outp
                 contentLength: generatedContent.length
               },
               metadata: {
-                generationTime: Date.now(),
-                financialYear
+                promptLength: prompt.length,
+                selectedQuarters: formData.quarterlyOptions.length,
+                generationTime: Date.now()
               }
             });
           } else {
@@ -159,11 +144,15 @@ Exclude any introductory notes, prefaces, end notes or disclaimers from the outp
               inputData: {
                 companyName: formData.companyName,
                 companyType: formData.companyType,
-                quarterlyOptions: formData.quarterlyOptions
+                quarterlyOptions: formData.quarterlyOptions,
+                financialYear
               },
               outputData: {
                 success: false,
                 error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length
               }
             });
           }
@@ -182,11 +171,15 @@ Exclude any introductory notes, prefaces, end notes or disclaimers from the outp
         inputData: {
           companyName: formData.companyName,
           companyType: formData.companyType,
-          quarterlyOptions: formData.quarterlyOptions
+          quarterlyOptions: formData.quarterlyOptions,
+          financialYear
         },
         outputData: {
           success: false,
           error: error.message
+        },
+        metadata: {
+          promptLength: prompt.length
         }
       });
     }

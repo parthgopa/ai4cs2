@@ -26,7 +26,8 @@ const activitySchema = new Schema({
       'notice_reply',
       'form_submission',
       'profile_update',
-      'settings_change'
+      'settings_change',
+      'feature_usage'
     ]
   },
   feature: {

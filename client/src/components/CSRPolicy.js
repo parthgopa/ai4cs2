@@ -58,19 +58,6 @@ const CSRPolicy = () => {
 `;
 
     try {
-      // Track activity before API call
-      await trackActivity({
-        activityType: ACTIVITY_TYPES.POLICY_GENERATION,
-        feature: FEATURES.CSR_POLICY,
-        action: 'Generate CSR Policy',
-        inputData: {
-          companyName: formData.companyName
-        },
-        metadata: {
-          promptLength: prompt.length
-        }
-      });
-
       await APIService({
         question: prompt,
         onResponse: async (data) => {
@@ -89,8 +76,12 @@ const CSRPolicy = () => {
               },
               outputData: {
                 success: true,
-                content: data.candidates[0].content.parts[0].text || '',
-                contentLength: data.candidates[0].content.parts[0].text ? data.candidates[0].content.parts[0].text.length : 0
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: Date.now()
               }
             });
           } else {
@@ -107,6 +98,9 @@ const CSRPolicy = () => {
               outputData: {
                 success: false,
                 error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length
               }
             });
           }
@@ -127,6 +121,9 @@ const CSRPolicy = () => {
         outputData: {
           success: false,
           error: error.message
+        },
+        metadata: {
+          promptLength: prompt.length
         }
       });
     }

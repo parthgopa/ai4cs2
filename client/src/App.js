@@ -48,6 +48,12 @@ import Profile from './components/Profile';
 import ProfileSettings from './components/ProfileSettings';
 import ProfilePreferences from './components/ProfilePreferences';
 import UserHistory from './components/UserHistory';
+import MiniLawLibrary from './components/MiniLawLibrary';
+import CaseDigest from './components/CaseDigest';
+import JudgmentSimulator from './components/JudgmentSimulator';
+import ResearchAssistant from './components/ResearchAssistant';
+import ResolutionAssistant from './components/ResolutionAssistant';
+import EmailDrafter from './components/EmailDrafter';
 
 // Layout wrapper component to conditionally show header/footer
 function Layout({ children }) {
@@ -114,6 +120,13 @@ function App() {
             <Route path="/profile/settings" element={<ProfileSettings />} />
             <Route path="/profile/preferences" element={<ProfilePreferences />} />
             <Route path="/profile/history" element={<UserHistory />} />
+            <Route path="/forms" element={<Forms />} />
+            <Route path="/mini-law-library" element={<MiniLawLibrary />} />
+            <Route path="/case-digest" element={<CaseDigest />} />
+            <Route path="/judgment-simulator" element={<JudgmentSimulator />} />
+            <Route path="/research-assistant" element={<ResearchAssistant />} />
+            <Route path="/resolution-assistant" element={<ResolutionAssistant />} />
+            <Route path="/email-drafter" element={<EmailDrafter />} />
           </Routes>
         </Layout>
       </Router>

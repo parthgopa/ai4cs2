@@ -6,8 +6,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const AgreementDrafting = () => {
+  const { trackActivity } = useActivityTracker();
   const [loading, setLoading] = useState(false);
   const [templateLoading, setTemplateLoading] = useState(false);
   const [response, setResponse] = useState('');
@@ -102,18 +104,79 @@ Ensure the template maintains clarity, authority, and readability, reflecting th
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful template generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.AGREEMENT_DRAFTING,
+              action: 'Agreement template generated successfully',
+              inputData: {
+                agreementType: formData.agreementType
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                generationType: 'template'
+              }
+            });
           } else {
-            setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+            const errorMessage = 'Sorry, we couldn\'t generate a response. Please try again.';
+            setResponse(errorMessage);
+            
+            // Track failed template generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.AGREEMENT_DRAFTING,
+              action: 'Failed to generate agreement template',
+              inputData: {
+                agreementType: formData.agreementType
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                generationType: 'template'
+              }
+            });
           }
         }
       });
     } catch (error) {
       setTemplateLoading(false);
-      setResponse('An error occurred while processing your request. Please try again.');
+      const errorMessage = 'An error occurred while processing your request. Please try again.';
+      setResponse(errorMessage);
+      
+      // Track template generation error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.AGREEMENT_DRAFTING,
+        action: 'Error in generating agreement template',
+        inputData: {
+          agreementType: formData.agreementType
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          generationType: 'template'
+        }
+      });
     }
     setTemplateLoading(false);
   };
@@ -158,18 +221,91 @@ console.log(prompt);
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful agreement generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.AGREEMENT_DRAFTING,
+              action: 'Agreement generated successfully',
+              inputData: {
+                agreementType: formData.agreementType,
+                partyAName: formData.partyAName,
+                partyBName: formData.partyBName,
+                purpose: formData.purpose,
+                effectiveDate: formData.effectiveDate,
+                duration: formData.duration,
+                governingLaw: formData.governingLaw
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                generationType: 'full_agreement'
+              }
+            });
           } else {
-            setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+            const errorMessage = 'Sorry, we couldn\'t generate a response. Please try again.';
+            setResponse(errorMessage);
+            
+            // Track failed agreement generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: FEATURES.AGREEMENT_DRAFTING,
+              action: 'Failed to generate agreement',
+              inputData: {
+                agreementType: formData.agreementType,
+                partyAName: formData.partyAName,
+                partyBName: formData.partyBName,
+                purpose: formData.purpose
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                generationType: 'full_agreement'
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse('An error occurred while processing your request. Please try again.');
+      const errorMessage = 'An error occurred while processing your request. Please try again.';
+      setResponse(errorMessage);
+      
+      // Track agreement generation error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.AGREEMENT_DRAFTING,
+        action: 'Error in generating agreement',
+        inputData: {
+          agreementType: formData.agreementType,
+          partyAName: formData.partyAName,
+          partyBName: formData.partyBName,
+          purpose: formData.purpose
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          generationType: 'full_agreement'
+        }
+      });
     }
   };
 

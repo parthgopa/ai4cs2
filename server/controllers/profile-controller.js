@@ -74,6 +74,9 @@ const updateProfile = async (req, res) => {
       console.log('No profile image provided in request');
     }
 
+    // Mark profile setup as complete (for first-time login modal)
+    updateData.isProfileSetupComplete = true;
+
     // Update user in database
     const updatedUser = await User.findByIdAndUpdate(
       userId,

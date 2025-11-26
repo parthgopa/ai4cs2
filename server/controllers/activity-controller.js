@@ -100,24 +100,35 @@ const getActivityHistory = async (req, res) => {
     // Get total count for pagination
     const totalCount = await Activity.countDocuments(query);
 
-    // Group activities by date for better organization
-    const groupedActivities = activities.reduce((acc, activity) => {
-      const date = activity.timestamp.toISOString().split('T')[0];
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(activity);
-      return acc;
-    }, {});
-
     res.status(200).json({
       success: true,
       data: {
-        activities: groupedActivities,
+        activities: activities.map(activity => ({
+          id: activity._id,
+          userId: activity.userId,
+          username: activity.username,
+          email: activity.email,
+          activityType: activity.activityType,
+          feature: activity.feature,
+          action: activity.action,
+          inputData: activity.inputData,
+          outputData: activity.outputData,
+          metadata: activity.metadata,
+          timestamp: activity.timestamp,
+          sessionId: activity.sessionId,
+          ipAddress: activity.ipAddress,
+          userAgent: activity.userAgent
+        })),
         totalCount,
         currentPage: Math.floor(offset / limit) + 1,
         totalPages: Math.ceil(totalCount / limit),
         hasMore: (offset + limit) < totalCount
+      },
+      pagination: {
+        total: totalCount,
+        hasMore: (offset + limit) < totalCount,
+        currentPage: Math.floor(offset / limit) + 1,
+        totalPages: Math.ceil(totalCount / limit)
       }
     });
   } catch (error) {
@@ -208,14 +219,39 @@ const getActivityStats = async (req, res) => {
       timestamp: { $gte: startDate }
     });
 
+    // Get unique active days count
+    const activeDays = await Activity.distinct('timestamp', {
+      userId,
+      timestamp: { $gte: startDate }
+    }).then(dates => {
+      const uniqueDays = new Set();
+      dates.forEach(date => {
+        uniqueDays.add(date.toISOString().split('T')[0]);
+      });
+      return uniqueDays.size;
+    });
+
+    // Format feature stats for frontend
+    const formattedFeatureStats = featureStats.map(stat => ({
+      name: stat._id,
+      count: stat.count,
+      lastActivity: stat.lastActivity
+    }));
+
+    // Get most used feature
+    const mostUsedFeature = formattedFeatureStats.length > 0 ? formattedFeatureStats[0].name : '';
+
     res.status(200).json({
       success: true,
       data: {
         totalActivities,
+        featuresUsed: featureStats.length,
+        activeDays,
+        mostUsedFeature,
         period: parseInt(period),
-        featureStats,
+        featureStats: formattedFeatureStats,
         typeStats,
-        dailyStats
+        dailyStats: dailyStats.map(stat => stat._id)
       }
     });
   } catch (error) {

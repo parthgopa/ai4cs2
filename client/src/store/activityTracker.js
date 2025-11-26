@@ -2,16 +2,16 @@ import { useAuth } from './auth';
 
 // Activity tracking hook
 export const useActivityTracker = () => {
-  const { user, token } = useAuth();
+  const { user, token, userId } = useAuth();
 
   const trackActivity = async (activityData) => {
     const storedToken = localStorage.getItem('token');
-    if (!storedToken) {
-      console.warn('No authentication token found');
+    const storedUserId = localStorage.getItem('userId');
+    
+    if (!storedToken || !storedUserId) {
+      console.warn('No authentication token or userId found - cannot track activity');
       return;
     }
-
-    console.log('Tracking activity:', activityData);
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/activity/track`, {
@@ -22,14 +22,15 @@ export const useActivityTracker = () => {
         },
         body: JSON.stringify({
           ...activityData,
+          userId: storedUserId,
           timestamp: new Date().toISOString()
         })
       });
 
       const result = await response.json();
-      console.log('Activity tracking response:', result);
 
       if (!response.ok) {
+        console.error('Activity tracking failed:', response.status, result.message);
         throw new Error(`HTTP error! status: ${response.status}, message: ${result.message}`);
       }
 
@@ -41,13 +42,21 @@ export const useActivityTracker = () => {
   };
 
   const getActivityHistory = async (filters = {}) => {
-    if (!user || !token) {
-      console.warn('User not authenticated');
-      return [];
+    const storedToken = localStorage.getItem('token');
+    const storedUserId = localStorage.getItem('userId');
+    
+    if (!storedToken || !storedUserId) {
+      console.warn('User not authenticated or userId not found');
+      console.log('Token:', storedToken ? 'Present' : 'Missing');
+      console.log('UserId:', storedUserId ? storedUserId : 'Missing');
+      return { data: { activities: [], totalCount: 0, hasMore: false } };
     }
 
     try {
       const queryParams = new URLSearchParams();
+      
+      // Add userId to query params
+      queryParams.append('userId', storedUserId);
       
       // Add filters to query params
       if (filters.startDate) queryParams.append('startDate', filters.startDate);
@@ -56,10 +65,12 @@ export const useActivityTracker = () => {
       if (filters.limit) queryParams.append('limit', filters.limit);
       if (filters.offset) queryParams.append('offset', filters.offset);
 
+      console.log('Fetching activity history with params:', queryParams.toString());
+
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/activity/history?${queryParams}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${storedToken}`
         }
       });
 
@@ -70,7 +81,7 @@ export const useActivityTracker = () => {
       return await response.json();
     } catch (error) {
       console.error('Error fetching activity history:', error);
-      return [];
+      return { data: { activities: [], totalCount: 0, hasMore: false } };
     }
   };
 
@@ -138,17 +149,69 @@ export const ACTIVITY_TYPES = {
 
 // Feature names constants
 export const FEATURES = {
+  // Compliance Tools
   COMPLIANCE_CALENDAR: 'Compliance Calendar',
+  SECRETARIAL_AUDIT: 'Secretarial Audit Toolkit',
+  REGULATORY_UPDATION: 'Regulatory Compass',
+  STATUTORY_REGISTERS: 'Statutory Register and Records',
+  PROCEDURE_PRACTICE: 'Procedure and Practice',
+  FORMS: 'Forms',
+  
+  // Legal Tools
+  LEGAL_OPINION: 'Legal Opinion',
+  LEGAL_RESEARCH: 'Legal Research',
+  RESEARCH_ASSISTANT: 'Research Assistant',
+  SCENARIO_SOLVER: 'Scenario Solver',
+  CASE_DIGEST: 'Case Digest',
+  JUDGMENT_SIMULATOR: 'Judgment Simulator',
+  MINI_LAW_LIBRARY: 'Mini-Law Library',
+  
+  // Policy Drafting Tools
   CSR_POLICY: 'CSR Policy',
   DOCUMENT_MANAGEMENT_POLICY: 'Document Management Policy',
   INSIDER_TRADING_POLICY: 'Insider Trading Policy',
   MEETING_MINUTES_POLICY: 'Meeting Minutes Policy',
   RELATED_PARTY_TRANSACTION_POLICY: 'Related Party Transaction Policy',
   STATUTORY_REGISTER_POLICY: 'Statutory Register Maintenance Policy',
+  POLICY_DRAFTING: 'Policy Drafting',
+  
+  // Agreement Tools
+  AGREEMENT_DRAFTING: 'Agreement Drafting',
+  CAPITAL_RAISING_AGREEMENT: 'Capital Raising Advisory Agreement',
+  
+  // Notice Reply Tools
+  REPLY_TO_NOTICE_RD: 'Reply to Notice - RD',
+  REPLY_TO_NOTICE_ROC: 'Reply to Notice - ROC',
+  REPLY_TO_NOTICE_NCLT: 'Reply to Notice - NCLT',
+  
+  // Meeting Tools
   BOARD_MEETING_ASSISTANT: 'Board Meeting Assistant',
   GENERAL_MEETING_ASSISTANT: 'General Meeting Assistant',
-  REPLY_TO_NOTICE_RD: 'Reply to Notice RD',
-  REPLY_TO_NOTICE_ROC: 'Reply to Notice ROC',
-  REPLY_TO_NOTICE_NCLT: 'Reply to Notice NCLT',
-  CAPITAL_RAISING_AGREEMENT: 'Capital Raising Advisory Agreement'
+  RESOLUTION_ASSISTANT: 'Resolution Assistant',
+  RESOLUTIONS_DRAFTING: 'Resolutions Drafting Page',
+  
+  // Petition Tools
+  PETITION_PREPARATOR: 'Petition Preparator',
+  
+  // Utility Tools
+  EMAIL_DRAFTER: 'Email Drafter',
+  CHATBOT: 'Chatbot',
+  
+  // User Management
+  PROFILE: 'Profile',
+  PROFILE_SETTINGS: 'Profile Settings',
+  PROFILE_PREFERENCES: 'Profile Preferences',
+  USER_HISTORY: 'User History',
+  
+  // Authentication
+  LOGIN: 'Login',
+  REGISTER: 'Register',
+  OTP_VERIFICATION: 'OTP Verification',
+  LOGOUT: 'Logout',
+  
+  // Other Pages
+  ABOUT: 'About',
+  CONTACT: 'Contact',
+  HOMEPAGE: 'Home Page',
+  TOOLS: 'Tools Page'
 };
