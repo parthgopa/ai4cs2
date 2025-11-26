@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import { FaPhone, FaEnvelope,  FaHandshake } from 'react-icons/fa';
+import {  FaHandshake } from 'react-icons/fa';
 import '../styles/Contact.css';
 import { IoCallOutline, IoMailOutline } from 'react-icons/io5';
 
@@ -44,8 +44,8 @@ const Contact = () => {
                       Speak directly with our team for immediate assistance and personalized support.
                     </p>
                     <div className="contact-detail">
-                      <a href="tel:+919978062293" className="contact-link">
-                        +91 9978062293
+                      <a href="tel:+ 91 1234567891" className="contact-link">
+                        +91 1234567891
                       </a>
                     </div>
                   </Card.Body>

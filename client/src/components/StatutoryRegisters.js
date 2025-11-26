@@ -6,8 +6,10 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { ACTIVITY_TYPES, FEATURES, useActivityTracker } from '../store/activityTracker';
 
 const StatutoryRegisters = () => {
+  const { trackActivity } = useActivityTracker();
   const [formData, setFormData] = useState({
     companyType: 'Private Limited Company',
   });
@@ -101,19 +103,76 @@ const StatutoryRegisters = () => {
 try {
     await APIService({
       question: prompt,
-      onResponse: (data) => {
+      onResponse: async (data) => {
         setLoading(false);
         if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-          setResponse(data.candidates[0].content.parts[0].text);
-          // console.log(data.candidates[0].content.parts[0].text);
+          const generatedContent = data.candidates[0].content.parts[0].text;
+          setResponse(generatedContent);
+          
+          // Track successful activity
+          await trackActivity({
+            activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+            feature: FEATURES.SECRETARIAL_AUDIT,
+            action: 'Generated statutory registers list',
+            inputData: {
+              companyType: formData.companyType
+            },
+            outputData: {
+              success: true,
+              content: generatedContent,
+              contentLength: generatedContent.length
+            },
+            metadata: {
+              promptLength: prompt.length,
+              generationTime: new Date().toISOString()
+            }
+          });
         } else {
-          setResponse("Sorry, we couldn't generate a compliance calendar. Please try again.");
+          const errorMessage = "Sorry, we couldn't generate a statutory registers list. Please try again.";
+          setResponse(errorMessage);
+          
+          // Track failed activity
+          await trackActivity({
+            activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+            feature: FEATURES.SECRETARIAL_AUDIT,
+            action: 'Failed to generate statutory registers list',
+            inputData: {
+              companyType: formData.companyType
+            },
+            outputData: {
+              success: false,
+              error: 'No valid response from API'
+            },
+            metadata: {
+              promptLength: prompt.length,
+              generationTime: new Date().toISOString()
+            }
+          });
         }
       }
     });
     } catch (error) {
       console.error('Error fetching data:', error);
-      setResponse('Error: Unable to fetch data. Please try again later.');
+      const errorMessage = 'Error: Unable to fetch data. Please try again later.';
+      setResponse(errorMessage);
+      
+      // Track error activity
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: FEATURES.SECRETARIAL_AUDIT,
+        action: 'Error in generating statutory registers list',
+        inputData: {
+          companyType: formData.companyType
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString()
+        }
+      });
     } finally {
       setLoading(false);
     }

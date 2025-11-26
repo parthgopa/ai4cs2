@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Container, Row, Col } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -7,8 +7,12 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { usePreferences } from '../store/preferences';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const BoardMeetingAssistant = () => {
+  const { getAutofillData, isAutoFillEnabled } = usePreferences();
+  const { trackActivity } = useActivityTracker();
   const [formData, setFormData] = useState({
     companyName: '',
     dateTime: '', // DD-MM-YYYY, HH:MM AM/PM
@@ -23,6 +27,17 @@ const BoardMeetingAssistant = () => {
 
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
+
+  // Auto-fill form data when component mounts
+  useEffect(() => {
+    if (isAutoFillEnabled) {
+      const autofillData = getAutofillData();
+      setFormData(prev => ({
+        ...prev,
+        companyName: autofillData.companyName || prev.companyName,
+      }));
+    }
+  }, [isAutoFillEnabled, getAutofillData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,32 +72,90 @@ const BoardMeetingAssistant = () => {
 - Draft Minutes
 - Resolutions (if any)
 
-Exclude and introductory paragraph , notes , disclaimers.
+Exclude introductory paragraph, notes, disclaimers.
 
 `;
 
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
-          if (
-            data &&
-            data.candidates &&
-            data.candidates[0] &&
-            data.candidates[0].content &&
-            data.candidates[0].content.parts
-          ) {
-            setResponse(data.candidates[0].content.parts[0].text);
+          if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.MEETING_ASSISTANCE,
+              feature: FEATURES.BOARD_MEETING_ASSISTANT,
+              action: 'Board Meeting Assistance Generated Successfully',
+              inputData: {
+                companyName: formData.companyName,
+                meetingType: 'General Board Meeting',
+                meetingDate: formData.dateTime.split(', ')[0],
+                meetingTime: formData.dateTime.split(', ')[1],
+                meetingVenue: formData.venueMode,
+                selectedItems: formData.agendaItems
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                itemsCount: formData.agendaItems.split(',').length,
+                generationTime: Date.now()
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the documents. Please try again.");
+            setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.MEETING_ASSISTANCE,
+              feature: FEATURES.BOARD_MEETING_ASSISTANT,
+              action: 'Board Meeting Assistance Generation Failed',
+              inputData: {
+                companyName: formData.companyName,
+                meetingType: 'General Board Meeting',
+                selectedItems: formData.agendaItems
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length
+              }
+            });
           }
-        },
+        }
       });
     } catch (error) {
       setLoading(false);
       setResponse('An error occurred while generating the documents. Please try again later.');
       console.error('Error:', error);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.MEETING_ASSISTANCE,
+        feature: FEATURES.BOARD_MEETING_ASSISTANT,
+        action: 'Board Meeting Assistance Generation Error',
+        inputData: {
+          companyName: formData.companyName,
+          meetingType: 'General Board Meeting',
+          selectedItems: formData.agendaItems
+        },
+        outputData: {
+          success: false,
+          error: error.message
+        },
+        metadata: {
+          promptLength: prompt.length
+        }
+      });
     }
   };
 

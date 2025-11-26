@@ -1,8 +1,10 @@
 import axios from "axios";
+//import the api key from .env file
+
 
 const APIService = async ({ question, onResponse, retries = 2 }) => {
   // const API_KEY = "AIzaSyAiUqUOYbZs2blgfFRBiD6XGyBeZKTiQRI";
-  const API_KEY = "AIzaSyCB27wjZdNO9d6t0J6QOBj_UyC60Fu2uZc";
+  const API_KEY = "AIzaSyAVfpTdEmCiexoRvta0nwE3ggyNgsXz5TU";
 
   const makeRequest = async (attempt = 1) => {
     try {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import APIService from '../Common/API';
@@ -6,13 +6,16 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { usePreferences } from '../store/preferences';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const ReplyToNoticeRD = () => {
+  const { getAutofillData, isAutoFillEnabled } = usePreferences();
+  const { trackActivity } = useActivityTracker();
+  
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
   const [selectedNoticeType, setSelectedNoticeType] = useState('');
-
-  // Form data for different notice types
   const [formData, setFormData] = useState({
     // Common fields
     companyName: '',
@@ -83,6 +86,20 @@ const ReplyToNoticeRD = () => {
     nameChangeAuthorizedSignatoryName: '',
     nameChangeAuthorizedSignatoryDesignation: ''
   });
+
+  // Auto-fill company data when component mounts or preferences change
+  useEffect(() => {
+    if (isAutoFillEnabled) {
+      const autofillData = getAutofillData();
+      if (autofillData.companyName || autofillData.cin) {
+        setFormData(prev => ({
+          ...prev,
+          companyName: autofillData.companyName || prev.companyName,
+          cin: autofillData.cin || prev.cin
+        }));
+      }
+    }
+  }, [isAutoFillEnabled, getAutofillData]);
 
   const noticeTypes = [
     { id: 'registered-office-shift', title: 'Registered Office Shift (Rule 28)' },
@@ -238,18 +255,88 @@ Authorized Signatory Name & Designation: ${formData.nameChangeAuthorizedSignator
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.NOTICE_REPLY,
+              feature: FEATURES.REPLY_TO_NOTICE_RD,
+              action: 'Reply to RD Notice generated successfully',
+              inputData: {
+                companyName: formData.companyName,
+                cin: formData.cin,
+                noticeType: selectedNoticeType,
+                rdNoticeDate: formData.rdNoticeDate
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                noticeType: selectedNoticeType
+              }
+            });
           } else {
-            setResponse('Sorry, we couldn\'t generate a response. Please try again.');
+            const errorMessage = 'Sorry, we couldn\'t generate a response. Please try again.';
+            setResponse(errorMessage);
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.NOTICE_REPLY,
+              feature: FEATURES.REPLY_TO_NOTICE_RD,
+              action: 'Failed to generate Reply to RD Notice',
+              inputData: {
+                companyName: formData.companyName,
+                cin: formData.cin,
+                noticeType: selectedNoticeType,
+                rdNoticeDate: formData.rdNoticeDate
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                noticeType: selectedNoticeType
+              }
+            });
           }
         }
       });
     } catch (error) {
       setLoading(false);
-      setResponse('An error occurred while processing your request. Please try again.');
+      const errorMessage = 'An error occurred while processing your request. Please try again.';
+      setResponse(errorMessage);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.NOTICE_REPLY,
+        feature: FEATURES.REPLY_TO_NOTICE_RD,
+        action: 'Error in generating Reply to RD Notice',
+        inputData: {
+          companyName: formData.companyName,
+          cin: formData.cin,
+          noticeType: selectedNoticeType,
+          rdNoticeDate: formData.rdNoticeDate
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          noticeType: selectedNoticeType
+        }
+      });
     }
   };
 

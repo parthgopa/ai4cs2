@@ -42,7 +42,6 @@ export const Login = () => {
         body: JSON.stringify(user),
       });
 
-      console.log("login", response);
 
       const res_data = await response.json();
 
@@ -111,8 +110,10 @@ export const Login = () => {
         toast.error(data.message || "Google login failed");
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Google login error");
+      // User closed popup or other error
+      if (err.code !== 'auth/popup-closed-by-user') {
+        console.error("Google login error:", err);
+      }
     }
   };
 

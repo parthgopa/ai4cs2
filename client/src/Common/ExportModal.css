@@ -1,0 +1,280 @@
+/* Export Modal Styles */
+.export-modal-header {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border-bottom: none;
+}
+
+.export-modal-header .modal-title {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.export-modal-header .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+.export-modal-body {
+  padding: 1.5rem;
+  background-color: var(--card-bg);
+}
+
+.export-modal-footer {
+  background-color: var(--accent-color);
+  border-top: 1px solid var(--border-color);
+  padding: 1rem 1.5rem;
+}
+
+/* Export Summary */
+.export-summary {
+  border-radius: 8px;
+  border: 1px solid rgba(13, 110, 253, 0.2);
+  background-color: rgba(13, 110, 253, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.export-summary .alert-info {
+  margin-bottom: 0;
+}
+
+/* Filter Sections */
+.filter-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--accent-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.filter-title {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.5rem;
+}
+
+/* Form Elements */
+.form-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control,
+.form-select {
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  padding: 0.75rem;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+/* Checkboxes */
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding-left: 0;
+}
+
+.form-check-input {
+  margin-right: 0.75rem;
+  margin-left: 0;
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--card-bg);
+  transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
+}
+
+.form-check-label {
+  color: var(--text-color);
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.status-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 6px;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: none;
+  color: white;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success:disabled {
+  background: #6c757d;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-outline-secondary {
+  border: 2px solid var(--border-color);
+  color: var(--text-color);
+  background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--accent-color);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-secondary {
+  background-color: var(--border-color);
+  border: none;
+  color: var(--text-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--muted-color);
+  color: white;
+}
+
+/* Spinner */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.15em;
+}
+
+/* Dark Theme Adjustments */
+.dark-theme .export-modal-body {
+  background-color: var(--card-bg);
+}
+
+.dark-theme .export-modal-footer {
+  background-color: var(--accent-color);
+  border-top-color: var(--border-color);
+}
+
+.dark-theme .filter-section {
+  background-color: var(--accent-color);
+  border-color: var(--border-color);
+}
+
+.dark-theme .export-summary {
+  background-color: rgba(109, 235, 245, 0.08);
+  border-color: rgba(109, 235, 245, 0.2);
+}
+
+.dark-theme .form-control,
+.dark-theme .form-select {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.dark-theme .form-control:focus,
+.dark-theme .form-select:focus {
+  background-color: var(--card-bg);
+  border-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+.dark-theme .form-check-input {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark-theme .form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .export-modal-body {
+    padding: 1rem;
+  }
+  
+  .filter-section {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .export-modal-footer {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .export-modal-footer .btn {
+    width: 100%;
+    margin: 0;
+  }
+  
+  .export-modal-footer .me-auto {
+    margin-right: 0 !important;
+    order: 3;
+  }
+  
+  .status-checkboxes {
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .export-summary {
+    font-size: 0.9rem;
+  }
+  
+  .export-summary .d-flex {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .filter-title {
+    font-size: 1rem;
+  }
+  
+  .form-label {
+    font-size: 0.9rem;
+  }
+}

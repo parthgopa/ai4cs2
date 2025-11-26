@@ -1,0 +1,83 @@
+/* Profile Styles */
+.profile-sidebar {
+  width: 350px;
+  max-width: 90vw;
+}
+
+.profile-image {
+  transition: all 0.3s ease;
+}
+
+.profile-image:hover {
+  transform: scale(1.05);
+}
+
+.profile-menu button {
+  transition: all 0.3s ease;
+}
+
+.profile-menu button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Image upload styles */
+.image-upload-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-upload-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.image-upload-overlay:hover {
+  transform: scale(1.1);
+}
+
+/* First time login modal styles */
+.step-content {
+  min-height: 300px;
+}
+
+/* Profile preferences section */
+.preference-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: var(--card-bg);
+}
+
+.preference-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.preference-card.active {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.preference-icon {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-sidebar {
+    width: 300px;
+  }
+}

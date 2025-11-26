@@ -95,17 +95,6 @@ Formatting Rules:
 
 **Content Structure**:
 Organize all forms under these exact categories in the specified order:
-6.  Board Meetings & General Meetings
-7.  Dormant & Strike-off filings
-8.  Foreign Company filings
-9.  Miscellaneous / Event-based
-10. Rare/Special Forms
-
-**Concluding Sections**:
-End the entire output with these three appendices in detail:
-1.  Appendix A: Abbreviations (list common acronyms like AGM, KMP, DIN).
-2.  Appendix B: Quick Date Triggers (summarize common timelines, e.g., "within X days of Board approval").
-3.  Revision Log (include version and source).
 
 Provide details for each form in these 5 categories plus the concluding sections.
 `;

@@ -6,12 +6,14 @@ import { FaCopy, FaFilePdf, FaFileWord } from 'react-icons/fa';
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 
 const SecretarialAudit = () => {
+  const { trackActivity } = useActivityTracker();
   const [formData, setFormData] = useState({
     companyName: '',
-    companyType: 'Listed Company',
+    companyType: 'Listed Public Company',
   });
 
   const [loading, setLoading] = useState(false);
@@ -109,23 +111,79 @@ Include:
 `;
 
 try {
-    await APIService({
-      question: prompt,
-      onResponse: (data) => {
-        setLoading(false);
-        if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-          setResponse(data.candidates[0].content.parts[0].text);
-          // console.log(data.candidates[0].content.parts[0].text);
-        } else {
-          setResponse("Sorry, we couldn't generate a compliance calendar. Please try again.");
+      await APIService({
+        question: prompt,
+        onResponse: async (data) => {
+          setLoading(false);
+          if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: 'Secretarial Audit',
+              action: 'Secretarial Audit Toolkit Generated Successfully',
+              inputData: {
+                companyName: formData.companyName,
+                companyType: formData.companyType
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: Date.now()
+              }
+            });
+          } else {
+            setResponse("Sorry, we couldn't generate a secretarial audit toolkit. Please try again.");
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+              feature: 'Secretarial Audit',
+              action: 'Secretarial Audit Toolkit Generation Failed',
+              inputData: {
+                companyName: formData.companyName,
+                companyType: formData.companyType
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length
+              }
+            });
+          }
         }
-      }
-    });
-  } catch (error) {
-    setLoading(false);
-    setResponse("An error occurred while generating the compliance calendar. Please try again later.");
-    console.error("Error:", error);
-  }
+      });
+    } catch (error) {
+      setLoading(false);
+      setResponse("An error occurred while generating the secretarial audit toolkit. Please try again later.");
+      console.error("Error:", error);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.DOCUMENT_GENERATION,
+        feature: 'Secretarial Audit',
+        action: 'Secretarial Audit Toolkit Generation Error',
+        inputData: {
+          companyName: formData.companyName,
+          companyType: formData.companyType
+        },
+        outputData: {
+          success: false,
+          error: error.message
+        },
+        metadata: {
+          promptLength: prompt.length
+        }
+      });
+    }
   };
 
   // Company type options

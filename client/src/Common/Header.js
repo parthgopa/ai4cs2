@@ -1,22 +1,27 @@
-import React, { useContext, useState } from 'react';
-import { Navbar, Container, Nav, Button, Offcanvas } from 'react-bootstrap';
+import React, { useContext, useState, useEffect } from 'react';
+import { Navbar, Container, Nav, Button, Offcanvas, Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import '../styles/Header.css';
 import { ThemeContext } from './ThemeContext';
-import { IoHomeOutline, IoInformationCircleOutline, IoCallOutline , IoPersonAddOutline , IoLogInOutline , IoLogOutOutline} from 'react-icons/io5';
+import { IoHomeOutline, IoInformationCircleOutline, IoCallOutline, IoPersonAddOutline, IoLogInOutline } from 'react-icons/io5';
+import { IoSettingsOutline } from 'react-icons/io5';
 import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs';
+import { FaUserCircle } from 'react-icons/fa';
 import Chatbot from '../components/Chatbot';
+import ProfileSidebar from '../components/ProfileSidebar';
+import FirstTimeLoginModal from '../components/FirstTimeLoginModal';
 import { useAuth } from '../store/auth';
-
 
 const Header = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [showMenu, setShowMenu] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  
-  const toggleChatbot = () => setIsChatbotOpen(!isChatbotOpen);
+  const [showProfileSidebar, setShowProfileSidebar] = useState(false);
 
-  const { isLoggedIn } = useAuth();
+  const toggleChatbot = () => setIsChatbotOpen(!isChatbotOpen);
+  const toggleProfileSidebar = () => setShowProfileSidebar(!showProfileSidebar);
+
+  const { isLoggedIn, user } = useAuth();
 
   return (
     <Navbar expand="lg" sticky="top" variant={theme === 'dark' ? 'dark' : 'light'} className="header-navbar shadow-sm">
@@ -27,7 +32,7 @@ const Header = () => {
             <img src="/logo.jpg" alt="Logo" className="logo" />
           </div>
         </Navbar.Brand>
-        
+
         {/* Chatbot Toggle Button - Center */}
         <div className="chatbot-header-toggle d-flex justify-content-center flex-grow-1">
           <Button 
@@ -39,7 +44,7 @@ const Header = () => {
             <img src="/images/chatbot.jpg" alt="AI Assistant" className="chatbot-image" />
             <div className="ms-2" style={{ fontWeight: 'bold',fontSize: '18px',alignItems: 'center',display: 'flex' }}>AI Assistant</div>
           </Button>
-          
+
           {/* Mobile Chatbot Image Toggle */}
           <Button 
             className="chatbot-toggle-image d-lg-none"
@@ -57,8 +62,9 @@ const Header = () => {
             />
           </Button>
         </div>
-        
+
         <div className="d-flex align-items-right">
+          {/* Theme Toggle Button - Desktop */}
           <Button 
             onClick={toggleTheme} 
             variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
@@ -78,6 +84,7 @@ const Header = () => {
               </>
             )}
           </Button>
+          
           <Navbar.Toggle 
             aria-controls="main-offcanvas" 
             onClick={() => setShowMenu(true)}
@@ -104,10 +111,50 @@ const Header = () => {
           <Offcanvas.Body>
             <Nav className="align-items-lg-center ms-lg-auto">
               <Nav.Link as={Link} to="/" className="nav-link" onClick={() => setShowMenu(false)}> <IoHomeOutline size={20} className='navbar-buttons'/> Home</Nav.Link>
+              <Nav.Link as={Link} to="/tools" className="nav-link" onClick={() => setShowMenu(false)}> <IoSettingsOutline size={20} className='navbar-buttons'/> Tools</Nav.Link>
               <Nav.Link as={Link} to="/about" className="nav-link" onClick={() => setShowMenu(false)}> <IoInformationCircleOutline size={20} className='navbar-buttons'/> About</Nav.Link>
               <Nav.Link as={Link} to="/contact" className="nav-link" onClick={() => setShowMenu(false)}> <IoCallOutline size={20} className='navbar-buttons'/> Contact Us</Nav.Link>
               {isLoggedIn ? (
-                <Nav.Link as={Link} to="/logout" className="nav-link" onClick={() => setShowMenu(false)}> <IoLogOutOutline size={20} /> Logout</Nav.Link>
+                <Nav.Link className="nav-link" onClick={() => {
+                  setShowMenu(false);
+                  toggleProfileSidebar();
+                }}>
+                  <div className="d-flex align-items-center">
+                    {user && user.profileImage ? (
+                      <>
+                        <div className="position-relative">
+                          <Image 
+                            src={user.profileImage} 
+                            roundedCircle 
+                            width={24} 
+                            height={24} 
+                            className="me-2"
+                            style={{ objectFit: 'cover' }}
+                            onError={(e) => {
+                              console.log('Profile image failed to load in header');
+                              e.target.onerror = null;
+                              e.target.style.display = 'none';
+                              // Show fallback icon
+                              const fallbackIcon = document.getElementById('profile-fallback-icon');
+                              if (fallbackIcon) {
+                                fallbackIcon.style.display = 'inline';
+                              }
+                            }}
+                          />
+                          <FaUserCircle 
+                            id="profile-fallback-icon" 
+                            size={20} 
+                            className="me-2" 
+                            style={{ display: 'none', position: 'absolute', left: 0, top: 0 }} 
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <FaUserCircle size={20} className="me-2" />
+                    )}
+                    Profile
+                  </div>
+                </Nav.Link>
               ) : (
                 <>
                   <Nav.Link as={Link} to="/register" className="nav-link" onClick={() => setShowMenu(false)}> <IoPersonAddOutline size={20} /> Register</Nav.Link>
@@ -115,6 +162,7 @@ const Header = () => {
                 </>
               )}
               
+              {/* Theme Toggle Button - Mobile */}
               <Button
                 variant="outline-secondary"
                 className="theme-toggle ms-lg-3 my-2 d-lg-none d-flex align-items-center"
@@ -131,9 +179,15 @@ const Header = () => {
           </Offcanvas.Body>
         </Navbar.Offcanvas>
       </Container>
-      
+
       {/* Chatbot Component */}
       <Chatbot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />
+
+      {/* Profile Sidebar */}
+      {isLoggedIn && <ProfileSidebar show={showProfileSidebar} handleClose={() => setShowProfileSidebar(false)} />}
+      
+      {/* First Time Login Modal */}
+      {isLoggedIn && <FirstTimeLoginModal />}
     </Navbar>
   );
 };

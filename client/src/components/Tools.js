@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Tools.css';
 // Import icons
-import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook, FaFileAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaBalanceScale, FaGavel, FaChartLine, FaClipboardList, FaBook, FaFileAlt, FaSearch, FaEnvelope } from 'react-icons/fa';
 import { MdUpdate, MdAssessment, MdOutlineAppRegistration } from 'react-icons/md';
 // Import ComingSoonModal component
 import ComingSoonModal from './ComingSoonModal';
@@ -66,17 +66,23 @@ const Tools = () => {
       icon: <FaBalanceScale />,
     },
     {
+      id: 'research-assistant',
+      title: 'Research Assistant',
+      category: 'Legal',
+      icon: <FaSearch />,
+    },
+    {
       id: 'procedure-practice',
       title: 'Procedure and Practice',
       category: 'Compliance',
       icon: <FaClipboardList />,
     },
-    {
-      id: 'forms',
-      title: 'Forms',
-      category: 'Compliance',
-      icon: <FaFileAlt />,
-    },
+    // {
+    //   id: 'forms',
+    //   title: 'Forms',
+    //   category: 'Compliance',
+    //   icon: <FaFileAlt />,
+    // },
     {
       id: 'policy-drafting',
       title: 'Policy Drafting',
@@ -137,6 +143,36 @@ const Tools = () => {
       category: 'Meetings',
       icon: <FaCalendarAlt />,
     },
+    {
+      id: 'resolution-assistant',
+      title: 'Resolution Assistant',
+      category: 'Utility',
+      icon: <FaGavel />,
+    },
+    {
+      id: 'mini-law-library',
+      title: 'Mini-Law Library',
+      category: 'Utility',
+      icon: <FaBook />,
+    },
+    {
+      id: 'case-digest',
+      title: 'Case Digest',
+      category: 'Legal',
+      icon: <FaGavel />,
+    },
+    {
+      id: 'judgment-simulator',
+      title: 'Judgment Simulator',
+      category: 'Legal',
+      icon: <FaGavel />,
+    },
+    {
+      id: 'email-drafter',
+      title: 'Email Drafter',
+      category: 'Utility',
+      icon: <FaEnvelope />,
+    },
   ];
   
   // Implemented/active feature IDs
@@ -148,17 +184,23 @@ const Tools = () => {
     'legal-opinion',
     'legal-research',
     'procedure-practice',
-    'forms',
     'policy-drafting',
     'scenario-solver',
     'agreement-drafting',
-    'capital-raising-advisory-agreement',
     'reply-to-notice-rd',
     'reply-to-notice-nclt',
     'reply-to-notice-roc',
-    'petetion-preparator',
     'board-meeting-assistant',
     'general-meeting-assistant',
+    'petetion-preparator',
+    'forms',
+    'capital-raising-advisory-agreement',
+    'mini-law-library',
+    'case-digest',
+    'judgment-simulator',
+    'research-assistant',
+    'resolution-assistant',
+    'email-drafter'
   ]);
 
   // Get unique categories for filtering
@@ -219,6 +261,18 @@ const Tools = () => {
       navigate('/forms');
     } else if (id === 'capital-raising-advisory-agreement') {
       navigate('/capital-raising-advisory-agreement');
+    } else if (id === 'mini-law-library') {
+      navigate('/mini-law-library');
+    } else if (id === 'case-digest') {
+      navigate('/case-digest');
+    } else if (id === 'judgment-simulator') {
+      navigate('/judgment-simulator');
+    } else if (id === 'research-assistant') {
+      navigate('/research-assistant');
+    } else if (id === 'resolution-assistant') {
+      navigate('/resolution-assistant');
+    } else if (id === 'email-drafter') {
+      navigate('/email-drafter');
     } else {
       openComingSoonModal(title);
     }

@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Container, Row, Col } from 'react-bootstrap';
 import { FaClipboardList, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import '../styles/theme.css';
 
 const PolicyDrafting = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const PolicyDrafting = () => {
           <Card className="input-card">
             <h2 className="card-title">Policy Drafting</h2>
               <div className="text-center mb-4">
-                <p className="lead text-muted">
+                <p className="lead" style={{ color: 'var(--muted-color)' }}>
                   Select a policy type below to start drafting professional and legally compliant policies.
                 </p>
               </div>
@@ -42,12 +43,18 @@ const PolicyDrafting = () => {
                 {policyOptions.map((policy) => (
                   <Col md={6} lg={4} key={policy.id} className="mb-4">
                     <Card 
-                      className={`h-100 policy-card ${policy.status === 'available' ? 'border-primary' : 'border-secondary'}`}
-                      style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                      className={`h-100 policy-card ${policy.status === 'available' ? '' : ''}`}
+                      style={{ 
+                        cursor: 'pointer', 
+                        transition: 'all 0.3s ease',
+                        backgroundColor: 'var(--card-bg)',
+                        borderColor: policy.status === 'available' ? 'var(--primary-color)' : 'var(--border-color)',
+                        color: 'var(--text-color)'
+                      }}
                       onClick={() => handlePolicyClick(policy)}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateY(-5px)';
-                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+                        e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'translateY(0)';
@@ -58,15 +65,17 @@ const PolicyDrafting = () => {
                         <div className="d-flex justify-content-between align-items-start mb-3">
                           <FaClipboardList 
                             size={24} 
-                            className={policy.status === 'available' ? 'text-primary' : 'text-muted'} 
+                            style={{ 
+                              color: policy.status === 'available' ? 'var(--primary-color)' : 'var(--muted-color)' 
+                            }} 
                           />
                         </div>
                         <h6 className="card-title mb-3">{policy.title}</h6>
                         <div className="mt-auto d-flex justify-content-between align-items-center">
-                          <small className="text-muted">
+                          <small style={{ color: 'var(--muted-color)' }}>
                             Click to start drafting
                           </small>
-                          <FaChevronRight className="text-primary" />
+                          <FaChevronRight style={{ color: 'var(--primary-color)' }} />
                         </div>
                       </Card.Body>
                     </Card>
@@ -74,19 +83,19 @@ const PolicyDrafting = () => {
                 ))}
               </Row>
 
-              <div className="mt-4 p-3 bg-light rounded">
+              <div className="mt-4 p-3 rounded" style={{ backgroundColor: 'var(--accent-color)' }}>
                 <Row>
                   <Col md={8}>
-                    <h6 className="mb-2">📋 Policy Drafting Features</h6>
-                    <ul className="list-unstyled mb-0">
-                      <li className="mb-1">• <strong>AI-Powered:</strong> Generate legally compliant policies using advanced AI</li>
-                      <li className="mb-1">• <strong>Customizable:</strong> Input company-specific details for personalized policies</li>
-                      <li className="mb-1">• <strong>Export Options:</strong> Download as PDF or Word document</li>
-                      <li className="mb-1">• <strong>Compliance Ready:</strong> Ensures adherence to latest regulations</li>
+                    <h6 className="mb-2" style={{ color: 'var(--text-color)' }}>📋 Policy Drafting Features</h6>
+                    <ul className="list-unstyled mb-0" style={{ color: 'var(--text-color)' }}>
+                      <li className="mb-1">• <strong style={{ color: 'var(--primary-color)' }}>AI-Powered:</strong> <span style={{ color: 'var(--text-color)' }}>Generate legally compliant policies using advanced AI</span></li>
+                      <li className="mb-1">• <strong style={{ color: 'var(--primary-color)' }}>Customizable:</strong> <span style={{ color: 'var(--text-color)' }}>Input company-specific details for personalized policies</span></li>
+                      <li className="mb-1">• <strong style={{ color: 'var(--primary-color)' }}>Export Options:</strong> <span style={{ color: 'var(--text-color)' }}>Download as PDF or Word document</span></li>
+                      <li className="mb-1">• <strong style={{ color: 'var(--primary-color)' }}>Compliance Ready:</strong> <span style={{ color: 'var(--text-color)' }}>Ensures adherence to latest regulations</span></li>
                     </ul>
                   </Col>
                   <Col md={4} className="text-center">
-                    <FaClipboardList size={60} className="text-muted opacity-50" />
+                    <FaClipboardList size={60} style={{ color: 'var(--primary-color)', opacity: 0.5 }} />
                   </Col>
                 </Row>
               </div>

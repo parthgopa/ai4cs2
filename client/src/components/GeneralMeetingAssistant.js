@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -7,8 +7,13 @@ import { FaCopy, FaFilePdf, FaSpinner, FaFileWord, FaSearch } from 'react-icons/
 import PDFGenerator from './PDFGenerator';
 import WordGenerator from './WordGenerator';
 import AIDisclaimer from './AIDisclaimer';
+import { usePreferences } from '../store/preferences';
+import { useActivityTracker, ACTIVITY_TYPES, FEATURES } from '../store/activityTracker';
 
 const GeneralMeetingAssistant = () => {
+  const { getAutofillData, isAutoFillEnabled } = usePreferences();
+  const { trackActivity } = useActivityTracker();
+  
   const [formData, setFormData] = useState({
     documentType: 'Notice', // Notice or Minutes
     meetingType: 'AGM', // AGM or EGM
@@ -30,6 +35,19 @@ const GeneralMeetingAssistant = () => {
 
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
+
+  // Auto-fill company data when component mounts or preferences change
+  useEffect(() => {
+    if (isAutoFillEnabled) {
+      const autofillData = getAutofillData();
+      if (autofillData.companyName) {
+        setFormData(prev => ({
+          ...prev,
+          companyName: autofillData.companyName
+        }));
+      }
+    }
+  }, [isAutoFillEnabled, getAutofillData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,14 +95,12 @@ Inputs Provided:
 10. Agenda_Items_and_Resolutions: ${formData.agendaItemsAndResolutions}
 11. Record_Date_or_Book_Closure: ${formData.recordDateOrBookClosure}${formData.recordDateOrBookClosure === 'Yes' && formData.recordDateDetails ? ` - ${formData.recordDateDetails}` : ''}
 12. Explanatory_Statement_Required: ${formData.explanatoryStatementRequired}${formData.explanatoryStatementRequired === 'Yes' && formData.explanatoryStatement ? ` - ${formData.explanatoryStatement}` : ''}
-13. Attendees_List: ${formData.documentType === 'Minutes' ? formData.attendeesList : 'N/A'}
-14. Voting_Mode: ${formData.documentType === 'Minutes' ? formData.votingMode : 'N/A'}
-`;
+13. Attendees_List: ${formData.documentType === 'Minutes' ? formData.attendeesList : 'N/A'}`;
 
     try {
       await APIService({
         question: prompt,
-        onResponse: (data) => {
+        onResponse: async (data) => {
           setLoading(false);
           if (
             data &&
@@ -93,16 +109,90 @@ Inputs Provided:
             data.candidates[0].content &&
             data.candidates[0].content.parts
           ) {
-            setResponse(data.candidates[0].content.parts[0].text);
+            const generatedContent = data.candidates[0].content.parts[0].text;
+            setResponse(generatedContent);
+            
+            // Track successful generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.MEETING_ASSISTANCE,
+              feature: FEATURES.GENERAL_MEETING_ASSISTANT,
+              action: 'General Meeting document generated successfully',
+              inputData: {
+                documentType: formData.documentType,
+                meetingType: formData.meetingType,
+                companyName: formData.companyName,
+                meetingDate: formData.meetingDate,
+                chairperson: formData.chairperson
+              },
+              outputData: {
+                success: true,
+                content: generatedContent,
+                contentLength: generatedContent.length
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                documentType: formData.documentType,
+                meetingType: formData.meetingType
+              }
+            });
           } else {
-            setResponse("Sorry, we couldn't generate the document. Please try again.");
+            const errorMessage = "Sorry, we couldn't generate the document. Please try again.";
+            setResponse(errorMessage);
+            
+            // Track failed generation
+            await trackActivity({
+              activityType: ACTIVITY_TYPES.MEETING_ASSISTANCE,
+              feature: FEATURES.GENERAL_MEETING_ASSISTANT,
+              action: 'Failed to generate General Meeting document',
+              inputData: {
+                documentType: formData.documentType,
+                meetingType: formData.meetingType,
+                companyName: formData.companyName,
+                meetingDate: formData.meetingDate
+              },
+              outputData: {
+                success: false,
+                error: 'No valid response from API'
+              },
+              metadata: {
+                promptLength: prompt.length,
+                generationTime: new Date().toISOString(),
+                documentType: formData.documentType,
+                meetingType: formData.meetingType
+              }
+            });
           }
         },
       });
     } catch (error) {
       setLoading(false);
-      setResponse('An error occurred while generating the document. Please try again later.');
-      console.error('Error:', error);
+      const errorMessage = "An error occurred while generating the document. Please try again later.";
+      setResponse(errorMessage);
+      console.error("Error:", error);
+      
+      // Track error
+      await trackActivity({
+        activityType: ACTIVITY_TYPES.MEETING_ASSISTANCE,
+        feature: FEATURES.GENERAL_MEETING_ASSISTANT,
+        action: 'Error in generating General Meeting document',
+        inputData: {
+          documentType: formData.documentType,
+          meetingType: formData.meetingType,
+          companyName: formData.companyName,
+          meetingDate: formData.meetingDate
+        },
+        outputData: {
+          success: false,
+          error: error.message || 'API call failed'
+        },
+        metadata: {
+          promptLength: prompt.length,
+          generationTime: new Date().toISOString(),
+          documentType: formData.documentType,
+          meetingType: formData.meetingType
+        }
+      });
     }
   };
 
